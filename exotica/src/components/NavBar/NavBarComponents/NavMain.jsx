@@ -188,7 +188,7 @@ const NavMain = () => {
                     </div>
                 </div>
 
-                <div id='profile-main' className='h-full p-6'>
+                <div id='profile-main' className='h-full'>
                     <ProfileLayout />
                 </div>
             </div>

@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import { auth } from '../../services/firebase';
 import { RecaptchaVerifier, signInWithPhoneNumber, PhoneAuthProvider, signInWithCredential } from "firebase/auth";
 import { Oval } from 'react-loader-spinner';
+import NewUserRegistration from './ProfileComponents/NewUserRegistration';
+import UserProfile from './ProfileComponents/UserProfile';
 
 const ProfileLayout = () => {
     const [profileState, setProfileState] = useState('initial'); // 'initial', 'login', 'otp', 'loggedIn'
@@ -20,6 +22,8 @@ const ProfileLayout = () => {
     const [resendTimer, setResendTimer] = useState(30); // 150 seconds = 2.5 minutes
     const [isResendDisabled, setIsResendDisabled] = useState(false);
     const recaptchaVerifierRef = useRef(null);
+    const [isUser, setIsUser] = useState(false);
+    const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
 
     useEffect(() => {
         if ((profileState === 'login' || profileState === 'otp') && !useEmail) {
@@ -34,56 +38,63 @@ const ProfileLayout = () => {
         }
     }, [profileState, useEmail]);
 
+    useEffect(() => {
+        setAuthToken(localStorage.getItem('authToken'));
+    }, [isUser, profileState]);
+
     const handleLoginClick = () => {
         setProfileState('login');
     }
 
     const handleUserLogin = async () => {
         setIsLoading(true);
+        if (!recaptchaVerifierRef.current) {
+            recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+                'callback': (response) => {
+                    console.log("Recaptcha verified");
+                }
+            });
+        }
+
         try {
             if (useEmail) {
-                recaptchaVerifierRef.current.render().verify().then(recaptchaToken => {
-                    if (recaptchaToken) {
-                        fetch(process.env.NEXT_PUBLIC_SEND_EMAIL_OTP_API_URL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email: inputValue })
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                toast.success('OTP has been sent to your email!');
-                                setIsOtpSent(true);
-                                setProfileState('otp');
-                                startResendTimer();
-                            } else {
-                                toast.error('Failed to send OTP. Please try again.');
-                                console.log(response);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error sending OTP:', error);
-                            toast.error('Failed to send OTP. Please try again.');
-                        })
-                        .finally(() => {
-                            setIsLoading(false);
-                        });
-                    }
-                }).catch(error => {
-                    console.error('Error verifying recaptcha:', error);
-                    toast.error('Failed to verify recaptcha. Please try again.');
-                    setIsLoading(false);
-                });             
+                recaptchaVerifierRef.current.render().then(() => {
+                    recaptchaVerifierRef.current.verify().then(recaptchaToken => {
+                        if (recaptchaToken) {
+                            fetch(process.env.NEXT_PUBLIC_SEND_EMAIL_OTP_API_URL, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email: inputValue })
+                            })
+                                .then(response => {
+                                    if (response.ok) {
+                                        toast.success('OTP has been sent to your email!');
+                                        setIsOtpSent(true);
+                                        setProfileState('otp');
+                                        startResendTimer();
+                                    } else {
+                                        toast.error('Failed to send OTP. Please try again.');
+                                        console.log(response);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error sending OTP:', error);
+                                    toast.error('Failed to send OTP. Please try again.');
+                                })
+                                .finally(() => {
+                                    setIsLoading(false);
+                                });
+                        }
+                    }).catch(error => {
+                        console.error('Error verifying recaptcha:', error);
+                        toast.error('Failed to verify recaptcha. Please try again.');
+                        setIsLoading(false);
+                    });
+                });
 
             } else {
-                const phoneNumber ="+91" + inputValue;
-                if (!recaptchaVerifierRef.current) {
-                    recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                        'size': 'invisible',
-                        'callback': (response) => {
-                            console.log("Recaptcha verified");
-                        }
-                    });
-                }
+                const phoneNumber = "+91" + inputValue;
                 const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifierRef.current);
                 setVerificationId(confirmationResult.verificationId);
                 setIsOtpSent(true);
@@ -152,21 +163,23 @@ const ProfileLayout = () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: inputValue, otp: otpValue })
                 })
-                .then(response => {
-                    if (response.ok) {
-                        toast.success('OTP Verified!');
-                        setProfileState('loggedIn');
-                    } else {
-                        toast.error('Invalid OTP. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error verifying OTP:', error);
-                    toast.error('An error occurred. Please try again.');
-                })
-                .finally(() => {
-                    setIsLoading(false);
-                });
+                    .then(response => {
+                        if (response.ok) {
+                            setOtpValue('')
+                            toast.success('OTP Verified!');
+                            setProfileState('loggedIn');
+                            findUser({ email: inputValue })
+                        } else {
+                            toast.error('Invalid OTP. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error verifying OTP:', error);
+                        toast.error('An error occurred. Please try again.');
+                    })
+                    .finally(() => {
+                        setIsLoading(false);
+                    });
             } else {
                 if (verificationId) {
                     try {
@@ -174,7 +187,9 @@ const ProfileLayout = () => {
                         await signInWithCredential(auth, credential);
                         setProfileState('loggedIn');
                         toast.success('OTP Verified!');
+                        setOtpValue('')
                         setIsLoading(false);
+                        findUser({ mobile: inputValue })
                     } catch (error) {
                         toast.error('Invalid OTP. Please try again.');
                         setIsLoading(false);
@@ -191,59 +206,8 @@ const ProfileLayout = () => {
     }
 
     const handleResendOtp = async () => {
-        setIsLoading(true);
-        if (useEmail) {
-            recaptchaVerifierRef.current.render().verify().then(recaptchaToken => {
-                if (recaptchaToken) {
-                    fetch(process.env.NEXT_PUBLIC_SEND_EMAIL_OTP_API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: inputValue })
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            toast.success('OTP has been sent to your email!');
-                            setIsOtpSent(true);
-                            setProfileState('otp');
-                            startResendTimer();
-                        } else {
-                            toast.error('Failed to send OTP. Please try again.');
-                            console.log(response);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error sending OTP:', error);
-                        toast.error('Failed to send OTP. Please try again.');
-                    })
-                    .finally(() => {
-                        setIsLoading(false);
-                    });
-                }
-            }).catch(error => {
-                console.error('Error verifying recaptcha:', error);
-                toast.error('Failed to verify recaptcha. Please try again.');
-                setIsLoading(false);
-            });            
-        } else {
-            try {
-                const phoneNumber = `+91${inputValue}`;
-                const appVerifier = recaptchaVerifierRef.current;
-                const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
-                setVerificationId(confirmationResult.verificationId);
-                toast.success('OTP has been resent to your mobile!');
-                setIsLoading(false);
-                startResendTimer();
-            } catch (error) {
-                if (error.code === 'auth/too-many-requests') {
-                    toast.error(`Too many requests. Use email instead`);
-                    startResendTimer();
-                } else {
-                    console.log(error);
-                    toast.error('Failed to resend OTP. Please try again.');
-                }
-                setIsLoading(false);
-            }
-        }
+        handleUserLogin();
+        startResendTimer();
     }
 
     const startResendTimer = () => {
@@ -269,15 +233,59 @@ const ProfileLayout = () => {
         }
     }
 
+    // login token
+    const findUser = async (identifier) => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_FATCH_LOGIN_USER, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(identifier),
+            });
+
+            if (!response.ok) {
+                setIsUser(false);
+                throw new Error('User not found or failed to authenticate');
+            }
+
+            // Parse the JSON response
+            const data = await response.json();
+
+            // Assuming the response contains an accessToken
+            if (data.accessToken) {
+                setIsUser(true);
+                localStorage.setItem('authToken', data.accessToken);
+            } else {
+                setIsUser(false);
+                console.error('Access token not found in response');
+            }
+        } catch (error) {
+            console.error('Error during user login:', error);
+            setIsUser(false);
+        }
+        setIsLoading(false);
+    };
+
+    const updateAuthToken = (newValue) => {
+        setIsUser(true)
+        setAuthToken(newValue);
+    };
+
+    const updateProfileState = (newValue) => {
+        setProfileState(newValue)
+    };
+
     return (
-        <div>
+        <div className='w-full h-full overflow-scroll scrollbar p-6 pb-20'>
             {isLoading && (
                 <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-                    <Oval color="#ff197d" secondaryColor = "#ffb1d3" height={80} width={80} />
+                    <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
                 </div>
             )}
 
-            {profileState === 'initial' && (
+            {!authToken && profileState === 'initial' && (
                 <div>
                     <div className='flex gap-4 mb-6'>
                         <PiUserCircleDuotone className='text-6xl text-neutral-600' />
@@ -291,8 +299,8 @@ const ProfileLayout = () => {
                         <button className='w-full bg-primary text-white text-pretty font-normal py-2 px-4 rounded mb-4' onClick={handleLoginClick}>Login / Sign Up</button>
                     </div>
 
-                    <div className='flex gap-4 text-stone-600 mb-6'>
-                        <div className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2'>
+                    <div className='flex gap-4 text-stone-600 mb-6 text-sm'>
+                        <div className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2' onClick={() => setProfileState('login')}>
                             <div className='flex items-center gap-2 font-serif hover:text-primary'>
                                 <span className='bg-neutral-200 rounded-md p-1'>
                                     <FcSurvey className='text-xl' />
@@ -302,7 +310,7 @@ const ProfileLayout = () => {
                                 </p>
                             </div>
                         </div>
-                        <div className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2'>
+                        <div className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2' onClick={() => setProfileState('login')}>
                             <div className='flex items-center gap-2 font-serif hover:text-primary'>
                                 <span className='bg-neutral-200 rounded-md p-1'>
                                     <FcLike className='text-xl' />
@@ -327,7 +335,7 @@ const ProfileLayout = () => {
                 </div>
             )}
 
-            {profileState === 'login' && (
+            {!authToken && profileState === 'login' && (
                 <div className='flex flex-col'>
                     <div className='flex w-full items-center mb-2'>
                         <button className='flex items-center gap-2 left-2 top-2 text-lg text-primary font-bold' onClick={handleBackClick}>
@@ -386,7 +394,7 @@ const ProfileLayout = () => {
                 </div>
             )}
 
-            {profileState === 'otp' && isOtpSent && (
+            {!authToken && profileState === 'otp' && isOtpSent && (
                 <div className='flex flex-col'>
                     <div className='flex w-full items-center mb-2'>
                         <button className='flex items-center gap-2 left-2 top-2 text-lg text-primary font-bold' onClick={handleOTPBackClick}>
@@ -433,9 +441,14 @@ const ProfileLayout = () => {
                 </div>
             )}
 
-            {profileState === 'loggedIn' && (
+            {authToken && (
+                <UserProfile />
+            )}
+
+            {!authToken && profileState === "loggedIn" && (
                 <div>
-                    User Logged In
+                    {authToken}
+                    <NewUserRegistration inputType={useEmail ? "Email" : "Mobile"} verifyValue={inputValue} updateAuthToken={updateAuthToken} gotoLogin={updateProfileState} />
                 </div>
             )}
 

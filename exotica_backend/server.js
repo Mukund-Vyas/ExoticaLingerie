@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const productRoutes = require('./router/productRoutes');
-const otpRouter = require('./router/otpRouter');
+const productRoutes = require('./router/productRouters');
+const otpRouter = require('./router/otpRouters');
+const userRoutes = require('./router/userRouters');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
@@ -20,6 +21,7 @@ app.use(cors());
 // Routes
 app.use('/api/v1', productRoutes);
 app.use('/api/v1', otpRouter);
+app.use('/api/v1/users', userRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI);
