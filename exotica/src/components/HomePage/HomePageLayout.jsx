@@ -31,7 +31,6 @@ const HomePageLayout = () => {
 
   return (
     <div>
-      <Layout>
         <div><Toaster position="bottom-center" reverseOrder={false} /></div>
         <Carousel images={images} image_url = {image_url}/>
         <Features />
@@ -40,7 +39,6 @@ const HomePageLayout = () => {
         <Advertising />
         <NewArrivals />
         <BraCollection />
-      </Layout>
         {/* <NavBarLayout />
         
         <Footer /> */}

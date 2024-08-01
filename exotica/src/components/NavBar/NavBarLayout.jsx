@@ -32,13 +32,13 @@ const NavBarLayout = () => {
   return (
     <>
       {isLargeScreen ? ( // Render large screen navbar
-        <div className={`bg-white z-50 transition-all duration-700 ease-in-out ${isFixed ? 'fixed top-0 left-0 right-0' : 'relative'}`}>
+        <div className={`bg-white z-50 transition-all duration-700 ease-in-out sticky top-0`}>
           <HeadLine title="The Weeked Bash - MIN 45% Discount alive - Shop Now" />
           <NavMain />
           <NavMenu />
         </div>
       ) : ( // Render small screen navbar
-        <div className={`bg-white z-50 transition-all duration-300 ease-in-out ${isFixed ? 'fixed top-0 left-0 right-0' : 'relative'}`}>
+        <div className={`bg-white z-50 transition-all duration-300 ease-in-out sticky top-0`}>
           <div className='flex bg-primary h-[25px] w-full items-center justify-center text-center text-white font-bold max-sm:text-[11px] max-sm:h-[20px]'>
             The Weeked Bash - MIN 45% Discount alive - Shop Now
           </div>

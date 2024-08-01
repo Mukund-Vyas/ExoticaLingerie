@@ -3,7 +3,7 @@ import NavBarLayout from '../NavBar/NavBarLayout';
 
 const Layout = ({ children }) => {
   return (
-    <div>
+    <div className='relative max-w-[1920px] mx-auto'>
       <NavBarLayout />
       <main>{children}</main>
       <Footer />
