@@ -3,10 +3,10 @@ import { Oval } from 'react-loader-spinner';
 import { FcAddressBook, FcBusinesswoman, FcDeleteDatabase, FcLike, FcRating, FcSurvey } from "react-icons/fc";
 import { PiUserCircleDuotone } from 'react-icons/pi';
 import { TiDeleteOutline } from "react-icons/ti";
-import AddAddress from './addAddress';
+import AddAddress from './AddAddress';
 import { GoArrowLeft } from 'react-icons/go';
 
-function UserProfile() {
+function UserProfile({gotoLogin}) {
     const [isLoading, setIsLoading] = useState(true);
     const [userData, setUserData] = useState(null);
     const [currentPage, setCurrentPage] = useState('profile');
@@ -72,7 +72,7 @@ function UserProfile() {
 
     const clearAuthToken = () => {
         localStorage.removeItem('authToken');
-        // Optionally, redirect or perform other actions
+        gotoLogin('login')
     };
 
     const updateCurrentPage = (page) => {
@@ -196,7 +196,7 @@ function UserProfile() {
                                     <FcDeleteDatabase className='text-7xl' />
                                     <h2 className="text-xl font-bold mb-2">Oops! This isn't your profile...</h2>
                                     <p className="text-gray-600">We couldn't find the details you're looking for. Perhaps you need to log in or check your credentials?</p>
-                                    <button className="text-primary font-semibold cursor-pointer mt-4" onClick={clearAuthToken}>Log in Again</button>
+                                    <button className="text-primary font-semibold cursor-pointer mt-4" onClick={() => clearAuthToken}>Log in Again</button>
                                 </div>
                             )}
                         </div>
@@ -210,7 +210,7 @@ function UserProfile() {
                     <button className='flex items-center gap-2 left-2 top-2 text-lg text-primary font-bold' onClick={() => updateCurrentPage('profile')}>
                         <GoArrowLeft />
                         <span className='text-xs'>
-                            Continue Shopping
+                            back
                         </span>
                     </button>
                     <div className='w-full'>

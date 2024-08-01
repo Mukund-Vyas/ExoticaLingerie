@@ -111,12 +111,12 @@ exports.addPartialInfo = async (req, res) => {
 
 // Add address for existing user
 exports.addAddress = async (req, res) => {
-    const { street, city, state, pinCode, country } = req.body;
+    const { firstName, lastName, street, city, state, pinCode, country, mobile } = req.body;
 
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).send('User not found.');
 
-    user.addresses.push({ street, city, state, pinCode, country });
+    user.addresses.push({ firstName, lastName, street, city, state, pinCode, country, mobile });
     await user.save();
 
     res.send(user);
@@ -165,16 +165,18 @@ exports.refreshToken = async (req, res) => {
 exports.getUserData = async (req, res) => {
     try {
         // Fetch the user data from the database, excluding password and refreshToken
-        const user = await User.findById(req.user._id).select('-password -refreshToken');
+        const user = await User.findById(req.user._id).select(' -refreshToken');
         if (!user) return res.status(404).send('User not found.');
 
         // Decrypt the email and mobile fields
         const decryptedEmail = decrypt(user.email);
         const decryptedMobile = decrypt(user.mobile);
+        
+        user.decryptAddressFields();
 
         // Send the user data with decrypted fields
         res.send({
-            ...user.toObject(),
+            ...user.toJSON(),
             email: decryptedEmail,
             mobile: decryptedMobile
         });

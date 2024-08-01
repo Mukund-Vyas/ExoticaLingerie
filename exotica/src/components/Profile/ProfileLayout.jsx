@@ -442,7 +442,7 @@ const ProfileLayout = () => {
             )}
 
             {authToken && (
-                <UserProfile />
+                <UserProfile gotoLogin={updateProfileState}/>
             )}
 
             {!authToken && profileState === "loggedIn" && (

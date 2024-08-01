@@ -5,7 +5,7 @@ const addressSchema = new mongoose.Schema({
   street: { type: String, required: true },
   city: { type: String, required: true },
   state: { type: String, required: true },
-  pinCode: { type: String, required: true, match: [/^\d{6}$/, 'Invalid pin code'] },
+  pinCode: { type: String, required: true },
   country: { type: String, required: true },
   mobile: { type: String, required: true },
   firstName: { type: String, required: true },

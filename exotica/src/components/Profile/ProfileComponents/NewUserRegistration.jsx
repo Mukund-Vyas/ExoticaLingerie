@@ -81,8 +81,6 @@ const NewUserRegistration = ({ inputType, verifyValue, updateAuthToken, gotoLogi
         }
     };
 
-
-
     return (
         <div>
             <div className='flex flex-col gap-4 p-4 border border-stone-400 rounded-xl'>
