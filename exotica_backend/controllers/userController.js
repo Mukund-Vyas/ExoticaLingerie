@@ -61,6 +61,32 @@ exports.findUser = async (req, res) => {
     }
 };
 
+// Find user data
+exports.getUserData = async (req, res) => {
+    try {
+        // Fetch the user data from the database, excluding refreshToken
+        const user = await User.findById(req.user._id).select(' -refreshToken');
+        if (!user) return res.status(404).send('User not found.');
+
+        // Decrypt the email and mobile fields
+        const decryptedEmail = decrypt(user.email);
+        const decryptedMobile = decrypt(user.mobile);
+
+        // Decrypt address fields
+        user.decryptAddressFields();
+
+        // Send the user data with decrypted fields
+        res.send({
+            ...user.toJSON(),
+            email: decryptedEmail,
+            mobile: decryptedMobile
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error.message);
+        res.status(500).send('Internal server error.');
+    }
+};
+
 // Add partial information
 exports.addPartialInfo = async (req, res) => {
     const { firstName, lastName, email, mobile, mobileVerified, emailVerified } = req.body;
@@ -108,6 +134,42 @@ exports.addPartialInfo = async (req, res) => {
     }
 };
 
+// Update User
+exports.updateUserProfile = async (req, res) => {
+    console.log("Comes for update");
+    
+    const userId = req.user._id;
+    const { firstName, lastName, mobile, email } = req.body;
+
+    if (!firstName || !lastName || !mobile || !email) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    try {
+        const encryptedMobile = encrypt(mobile, true);
+        const encryptedEmail = encrypt(email, true);
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                firstName,
+                lastName,
+                mobile: encryptedMobile,
+                email: encryptedEmail,
+            }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'User Updated Successfully' });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 
 // Add address for existing user
 exports.addAddress = async (req, res) => {
@@ -119,7 +181,44 @@ exports.addAddress = async (req, res) => {
     user.addresses.push({ firstName, lastName, street, city, state, pinCode, country, mobile });
     await user.save();
 
+    user.decryptAddressFields();
     res.send(user);
+};
+
+// Delete address for existing user
+exports.deleteAddress = async (req, res) => {
+    const {addressId } = req.params;
+    
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).send('User not found.');
+        }
+
+        // Find the address by ID and remove it
+        const addressIndex = user.addresses.findIndex(addr => addr._id.toString() === addressId);
+        if (addressIndex === -1) {
+            return res.status(404).send('Address not found.');
+        }
+
+        user.addresses.splice(addressIndex, 1);
+        await user.save();
+
+        // Decrypt the email and mobile fields
+        const decryptedEmail = decrypt(user.email);
+        const decryptedMobile = decrypt(user.mobile);
+
+        user.decryptAddressFields();
+
+        res.status(200).send({
+            ...user.toJSON(),
+            email: decryptedEmail,
+            mobile: decryptedMobile
+        });
+    } catch (error) {
+        console.error('Error deleting address:', error.message);
+        res.status(500).send('Internal server error.');
+    }
 };
 
 // Login
@@ -158,30 +257,5 @@ exports.refreshToken = async (req, res) => {
         });
     } catch (err) {
         res.sendStatus(500);
-    }
-};
-
-//get user data
-exports.getUserData = async (req, res) => {
-    try {
-        // Fetch the user data from the database, excluding password and refreshToken
-        const user = await User.findById(req.user._id).select(' -refreshToken');
-        if (!user) return res.status(404).send('User not found.');
-
-        // Decrypt the email and mobile fields
-        const decryptedEmail = decrypt(user.email);
-        const decryptedMobile = decrypt(user.mobile);
-        
-        user.decryptAddressFields();
-
-        // Send the user data with decrypted fields
-        res.send({
-            ...user.toJSON(),
-            email: decryptedEmail,
-            mobile: decryptedMobile
-        });
-    } catch (error) {
-        console.error('Error fetching user data:', error.message);
-        res.status(500).send('Internal server error.');
     }
 };

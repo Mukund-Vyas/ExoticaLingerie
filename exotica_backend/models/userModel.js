@@ -13,30 +13,14 @@ const addressSchema = new mongoose.Schema({
 });
 
 addressSchema.pre('save', function(next) {
-  if (this.isModified('street')) {
-    this.street = encrypt(this.street);
-  }
-  if (this.isModified('city')) {
-    this.city = encrypt(this.city);
-  }
-  if (this.isModified('state')) {
-    this.state = encrypt(this.state);
-  }
-  if (this.isModified('pinCode')) {
-    this.pinCode = encrypt(this.pinCode);
-  }
-  if (this.isModified('country')) {
-    this.country = encrypt(this.country);
-  }
-  if (this.isModified('mobile')) {
-    this.mobile = encrypt(this.mobile);
-  }
-  if (this.isModified('firstName')) {
-    this.firstName = encrypt(this.firstName);
-  }
-  if (this.isModified('lastName')) {
-    this.lastName = encrypt(this.lastName);
-  }
+  if (this.isNew || this.isModified('street')) this.street = encrypt(this.street, this.isNew);
+  if (this.isNew || this.isModified('city')) this.city = encrypt(this.city, this.isNew);
+  if (this.isNew || this.isModified('state')) this.state = encrypt(this.state, this.isNew);
+  if (this.isNew || this.isModified('pinCode')) this.pinCode = encrypt(this.pinCode, this.isNew);
+  if (this.isNew || this.isModified('country')) this.country = encrypt(this.country, this.isNew);
+  if (this.isNew || this.isModified('mobile')) this.mobile = encrypt(this.mobile, this.isNew);
+  if (this.isNew || this.isModified('firstName')) this.firstName = encrypt(this.firstName, this.isNew);
+  if (this.isNew || this.isModified('lastName')) this.lastName = encrypt(this.lastName, this.isNew);
   next();
 });
 
@@ -63,26 +47,27 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 userSchema.pre('save', function(next) {
-  if (this.isModified('email') || this.isNew) {
-    this.email = encrypt(this.email);
-  }
-  if (this.isModified('mobile') || this.isNew) {
-    this.mobile = encrypt(this.mobile);
-  }
+  if (this.isModified('email') || this.isNew) this.email = encrypt(this.email, this.isNew);
+  if (this.isModified('mobile') || this.isNew) this.mobile = encrypt(this.mobile, this.isNew);
   next();
 });
 
 userSchema.methods.decryptAddressFields = function() {
   this.addresses.forEach(address => address.decryptFields());
+  return this;  
 };
 
-function encrypt(text) {
+function encrypt(text, isNew) {
   if (!text) {
     throw new TypeError('Text to encrypt must be a non-empty string');
   }
 
   const key = Buffer.from(process.env.ENCRYPTION_KEY, 'hex');
   const iv = Buffer.from(process.env.IV, 'hex');
+
+  if (!isNew && /^[0-9a-fA-F]+$/.test(text)) {
+    return text;
+  }
 
   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
   let encrypted = cipher.update(text, 'utf8', 'hex');

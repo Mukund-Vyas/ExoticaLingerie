@@ -10,9 +10,7 @@ const ProductsPageLayout = dynamic(() => import("@/src/components/ProductsPage/P
 
 export default function Home({ products }) {
   return (
-    <Layout>
-      <ProductsPageLayout products={products} />
-    </Layout>
+    <ProductsPageLayout products={products} />
   );
 }
 

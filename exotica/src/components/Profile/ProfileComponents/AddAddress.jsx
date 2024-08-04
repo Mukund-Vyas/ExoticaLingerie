@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BiCurrentLocation, BiSave, BiSolidUser } from "react-icons/bi";
+import { BiCurrentLocation, BiSolidPhoneCall, BiSolidUser } from "react-icons/bi";
 import axios from "axios";
 import toast from 'react-hot-toast';
+import PropTypes from 'prop-types';
 
-function AddAddress() {
+function AddAddress({goBack}) {
     const [pinCode, setPinCode] = useState("");
     const [area, setArea] = useState("");
     const [city, setCity] = useState("");
@@ -14,10 +15,12 @@ function AddAddress() {
     const [contact, setContact] = useState('');
     const [addressLine1, setAddressLine1] =  useState('');
     const [addressLine2, setAddressLine2] =  useState('');
+    const [selectedArea, setSelectedArea] = useState('');
 
+    // Input Validation
     useEffect(() => {
-        setIsInputValid(validateMobile(contact) && validateFields());
-    }, [firstName, lastName, addressLine1, addressLine2, contact, pinCode]);
+        setIsInputValid(validateMobile(contact) && validateFields() && selectedArea);
+    }, [firstName, lastName, addressLine1, addressLine2, contact, pinCode, selectedArea]);
 
     const handleMobileInputChange = (e) => {
         const { value } = e.target;
@@ -37,6 +40,10 @@ function AddAddress() {
 
     const handleInputChange = (e, setter) => {
         setter(e.target.value);
+    };
+
+    const handleAreaChange = (event) => {
+        setSelectedArea(event.target.value);
     };
 
     // Set Valid Pincode
@@ -81,8 +88,8 @@ function AddAddress() {
             .split(" ") // split by space
             .map((element) => {
                 // remove Dot(.) and braces("()") contained words
-                var dot = element.split(".");
-                var braces = element.split("(");
+                let dot = element.split(".");
+                let braces = element.split("(");
 
                 if (dot.length > 1 || braces.length > 1) {
                     return null;
@@ -96,12 +103,13 @@ function AddAddress() {
             .join(" "); //join array with space(" ")
     };
 
+    // Save Data to database
     const handleSaveAddress = async () => {
         const token = localStorage.getItem('authToken');
         const addressData = {
             firstName,
             lastName,
-            street: addressLine1 + ", " + addressLine2,
+            street: addressLine1 + ", " + addressLine2 + ", "+ selectedArea,
             city: city,
             state,
             pinCode,
@@ -124,6 +132,7 @@ function AddAddress() {
             console.error('Error saving address:', error);
             toast.error('Failed to save address. Please try again.');
         }
+        goBack('profile')
     };
 
     return (
@@ -215,15 +224,17 @@ function AddAddress() {
                                 type="text"
                                 id="area"
                                 name="area"
-                                className={`w-full max-w-lg rounded-lg ${!area && "bg-transparent cursor-not-allowed"
+                                className={`w-full overflow-y-scroll max-w-lg rounded-lg ${!area && "bg-transparent cursor-not-allowed"
                                     } border border-slate-400 px-3 py-2 hover:border-primary focus:border focus:border-primary active:border-primary max-sm:text-xs`}
                                 required
+                                value={selectedArea}
+                                onChange={(e) => handleAreaChange(e)}
                             >
                                 <option value="" className='bg-transparent'>--Select--</option>
                                 {area &&
                                     area.map((item, index) => {
                                         return (
-                                            <option key={"option" + index} value={item} className='bg-transparent'>
+                                            <option key={"option" + index} value={item} className='bg-transparent text-wrap'>
                                                 {item}
                                             </option>
                                         );
@@ -243,7 +254,7 @@ function AddAddress() {
                                 type="text"
                                 id="city"
                                 name="city"
-                                className="w-full max-w-lg rounded-lg border bg-gray-200 border-slate-200 px-3 py-2 hover:border-green-500 focus:outline-none focus:ring focus:ring-green-500/40 active:ring active:ring-green-500/40 cursor-not-allowed max-sm:text-xs"
+                                className="w-full max-w-lg rounded-lg border bg-gray-200 border-slate-200 px-3 py-2 hover:border-primary focus:border focus:border-primary active:border-primary cursor-not-allowed max-sm:text-xs"
                                 value={city}
                                 readOnly
                             />
@@ -257,7 +268,7 @@ function AddAddress() {
                                 type="text"
                                 id="state"
                                 name="state"
-                                className="w-full max-w-lg rounded-lg border bg-gray-200 border-slate-200 px-3 py-2 hover:border-green-500 focus:outline-none focus:ring focus:ring-green-500/40 active:ring active:ring-green-500/40 cursor-not-allowed max-sm:text-xs"
+                                className="w-full max-w-lg rounded-lg border bg-gray-200 border-slate-200 px-3 py-2 hover:border-primary focus:border focus:border-primary active:border-primary cursor-not-allowed max-sm:text-xs"
                                 value={state}
                                 readOnly
                             />
@@ -266,7 +277,7 @@ function AddAddress() {
                 </div>
                 
                 {/* Contect Detail */}
-                <span className="flex items-center gap-1 text-sm font-medium my-4">Contect Detail</span>
+                <span className="flex items-center gap-1 text-sm font-medium my-4"><BiSolidPhoneCall /> Contact Details</span>
                 <div className='w-full flex gap-2 items-center mb-6'>
                     <span> +91</span>
                     <div className="relative w-full min-w-[200px] h-10">
@@ -278,7 +289,7 @@ function AddAddress() {
                             onChange={(e) => handleMobileInputChange(e)}
                         />
                         <label className="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-stone-500 peer-focus:text-rose-600 before:border-slate-400 peer-focus:before:!border-primary after:border-slate-400 peer-focus:after:!border-primary">
-                            Mobile Number
+                            Mobile Number *
                         </label>
                     </div>
                 </div>
@@ -292,10 +303,15 @@ function AddAddress() {
                     >
                         Save Address
                     </button>
+                    <p className='w-full text-start text-xs'>* Required Fields</p>
                 </div>
             </div>
         </div>
     )
 }
+
+AddAddress.propTypes = {
+    goBack: PropTypes.func.isRequired,
+};
 
 export default AddAddress

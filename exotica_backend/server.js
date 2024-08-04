@@ -24,10 +24,9 @@ app.use('/api/v1', otpRouter);
 app.use('/api/v1/users', userRoutes);
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI);
-const db = mongoose.connection;
-db.on('error', (error) => console.error(error));
-db.once('open', () => console.log('Connected to MongoDB'));
+mongoose.connect(process.env.MONGODB_URI)
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Start server
 const PORT = process.env.PORT || 3000;

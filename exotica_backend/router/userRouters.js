@@ -10,8 +10,14 @@ router.post('/find-user', userController.findUser);
 // Add partial information
 router.post('/add-partial-info', userController.addPartialInfo);
 
+//Updated user info for existing user
+router.put('/update-user', auth, userController.updateUserProfile);
+
 // Add address for existing user
 router.post('/add-address', auth, userController.addAddress);
+
+// Delete address route
+router.delete('/addresses/:addressId', auth, userController.deleteAddress);
 
 // get user data
 router.get('/get-user', auth, userController.getUserData);

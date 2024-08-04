@@ -1,26 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types';
+import { FaUserEdit } from 'react-icons/fa';
 
-const NewUserRegistration = ({ inputType, verifyValue, updateAuthToken, gotoLogin }) => {
-    const [isEmail, setIsEmail] = useState(false);
-    const [inputValue, setInputValue] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+const EditProfile = ({ user, goBack }) => {
+    const [firstName, setFirstName] = useState(user.firstName);
+    const [lastName, setLastName] = useState(user.lastName);
+    const [mobile, setMobile] = useState(user.mobile);
+    const [email, setEmail] = useState(user.email);
     const [isInputValid, setIsInputValid] = useState(false);
 
     useEffect(() => {
-        setIsEmail(inputType === "Email")
-    }, [inputType])
+        setIsInputValid(validateEmail(email) && validateMobile(mobile) && validateFields());
+    }, [email, mobile, firstName, lastName]);
 
-    useEffect(() => {
-        if (!isEmail) {
-            console.log("Email validation performs");
-            setIsInputValid(validateEmail(inputValue) && validateFields());
-        } else {
-            console.log("Mobile validation performs");
-            setIsInputValid(validateMobile(inputValue) && validateFields());
-        }
-    }, [inputValue, isEmail, firstName, lastName]);
+    const handleInputChange = (e, setter) => {
+        setter(e.target.value);
+    };
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,53 +31,39 @@ const NewUserRegistration = ({ inputType, verifyValue, updateAuthToken, gotoLogi
         return firstName.trim() !== '' && lastName.trim() !== '';
     };
 
-    const handleInputChange = (e, setter) => {
-        setter(e.target.value);
-    };
-
-    const registerUser = async () => {
-        const userData = {
-            firstName,
-            lastName,
-            email: isEmail ? verifyValue : inputValue,
-            mobile: isEmail ? inputValue : verifyValue,
-            emailVerified: isEmail,
-            mobileVerified: !isEmail,
-        };
-
+    const saveUser = async () => {
+        const token = localStorage.getItem('authToken');
         try {
-            const response = await fetch(process.env.NEXT_PUBLIC_REGESTER_USER, {
-                method: 'POST',
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/update-user`, {
+                method: 'PUT',
                 headers: {
+                    'x-auth-token': token,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userData),
+                body: JSON.stringify({ firstName, lastName, mobile, email }),
             });
 
-            if (response.status === 409) {
-                throw new Error('User with this email or mobile number already exists.');
-            }
+            // if(response.status == 401){
+            //     goBack('profile')
+            // }
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Failed to update profile');
             }
 
-            const result = await response.json();
-            toast.success('User registered successfully!');
-
-            // Store the token in local storage
-            localStorage.setItem('authToken', result.accessToken);
-            updateAuthToken(localStorage.getItem('authToken'))
-            // Handle success, e.g., redirect or show a success message
+            goBack('profile');
         } catch (error) {
-            toast.error('Error registering user: ' + error.message);
-            console.error('Error registering user:', error);
-            // Handle error, e.g., show an error message
+            console.error('Error updating profile:', error);
         }
-    };
+    }
+
 
     return (
         <div>
+            <div className='flex items-center mb-4 gap-3 font-medium'>
+                <FaUserEdit />
+                Edit Profile
+            </div>
             <div className='flex flex-col gap-4 p-4 border border-stone-400 rounded-xl'>
                 <div className='flex w-full gap-2'>
                     <div className='w-1/2'>
@@ -112,18 +93,32 @@ const NewUserRegistration = ({ inputType, verifyValue, updateAuthToken, gotoLogi
                         </div>
                     </div>
                 </div>
-                <div className='w-full flex gap-2 items-center mb-6'>
-                    {isEmail && <span> +91</span>}
+                <div className='w-full flex gap-2 items-center'>
+                    <span> +91</span>
                     <div className="relative w-full min-w-[200px] h-10">
                         <input
-                            type={isEmail ? 'tel' : 'email'}
+                            type='tel'
                             className="peer w-full h-full bg-transparent text-slate-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-slate-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-slate-400 placeholder-shown:border-t-slate-400 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-slate-400 focus:border-primary"
                             placeholder=" "
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
+                            value={mobile}
+                            onChange={(e) => handleInputChange(e, setMobile)}
                         />
                         <label className="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-stone-500 peer-focus:text-rose-600 before:border-slate-400 peer-focus:before:!border-primary after:border-slate-400 peer-focus:after:!border-primary">
-                            {isEmail ? 'Mobile Number' : 'Email ID'}
+                            Mobile Number
+                        </label>
+                    </div>
+                </div>
+                <div className='w-full flex gap-2 items-center mb-6'>
+                    <div className="relative w-full min-w-[200px] h-10">
+                        <input
+                            type='email'
+                            className="peer w-full h-full bg-transparent text-slate-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-slate-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-slate-400 placeholder-shown:border-t-slate-400 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-slate-400 focus:border-primary"
+                            placeholder=" "
+                            value={email}
+                            onChange={(e) => handleInputChange(e, setEmail)}
+                        />
+                        <label className="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-stone-500 peer-focus:text-rose-600 before:border-slate-400 peer-focus:before:!border-primary after:border-slate-400 peer-focus:after:!border-primary">
+                            Email ID
                         </label>
                     </div>
                 </div>
@@ -131,17 +126,26 @@ const NewUserRegistration = ({ inputType, verifyValue, updateAuthToken, gotoLogi
                     <button
                         className={`w-full bg-primary text-white text-pretty font-normal py-2 px-4 rounded ${isInputValid ? '' : 'opacity-50 cursor-not-allowed'}`}
                         disabled={!isInputValid}
-                        onClick={registerUser}
+                        onClick={saveUser}
                     >
-                        Register
+                        Save
                     </button>
                 </div>
             </div>
-            <div className='text-sm text-center py-4'>
-                Already part of the <span className='text-primary font-medium'>Exotica</span> family? <button className='text-primary font-medium' onClick={() => gotoLogin('login')}>Log in</button> and discover more!
-            </div>
         </div>
-    );
+    )
+}
+
+EditProfile.propTypes = {
+    user: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        firstName: PropTypes.string.isRequired,
+        lastName: PropTypes.string.isRequired,
+        mobile: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+    }).isRequired,
+    goBack: PropTypes.func.isRequired,
 };
 
-export default NewUserRegistration;
+
+export default EditProfile
