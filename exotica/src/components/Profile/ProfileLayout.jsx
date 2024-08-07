@@ -12,6 +12,8 @@ import UserProfile from './ProfileComponents/UserProfile';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser } from '@/Redux/Reducers/userSlice';
+import Link from 'next/link';
+import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
 
 const ProfileLayout = ({toggleProfile}) => {
     const [profileState, setProfileState] = useState('initial'); // 'initial', 'login', 'otp', 'loggedIn'
@@ -28,6 +30,7 @@ const ProfileLayout = ({toggleProfile}) => {
     // const [isUser, setIsUser] = useState(false);
     const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
     const {isUser} = useSelector((state)=>state.user)
+    const {profileOpen} = useSelector((state)=>state.profile)
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -254,6 +257,10 @@ const ProfileLayout = ({toggleProfile}) => {
         setProfileState(newValue)
     };
 
+    const handleToggleProfile = () => {
+        dispatch(setProfileOpen(!profileOpen))
+    }
+
     return (
         <div className='w-full h-full overflow-scroll scrollbar p-6 pb-20'>
             {isLoading && (
@@ -304,9 +311,9 @@ const ProfileLayout = ({toggleProfile}) => {
                             <span className='hover:text-primary'>FAQs</span>
                             <span className='hover:text-primary'>Contact Us</span>
                             <span className='hover:text-primary'>About Us</span>
-                            <span className='hover:text-primary'>Return Policy</span>
-                            <span className='hover:text-primary'>Privacy Policy</span>
-                            <span className='hover:text-primary'>Terms of Use</span>
+                            <span className='hover:text-primary'><Link href="/return-policy" onClick={()=>handleToggleProfile()}>Return Policy</Link></span>
+                            <span className='hover:text-primary'><Link href="/privacy-policy" onClick={()=>handleToggleProfile()}>Privacy Policy</Link></span>
+                            <span className='hover:text-primary'><Link href="/terms-of-use" onClick={()=>handleToggleProfile()}>Terms of Use</Link></span>
                         </div>
                     </div>
                 </div>

@@ -6,13 +6,13 @@ const TextBlockWithSubItem = ({data, key}) => {
     return (
         <div key={key} className='flex flex-col gap-2'>
             <h2 className='text-xl font-semibold'>{data?.no ? `${data?.no}. ` : ""}{data?.title}</h2>
-            <p>{data?.description}</p>
+            <p className='text-justify'>{data?.description}</p>
             {
                 data?.subTabs &&
                 <div>
                 {
                     data?.subTabs?.map((tab, index) => (
-                        <div key={index}>
+                        <div key={index} className='text-justify'>
                             <span className=' font-semibold'> {tab?.no ? `${tab?.no}.` : ""} {tab?.heading}</span> {tab?.description}
                         </div>
                     ))
@@ -21,7 +21,7 @@ const TextBlockWithSubItem = ({data, key}) => {
             }
             {
                 data?.address && 
-                <div>
+                <div className='text-justify'>
                     <p>{data?.address?.name}</p>
                     <p>{data?.address?.addr1}</p>
                     <p>{data?.address?.addr2}</p>

@@ -96,11 +96,11 @@ const Footer = () => {
                     <div className="footer-menu">
                         <ul>
                             <li>Help & Support</li>
-                            <li>
+                            {/* <li>
                                 <Link href="http://localhost:3000/">Contact Us</Link>
-                            </li>
+                            </li> */}
                             <li>
-                                <Link href="http://localhost:3000/">Shipping Policy</Link>
+                                <Link href="/shipping-policy">Shipping Policy</Link>
                             </li>
                             <li>
                                 <Link href="/privacy-policy">Privacy Policy</Link>
@@ -109,20 +109,20 @@ const Footer = () => {
                                 <Link href="/terms-of-use">Terms & Conditions</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Returns & Exchange Policy</Link>
+                                <Link href="/return-policy">Returns & Exchange Policy</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Track your Order</Link>
+                                <Link href="/">Track your Order</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Discreet Packaging</Link>
+                                <Link href="/">Discreet Packaging</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Payment Policy</Link>
+                                <Link href="/payment-policy">Payment Policy</Link>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link href="http://localhost:3000/">Customer Support</Link>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
 
