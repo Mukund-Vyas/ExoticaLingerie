@@ -11,7 +11,7 @@ const ProductsPageLayout = ({ products }) => {
   };
 
   // Flatten all variations from all products into a single array
-  const allVariations = products.flatMap((product) => 
+  const allVariations = products.flatMap((product) =>
     product.variations.map((variation) => ({
       ...product,
       variation,
@@ -33,6 +33,9 @@ const ProductsPageLayout = ({ products }) => {
 
   const shuffledVariations = shuffleArray(allVariations);
 
+  const handleWishlist = () =>{
+    return "";
+  }
   return (
     <div className='bg-pink-50 divide-y divide-pink-200'>
       <div><Toaster position="bottom-center" reverseOrder={false} /></div>
@@ -41,8 +44,8 @@ const ProductsPageLayout = ({ products }) => {
         <div className='text-center mx-auto mb-2'>
           <p>
             {isExpanded
-              ? `Women's lingerie is all about providing comfort and boosting confidence, with bras being a key component in ensuring women feel at ease. Understanding the variety of styles available is essential for finding the perfect fit for any occasion. Different bra styles cater to diverse needs and preferences, ensuring comfort and confidence throughout the day. The options include T-shirt bras for a seamless look, padded bras for extra lift, strapless bras for shoulder-baring outfits, and sports bras for essential workout support. Push-up bras enhance natural curves, while fancy bras make a bold statement. Online shopping has revolutionized the bra-buying process, offering a convenient way to explore a wide range of designs and sizes from the comfort of home. For those seeking the perfect bra, Exotica Lingerie provides a fantastic selection, ensuring women can find styles that suit their individual preferences and needs, making every woman feel confident and comfortable.`
-              : `Women's lingerie is all about providing comfort and boosting confidence, with bras being a key component in ensuring women feel at ease. Understanding the variety of styles available is essential... `}
+              ? "Women's lingerie is all about providing comfort and boosting confidence, with bras being a key component in ensuring women feel at ease. Understanding the variety of styles available is essential for finding the perfect fit for any occasion. Different bra styles cater to diverse needs and preferences, ensuring comfort and confidence throughout the day. The options include T-shirt bras for a seamless look, padded bras for extra lift, strapless bras for shoulder-baring outfits, and sports bras for essential workout support. Push-up bras enhance natural curves, while fancy bras make a bold statement. Online shopping has revolutionized the bra-buying process, offering a convenient way to explore a wide range of designs and sizes from the comfort of home. For those seeking the perfect bra, Exotica Lingerie provides a fantastic selection, ensuring women can find styles that suit their individual preferences and needs, making every woman feel confident and comfortable."
+              : "Women's lingerie is all about providing comfort and boosting confidence, with bras being a key component in ensuring women feel at ease. Understanding the variety of styles available is essential..."}
             <button className="text-primary cursor-pointer" onClick={handleToggle}>
               {isExpanded ? 'less' : 'more'}
             </button>
@@ -51,7 +54,12 @@ const ProductsPageLayout = ({ products }) => {
       </div>
       <div className="container mx-auto py-4 px-4 sm:px-2 md:px-6 lg:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {shuffledVariations.map((item, index) => (
-          <ProductCard key={`${item._id}-${index}`} product={item} />
+          <ProductCard
+            key={`${item._id}-${item.variation._id}-${index}`}
+            product={item}
+            variation={item.variation}
+            getWishlist = {handleWishlist}
+          />
         ))}
       </div>
     </div>

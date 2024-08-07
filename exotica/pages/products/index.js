@@ -1,12 +1,12 @@
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
-import Layout from "@/src/components/common/Layout";
 import Loader from '@/src/utils/Loader';
+import ProductsPageLayout from '@/src/components/ProductsPage/ProductsPageLayout';
 
-const ProductsPageLayout = dynamic(() => import("@/src/components/ProductsPage/ProductsPageLayout"), {
-  loading: () => <Loader />,
-  ssr: false,
-});
+// const ProductsPageLayout = dynamic(() => import("@/src/components/ProductsPage/ProductsPageLayout"), {
+//   loading: () => <Loader />,
+//   ssr: false,
+// });
 
 export default function Home({ products }) {
   return (
@@ -21,6 +21,7 @@ Home.propTypes = {
 export const getServerSideProps = async () => {
   try {
     const res = await fetch(process.env.GET_LAYOUT_PRODUCT_API_URL);
+    
     if (res.ok) {
       const products = await res.json();
       return {

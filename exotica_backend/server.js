@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const productRoutes = require('./router/productRouters');
 const otpRouter = require('./router/otpRouters');
 const userRoutes = require('./router/userRouters');
+const wishlistRoutes = require('./router/wishlistRouters');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
@@ -16,12 +17,31 @@ const app = express();
 app.use(express.json());
 
 // Enable CORS
-app.use(cors());
+
+const allowedOrigins = [
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+    'http://exoticalingerie.in',
+];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 
 // Routes
 app.use('/api/v1', productRoutes);
 app.use('/api/v1', otpRouter);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/', wishlistRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)

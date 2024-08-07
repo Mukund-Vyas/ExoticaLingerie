@@ -13,7 +13,7 @@ exports.findUser = async (req, res) => {
     let encryptedEmail, encryptedMobile;
     if (email) {
         try {
-            encryptedEmail = encrypt(email);
+            encryptedEmail = encrypt(email, true);
         } catch (error) {
             console.error('Encryption error for email:', error.message);
             return res.status(500).send('Internal server error.');
@@ -22,7 +22,7 @@ exports.findUser = async (req, res) => {
 
     if (mobile) {
         try {
-            encryptedMobile = encrypt(mobile);
+            encryptedMobile = encrypt(mobile, true);
         } catch (error) {
             console.error('Encryption error for mobile:', error.message);
             return res.status(500).send('Internal server error.');
@@ -41,7 +41,6 @@ exports.findUser = async (req, res) => {
     try {
         console.log(encryptedEmail);
         const user = await User.findOne(query);
-        console.log(user);
 
         if (!user) {
             return res.status(404).send('User not found.');
@@ -53,9 +52,12 @@ exports.findUser = async (req, res) => {
         user.refreshToken = refreshToken;
         await user.save();
 
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
+        const isProduction = process.env.NODE_ENV === 'production';
+
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: isProduction, sameSite: 'Strict'});
         res.send({ accessToken });
     } catch (error) {
+        console.log(error);
         console.error('Error finding user:', error.message);
         res.status(500).send('Internal server error.');
     }
@@ -136,8 +138,6 @@ exports.addPartialInfo = async (req, res) => {
 
 // Update User
 exports.updateUserProfile = async (req, res) => {
-    console.log("Comes for update");
-    
     const userId = req.user._id;
     const { firstName, lastName, mobile, email } = req.body;
 
@@ -156,7 +156,8 @@ exports.updateUserProfile = async (req, res) => {
                 lastName,
                 mobile: encryptedMobile,
                 email: encryptedEmail,
-            }
+            },
+            { new: true } // Return the updated document
         );
 
         if (!updatedUser) {
@@ -166,6 +167,21 @@ exports.updateUserProfile = async (req, res) => {
         res.status(200).json({ message: 'User Updated Successfully' });
     } catch (error) {
         console.error('Error updating profile:', error);
+        
+        if (error.code === 11000) {
+            // Check which field caused the duplicate key error
+            const duplicateField = Object.keys(error.keyPattern)[0];
+            console.log(duplicateField);
+            
+            let errorMessage = 'Duplicate value';
+            if (duplicateField === 'mobile') {
+                errorMessage = 'This mobile number is already registered. Please use another number or log in.';
+            } else if (duplicateField === 'email') {
+                errorMessage = 'This email is already registered. Please use another email or log in.';
+            }
+            return res.status(409).json({ message: errorMessage });
+        }
+
         res.status(500).json({ message: 'Server error' });
     }
 };

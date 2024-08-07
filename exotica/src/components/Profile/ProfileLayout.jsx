@@ -9,8 +9,11 @@ import { RecaptchaVerifier, signInWithPhoneNumber, PhoneAuthProvider, signInWith
 import { Oval } from 'react-loader-spinner';
 import NewUserRegistration from './ProfileComponents/NewUserRegistration';
 import UserProfile from './ProfileComponents/UserProfile';
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUser } from '@/Redux/Reducers/userSlice';
 
-const ProfileLayout = () => {
+const ProfileLayout = ({toggleProfile}) => {
     const [profileState, setProfileState] = useState('initial'); // 'initial', 'login', 'otp', 'loggedIn'
     const [useEmail, setUseEmail] = useState(true);
     const [inputValue, setInputValue] = useState('');
@@ -22,8 +25,10 @@ const ProfileLayout = () => {
     const [resendTimer, setResendTimer] = useState(30); // 150 seconds = 2.5 minutes
     const [isResendDisabled, setIsResendDisabled] = useState(false);
     const recaptchaVerifierRef = useRef(null);
-    const [isUser, setIsUser] = useState(false);
+    // const [isUser, setIsUser] = useState(false);
     const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
+    const {isUser} = useSelector((state)=>state.user)
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if ((profileState === 'login' || profileState === 'otp') && !useEmail) {
@@ -237,40 +242,12 @@ const ProfileLayout = () => {
     const findUser = async (identifier) => {
         setIsLoading(true);
         try {
-            const response = await fetch(process.env.NEXT_PUBLIC_FATCH_LOGIN_USER, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(identifier),
-            });
-
-            if (!response.ok) {
-                setIsUser(false);
-                throw new Error('User not found or failed to authenticate');
-            }
-
-            // Parse the JSON response
-            const data = await response.json();
-
-            // Assuming the response contains an accessToken
-            if (data.accessToken) {
-                setIsUser(true);
-                localStorage.setItem('authToken', data.accessToken);
-            } else {
-                setIsUser(false);
-                console.error('Access token not found in response');
-            }
+            dispatch(fetchUser(identifier))
         } catch (error) {
             console.error('Error during user login:', error);
-            setIsUser(false);
+            // setIsUser(false);
         }
         setIsLoading(false);
-    };
-
-    const updateAuthToken = (newValue) => {
-        setIsUser(true)
-        setAuthToken(newValue);
     };
 
     const updateProfileState = (newValue) => {
@@ -442,13 +419,13 @@ const ProfileLayout = () => {
             )}
 
             {authToken && (
-                <UserProfile gotoLogin={updateProfileState}/>
+                <UserProfile gotoLogin={updateProfileState} toggleProfile={toggleProfile}/>
             )}
 
             {!authToken && profileState === "loggedIn" && (
                 <div>
                     {authToken}
-                    <NewUserRegistration inputType={useEmail ? "Email" : "Mobile"} verifyValue={inputValue} updateAuthToken={updateAuthToken} gotoLogin={updateProfileState} />
+                    <NewUserRegistration inputType={useEmail ? "Email" : "Mobile"} verifyValue={inputValue} gotoLogin={updateProfileState} />
                 </div>
             )}
 
@@ -456,5 +433,9 @@ const ProfileLayout = () => {
         </div>
     );
 }
+
+ProfileLayout.propTypes = {
+    toggleProfile: PropTypes.func.isRequired,
+};
 
 export default ProfileLayout;

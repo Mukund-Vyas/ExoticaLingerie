@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { HiOutlineTrash } from "react-icons/hi2";
+import axios from 'axios';
 
 const CartItem = ({ item, onRemove, onUpdateQuantity, isSelected, onSelect }) => {
     const handleQuantityChange = (quantity) => {
@@ -24,7 +25,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity, isSelected, onSelect }) =>
                         <p className='text-sm text-gray-500'>Unit Price: ₹{item.discountedPrice.toFixed(2)}</p>
                         <p className='text-sm text-gray-500'>Color: {item.variation.color}</p>
                     </div>
-                    <button onClick={() => onRemove(item)} className='text-xl text-primary hover:text-red-700'>
+                    <button onClick={() => onRemove(item)} className='text-xl text-primary hover:text-red-700' title="remove from cart">
                         <HiOutlineTrash />
                     </button>
                 </div>

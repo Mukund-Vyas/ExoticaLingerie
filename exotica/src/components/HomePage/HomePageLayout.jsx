@@ -18,6 +18,11 @@ const HomePageLayout = () => {
     'https://cdn.zivame.com/media/mimages/home_page_banner_desktop_1400x550_June_20-02_Desktop.jpg?t=1687244193',
     'https://cdn.zivame.com/media/mimages/home_page_banner_desktop_1400x550_June2003Desktop1.jpg?t=1687260726',
     'https://cdn.zivame.com/media/mimages/home_page_banner_desktop_1400x550_June_20-01_Desktop.jpg?t=1687216376',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1722969538/t7rbvbulfjwefjtyli91.png',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1722968314/z6ysp1xgzwyp0hibp7fe.png',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1722968316/ihyc7f0rrh1m9aiqsppx.png',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1722968660/blisa4vxlhz8nyvjuein.png',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1722968749/zuubab4ygo7b0o5vuzig.png',
     // Add more image paths here
   ];
   

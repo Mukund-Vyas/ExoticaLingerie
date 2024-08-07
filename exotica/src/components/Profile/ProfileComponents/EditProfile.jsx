@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types';
 import { FaUserEdit } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 const EditProfile = ({ user, goBack }) => {
     const [firstName, setFirstName] = useState(user.firstName);
@@ -43,15 +44,17 @@ const EditProfile = ({ user, goBack }) => {
                 body: JSON.stringify({ firstName, lastName, mobile, email }),
             });
 
-            // if(response.status == 401){
-            //     goBack('profile')
-            // }
-
+            const result = await response.json();
             if (!response.ok) {
-                throw new Error('Failed to update profile');
+                // Handle error response
+                console.error('Error:', result.message);
+                toast.error(`Error: ${result.message || 'error occurred!, please try again'}`);
+                return;
             }
-
-            goBack('profile');
+            else{
+                toast.success(`${result.message || 'User Updated Successfully'}`)
+                goBack('profile');
+            }
         } catch (error) {
             console.error('Error updating profile:', error);
         }

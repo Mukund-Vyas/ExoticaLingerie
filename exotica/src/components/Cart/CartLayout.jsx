@@ -8,15 +8,18 @@ import { LiaQuestionCircleSolid } from "react-icons/lia";
 import Tooltip from '../common/Tooltip';
 import { toast } from 'react-hot-toast';
 import { FiTrash2 } from "react-icons/fi";
+import Link from 'next/link';
+import PropTypes from 'prop-types';
+import { BsExclamationLg } from 'react-icons/bs';
 
-const CartLayout = () => {
+const CartLayout = ({ toggleCart }) => {
     const { cart, dispatch } = useCart();
     const cartIsEmpty = cart.length === 0;
     const [selectedItems, setSelectedItems] = useState([]);
 
     useEffect(() => {
         const updateSelectedItems = () => {
-            return selectedItems.filter(item => 
+            return selectedItems.filter(item =>
                 cart.some(cartItem => cartItem._id === item._id && cartItem.size === item.size)
             );
         };
@@ -43,19 +46,21 @@ const CartLayout = () => {
     };
 
     const handleRemoveSelectedItems = () => {
-        const itemsRemoved = selectedItems.length;
-        selectedItems.forEach(item => {
-            dispatch({ type: 'REMOVE_FROM_CART', payload: item });
-        });
-        setSelectedItems([]);
+        if (window.confirm('Are you sure you want to remove selected item from cart?')){
+            const itemsRemoved = selectedItems.length;
+            selectedItems.forEach(item => {
+                dispatch({ type: 'REMOVE_FROM_CART', payload: item });
+            });
+            setSelectedItems([]);
 
-        toast(`Removed ${itemsRemoved} item${itemsRemoved > 1 ? 's' : ''} from cart.`, {
-            style: {
-                border: '1px solid #ff197d',
-                padding: '16px',
-            },
-            icon: <FiTrash2 color='rgb(225 29 72)' />,
-        });
+            toast(`Removed ${itemsRemoved} item${itemsRemoved > 1 ? 's' : ''} from cart.`, {
+                style: {
+                    border: '1px solid #ff197d',
+                    padding: '16px',
+                },
+                icon: <FiTrash2 color='rgb(225 29 72)' />,
+            });
+        }
     };
 
     const getTotalPrice = (items) => {
@@ -63,15 +68,17 @@ const CartLayout = () => {
     };
 
     const handleRemoveFromCart = (item) => {
-        dispatch({ type: 'REMOVE_FROM_CART', payload: item });
+        if (window.confirm('Are you sure you want to remove item from cart?')){
+            dispatch({ type: 'REMOVE_FROM_CART', payload: item });
 
-        toast('Removed 1 item from cart.', {
-            style: {
-                border: '1px solid #ff197d',
-                padding: '16px',
-            },
-            icon: <FiTrash2 color='rgb(225 29 72)' />,
-        });
+            toast('Removed 1 item from cart.', {
+                style: {
+                    border: '1px solid #ff197d',
+                    padding: '16px',
+                },
+                icon: <FiTrash2 color='rgb(225 29 72)' />,
+            });
+        }
     };
 
     const handleQuantityChange = (item, quantity) => {
@@ -96,6 +103,16 @@ const CartLayout = () => {
     const convenienceCharge = 2;
     const orderTotal = totalPrice + shippingCharge + convenienceCharge;
 
+    const handleGotoProductsClick = () => {
+        toggleCart();
+    }
+
+    const handleCheckoutClick = () => {
+        toast('We apologize for the inconvenience, but we are currently unable to process your order. Please try again later or contact our support team for assistance.', {
+            icon: <div><BsExclamationLg className='text-6xl bg-rose-100 border border-neutral-600 rounded-full p-2' /></div>,
+            duration: 6000,
+        })
+    }
     return (
         <div className='relative h-full bg-gray-200 bg-opacity-45'>
             {/* Cart Body */}
@@ -106,9 +123,11 @@ const CartLayout = () => {
                         <Image src={emptyCartImage} alt='Empty Cart' width={200} height={200} />
                         <p className='text-lg font-semibold text-center'>Hey, gorgeous! Let's fill your cart with goodies!</p>
                         <p className='text-sm text-gray-600 text-center mb-4'>Act fast! Shop our exciting offers and elevate your intimates collection today!</p>
-                        <button className="bg-primary hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded">
-                            Let's go Shopping
-                        </button>
+                        <Link href="/products" passHref onClick={() => handleGotoProductsClick()}>
+                            <button className="bg-primary hover:bg-pink-600 text-white font-medium py-2 px-4 rounded">
+                                Let's go Shopping
+                            </button>
+                        </Link>
                     </div>
                 ) : (
                     /* When cart has items */
@@ -129,6 +148,7 @@ const CartLayout = () => {
                                 onClick={handleRemoveSelectedItems}
                                 className='text-xl text-primary hover:text-red-700'
                                 disabled={selectedItems.length === 0}
+                                title="remove from cart"
                             >
                                 <HiOutlineTrash />
                             </button>
@@ -200,6 +220,7 @@ const CartLayout = () => {
                     <button
                         className='py-3 w-full bg-primary hover:bg-pink-600 text-white font-mono font-semibold text-lg'
                         disabled={selectedItems.length === 0}
+                        onClick={() => handleCheckoutClick()}
                     >
                         Continue to Checkout
                     </button>
@@ -209,4 +230,7 @@ const CartLayout = () => {
     );
 };
 
+CartLayout.propTypes = {
+    toggleCart: PropTypes.func.isRequired,
+};
 export default CartLayout;

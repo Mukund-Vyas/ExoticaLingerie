@@ -1,12 +1,15 @@
+import { setAuthToken } from '@/Redux/Reducers/userSlice';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 
-const NewUserRegistration = ({ inputType, verifyValue, updateAuthToken, gotoLogin }) => {
+const NewUserRegistration = ({ inputType, verifyValue, gotoLogin }) => {
     const [isEmail, setIsEmail] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [isInputValid, setIsInputValid] = useState(false);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         setIsEmail(inputType === "Email")
@@ -71,8 +74,8 @@ const NewUserRegistration = ({ inputType, verifyValue, updateAuthToken, gotoLogi
             toast.success('User registered successfully!');
 
             // Store the token in local storage
-            localStorage.setItem('authToken', result.accessToken);
-            updateAuthToken(localStorage.getItem('authToken'))
+            dispatch(setAuthToken({accessToken: result.accessToken}))
+            // updateAuthToken(localStorage.getItem('authToken'))
             // Handle success, e.g., redirect or show a success message
         } catch (error) {
             toast.error('Error registering user: ' + error.message);

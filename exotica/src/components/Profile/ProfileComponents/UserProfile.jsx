@@ -8,12 +8,17 @@ import { GoArrowLeft } from 'react-icons/go';
 import { MdDeleteForever } from "react-icons/md";
 import { TbLogout } from "react-icons/tb";
 import EditProfile from './EditProfile';
+import OrderHistory from './OrderHistory';
+import UserReviews from './UserReviews';
+import { useDispatch } from 'react-redux';
+import { logout } from '@/Redux/Reducers/userSlice';
 
-function UserProfile({ gotoLogin }) {
+function UserProfile({ gotoLogin, toggleProfile }) {
     const [isLoading, setIsLoading] = useState(true);
     const [userData, setUserData] = useState(null);
     const [currentPage, setCurrentPage] = useState('profile');
     const [userSubset, setUserSubset] = useState(null);
+    const dispatch = useDispatch();
 
     const refreshAuthToken = async () => {
         try {
@@ -126,8 +131,8 @@ function UserProfile({ gotoLogin }) {
     }, [userData]);
 
     const clearAuthToken = () => {
-        localStorage.removeItem('authToken');
-        gotoLogin('login');
+        dispatch(logout());
+        gotoLogin('initial');
     };
 
     const updateCurrentPage = (page) => {
@@ -163,33 +168,33 @@ function UserProfile({ gotoLogin }) {
                                                 <p>Edit Profile</p>
                                             </div>
                                         </button>
-                                        <div className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2'>
-                                            <div className='flex items-center gap-2 font-serif hover:text-primary'>
-                                                <span className='bg-neutral-200 rounded-md p-1'>
-                                                    <FcRating className='text-xl' />
-                                                </span>
-                                                <p>My Reviews</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className='flex gap-4 text-stone-600 mb- text-sm'>
-                                        <div className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2'>
-                                            <div className='flex items-center gap-2 font-serif hover:text-primary'>
-                                                <span className='bg-neutral-200 rounded-md p-1'>
-                                                    <FcSurvey className='text-xl' />
-                                                </span>
-                                                <p>Order History</p>
-                                            </div>
-                                        </div>
-                                        <div className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2'>
+                                        <button className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2' onClick={() => updateCurrentPage('wishlist')}>
                                             <div className='flex items-center gap-2 font-serif hover:text-primary'>
                                                 <span className='bg-neutral-200 rounded-md p-1'>
                                                     <FcLike className='text-xl' />
                                                 </span>
                                                 <p>My Wishlist</p>
                                             </div>
-                                        </div>
+                                        </button>
+                                    </div>
+
+                                    <div className='flex gap-4 text-stone-600 mb- text-sm'>
+                                        <button className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2' onClick={() => updateCurrentPage('orders')}>
+                                            <div className='flex items-center gap-2 font-serif hover:text-primary'>
+                                                <span className='bg-neutral-200 rounded-md p-1'>
+                                                    <FcSurvey className='text-xl' />
+                                                </span>
+                                                <p>Order History</p>
+                                            </div>
+                                        </button>
+                                        <button className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2' onClick={() => updateCurrentPage('reviews')}>
+                                            <div className='flex items-center gap-2 font-serif hover:text-primary'>
+                                                <span className='bg-neutral-200 rounded-md p-1'>
+                                                    <FcRating className='text-xl' />
+                                                </span>
+                                                <p>My Reviews</p>
+                                            </div>
+                                        </button>
                                     </div>
 
                                     <div className='w-full my-8'>
@@ -203,7 +208,7 @@ function UserProfile({ gotoLogin }) {
 
                                         <div className=''>
                                             {userData.addresses && userData.addresses.map((address, index) => (
-                                                <div key={"Key-" + index} className='w-full min-h-28 bg-zinc-50 flex flex-col justify-center my-2 p-2 border border-pink-200 text-sm'>
+                                                <div key={"Key-" + index} className='w-full min-h-28 bg-zinc-50 flex flex-col justify-center my-2 p-2 border border-pink-200 text-sm rounded-md'>
                                                     <span className='font-medium flex justify-between'>
                                                         {address.firstName} {address.lastName}
                                                         <button onClick={() => handleDeleteClick(address._id)}>
@@ -236,7 +241,7 @@ function UserProfile({ gotoLogin }) {
                                         </div>
                                     </div>
 
-                                    <button className='flex w-full items-center justify-between font-semibold my-4 hover:text-primary' onClick={() => clearAuthToken()}>
+                                    <button className='flex w-full mb-16 items-center justify-between font-semibold my-4 hover:text-primary' onClick={() => clearAuthToken()}>
                                         <span>
                                             Logout
                                         </span>
@@ -279,12 +284,49 @@ function UserProfile({ gotoLogin }) {
                     </div>
                 </div>
             )}
+
+            {currentPage === 'reviews' && (
+                <div className='w-full flex flex-col gap-2'>
+                    <button className='flex items-center gap-2 left-2 top-2 text-lg text-primary font-bold' onClick={() => updateCurrentPage('profile')}>
+                        <GoArrowLeft />
+                        <span className='text-xs'>back</span>
+                    </button>
+                    <div className='w-full'>
+                        <UserReviews goBack={updateCurrentPage} toggleProfile={toggleProfile}/>
+                    </div>
+                </div>
+            )}
+
+            {currentPage === 'orders' && (
+                <div className='w-full flex flex-col gap-2'>
+                    <button className='flex items-center gap-2 left-2 top-2 text-lg text-primary font-bold' onClick={() => updateCurrentPage('profile')}>
+                        <GoArrowLeft />
+                        <span className='text-xs'>back</span>
+                    </button>
+                    <div className='w-full'>
+                        <OrderHistory goBack={updateCurrentPage} toggleProfile={toggleProfile}/>
+                    </div>
+                </div>
+            )}
+
+            {currentPage === 'wishlist' && (
+                <div className='w-full flex flex-col gap-2'>
+                    <button className='flex items-center gap-2 left-2 top-2 text-lg text-primary font-bold' onClick={() => updateCurrentPage('profile')}>
+                        <GoArrowLeft />
+                        <span className='text-xs'>back</span>
+                    </button>
+                    <div className='w-full'>
+                        <EditProfile user={userSubset}  goBack={updateCurrentPage}/>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
 
 UserProfile.propTypes = {
     gotoLogin: PropTypes.func.isRequired,
+    toggleProfile: PropTypes.func.isRequired,
 };
 
 export default UserProfile;

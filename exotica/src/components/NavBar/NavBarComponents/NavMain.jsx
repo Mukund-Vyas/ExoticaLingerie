@@ -11,14 +11,18 @@ import { GiShoppingCart } from "react-icons/gi";
 import { useCart } from '@/src/contexts/CartContext';
 import { SlUserFemale } from "react-icons/sl";
 import ProfileLayout from '../../Profile/ProfileLayout'
+import { useDispatch, useSelector } from 'react-redux'
+import { setProfileOpen } from '@/Redux/Reducers/profileSlice'
 
 
 const NavMain = () => {
     const [cartOpen, setCartOpen] = useState(false);
     const [notificationOpen, setNotificationOpen] = useState(false);
-    const [profileOpen, setProfileOpen] = useState(false);
+    // const [profileOpen, setProfileOpen] = useState(false);
     const { cart } = useCart(); // Access cart state
-
+    const dispatch = useDispatch();
+    const {profileOpen} = useSelector((state) => state.profile);
+    
     const toggleCart = () => {
         setCartOpen(!cartOpen);
     };
@@ -28,7 +32,7 @@ const NavMain = () => {
     };
 
     const toggleProfile = () => {
-        setProfileOpen(!profileOpen);
+        dispatch(setProfileOpen({isOpen: !profileOpen}));
     };
 
     // Calculate the total number of items in the cart
@@ -125,7 +129,7 @@ const NavMain = () => {
                 </div>
 
                 <div id='cart-main' className='h-full'>
-                    <CartLayout />
+                    <CartLayout toggleCart = {toggleCart}/>
                 </div>
             </div>
             {cartOpen && (
@@ -189,7 +193,7 @@ const NavMain = () => {
                 </div>
 
                 <div id='profile-main' className='h-full'>
-                    <ProfileLayout />
+                    <ProfileLayout toggleProfile = {toggleProfile}/>
                 </div>
             </div>
             {profileOpen && (
