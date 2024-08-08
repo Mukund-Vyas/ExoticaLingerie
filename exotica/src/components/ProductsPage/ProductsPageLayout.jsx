@@ -52,7 +52,7 @@ const ProductsPageLayout = ({ products }) => {
           </p>
         </div>
       </div>
-      <div className="container mx-auto py-4 px-4 sm:px-2 md:px-6 lg:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="container mx-auto py-4 px-4 sm:px-2 md:px-6 lg:px-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {shuffledVariations.map((item, index) => (
           <ProductCard
             key={`${item._id}-${item.variation._id}-${index}`}

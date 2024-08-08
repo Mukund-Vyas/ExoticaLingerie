@@ -1,16 +1,23 @@
-import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
-import Loader from '@/src/utils/Loader';
 import ProductsPageLayout from '@/src/components/ProductsPage/ProductsPageLayout';
+import { useState } from 'react';
+import { Oval } from 'react-loader-spinner';
 
-// const ProductsPageLayout = dynamic(() => import("@/src/components/ProductsPage/ProductsPageLayout"), {
-//   loading: () => <Loader />,
-//   ssr: false,
-// });
 
 export default function Home({ products }) {
   return (
-    <ProductsPageLayout products={products} />
+    <>
+      {!products &&
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+          <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
+        </div>
+      }
+
+      {products &&
+        <ProductsPageLayout products={products} />
+      }
+
+    </>
   );
 }
 
@@ -21,7 +28,7 @@ Home.propTypes = {
 export const getServerSideProps = async () => {
   try {
     const res = await fetch(process.env.GET_LAYOUT_PRODUCT_API_URL);
-    
+
     if (res.ok) {
       const products = await res.json();
       return {
@@ -38,6 +45,7 @@ export const getServerSideProps = async () => {
       };
     }
   } catch (error) {
+    setIsLoading(false);
     console.error('Error fetching products:', error);
     return {
       props: {

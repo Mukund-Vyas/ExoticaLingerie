@@ -25,7 +25,6 @@ const getLimitedProducts = async (req, res) => {
   }
 };
 
-
 module.exports = {
   getProducts,
   getLimitedProducts

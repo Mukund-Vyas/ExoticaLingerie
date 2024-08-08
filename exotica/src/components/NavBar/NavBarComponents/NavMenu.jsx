@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 import {FiChevronDown} from 'react-icons/fi'
 
@@ -6,10 +7,10 @@ const NavMenu = () => {
   return (
     <div className='flex items-center justify-center gap-10 w-full px-24 pb-1 bg-pink-50'>
         <div className='relative group'>
-            <button className='flex gap-1 items-center text-black'>
-                New Arrivals 
+            <Link href={"/products"} className='flex gap-1 items-center text-black'>
+                New Arrivals
                 <FiChevronDown className='pt-1 text-xl'/>
-            </button>
+            </Link>
             <div className='absolute hidden z-10 group-hover:block w-auto min-w-96 bg-pink-50 py-5 pl-3 border-[1px] border-gray-400'>
                 <p className='pb-2 font-semibold font-mono uppercase text-sm hover:underline hover:underline-offset-2 decoration-primary decoration-[0.1rem]'>New Arrivals</p>
                 <ul>

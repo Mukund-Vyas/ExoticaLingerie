@@ -1,9 +1,18 @@
-import React from 'react'
+import ProductDetails from '@/src/components/ProductsPage/ProductsPageComponents/ProductDetails';
+import React from 'react';
+import { useRouter } from 'next/router';
 
-const index = () => {
+const Home = () => {
+  const params = useRouter();
+
+  const {product} = params.query
+  console.log(product);
+  
   return (
-    <div>index</div>
+    <div>
+      <ProductDetails />
+    </div>
   )
 }
 
-export default index
+export default Home

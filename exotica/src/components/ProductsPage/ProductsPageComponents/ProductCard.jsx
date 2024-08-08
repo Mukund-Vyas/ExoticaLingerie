@@ -125,7 +125,7 @@ const ProductCard = ({ product, variation, getWishlist }) => {
         alt={`${variation.color} ${product.productname}`}
         className="w-full object-cover rounded-md bg-gray-100"
       />
-      <div className="flex justify-between gap-2 mt-4">
+      <div className="flex justify-between gap-2 mt-4 max-sm:text-sm">
         <div>
           <h2 className='text-sm'>
             {product.brandname} {product.productname} - {variation.color}
@@ -138,7 +138,7 @@ const ProductCard = ({ product, variation, getWishlist }) => {
       </div>
       <div className="flex justify-end mt-4">
         <button
-          className="bg-primary text-white px-4 py-1.5 rounded-full shadow hover:bg-rose-600"
+          className="bg-primary text-white px-4 py-1.5 max-sm:px-3 max-sm:py-1 max-sm:text-sm font-medium rounded-full shadow hover:bg-rose-600"
           onClick={() => handleAddToCart(variation)}
         >
           Add to Cart

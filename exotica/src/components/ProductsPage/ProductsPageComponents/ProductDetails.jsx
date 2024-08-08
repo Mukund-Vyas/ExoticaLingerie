@@ -1,7 +1,13 @@
-import React from 'react'
-
-const ProductDetails = () => {
-    const product = {
+import React, { useState } from 'react'
+import { BiMinus, BiPlus } from 'react-icons/bi';
+import { FaBoxes, FaRegHeart } from 'react-icons/fa';
+import { FaTruckFast } from 'react-icons/fa6';
+import { HiCash } from 'react-icons/hi';
+import { HiOutlineShoppingCart } from 'react-icons/hi2';
+import { MdColorLens, MdOutlineStar } from 'react-icons/md';
+import { TbRulerMeasure } from 'react-icons/tb';
+const ProductDetails = () => {    
+    const product1 = {
         productId: "1",
         brandName: "Exotica",
         productTtile: "Nike Invincible",
@@ -81,8 +87,8 @@ const ProductDetails = () => {
         ],
     };
 
-    const [activeColor, setActiveColor] = useState(product.color[0]);
-    const [activeImg, setActiveImg] = useState(product.images[activeColor][0]);
+    const [activeColor, setActiveColor] = useState(product1.color[0]);
+    const [activeImg, setActiveImg] = useState(product1.images[activeColor][0]);
 
     const [qty, setQty] = useState(1);
     const handleQty = (action) => {
@@ -99,15 +105,15 @@ const ProductDetails = () => {
         }
     };
 
-    const [size, setSize] = useState(product.size[0]);
+    const [size, setSize] = useState(product1.size[0]);
 
     return (
-        <div className="max-sm:p-2 xl:px-48 md:px-16 lg:px-24">
+        <div className="py-10 max-sm:p-2 xl:px-48 md:px-16 lg:px-24 bg-pink-50">
             <div className="flex flex-col justify-between lg:flex-row gap-16 lg:items-start max-sm:gap-4">
                 {/* Images Section */}
                 <div className="sticky flex max-sm:flex-col gap-6 max-sm:gap-2 lg:w-2/4">
                     <div className="max-sm:hidden sm:visited flex flex-col flex-wrap h-auto">
-                        {product.images[activeColor].map((value, index) => {
+                        {product1.images[activeColor].map((value, index) => {
                             return (
                                 <img
                                     key={"Image" + index}
@@ -115,7 +121,7 @@ const ProductDetails = () => {
                                     alt={"image" + index}
                                     className={
                                         activeImg === value
-                                            ? "w-24 rounded-md mb-2 cursor-pointer imgRowMobile border-violet-800 border-2"
+                                            ? "w-24 rounded-md mb-2 cursor-pointer imgRowMobile border-primary border-2"
                                             : "w-24 rounded-md mb-2 cursor-pointer imgRowMobile opacity-75 border-gray-400 hover:border-2 hover:scale-110"
                                     }
                                     onClick={() => setActiveImg(value)}
@@ -132,7 +138,7 @@ const ProductDetails = () => {
                     />
                     {/* For the Mobile Divece Image Gallary */}
                     <div className="max-sm:visited sm:hidden flex flex-row justify-between flex-wrap h-auto">
-                        {product.images[activeColor].map((value, index) => {
+                        {product1.images[activeColor].map((value, index) => {
                             return (
                                 <img
                                     key={"Image" + index}
@@ -140,7 +146,7 @@ const ProductDetails = () => {
                                     alt={"image" + index}
                                     className={
                                         activeImg === value
-                                            ? "w-24 rounded-md mb-2 cursor-pointer imgRowMobile border-violet-800 border-2"
+                                            ? "w-24 rounded-md mb-2 cursor-pointer imgRowMobile border-primary border-2"
                                             : "w-24 rounded-md mb-2 cursor-pointer imgRowMobile opacity-75 border-gray-400 hover:border-2 hover:scale-110"
                                     }
                                     onClick={() => setActiveImg(value)}
@@ -153,15 +159,15 @@ const ProductDetails = () => {
                 {/* Product Details */}
                 <div className="flex flex-col lg:w-2/4 ">
                     {/* Heading */}
-                    <div className="pl-2 border-l-2 border-violet-800">
-                        <span className="text-violet-600 font-semibold max-sm:text-sm">
-                            {product.brandName}
+                    <div className="pl-2 border-l-2 border-primary">
+                        <span className="text-primary font-semibold max-sm:text-sm">
+                            {product1.brandName}
                         </span>
                         <h2 className="text-3xl font-bold max-sm:text-xl">
-                            {product.productTtile}
+                            {product1.productTtile}
                         </h2>
                     </div>
-                    <p className="text-green-700 mt-2 font-semibold text-justify max-sm:text-xs">
+                    <p className="text-green-600 mt-2 font-semibold text-justify max-sm:text-xs">
                         Special Price
                     </p>
                     {/* Price */}
@@ -169,45 +175,45 @@ const ProductDetails = () => {
                         <h6 className="text-3xl font-semibold max-sm:text-2xl">
                             ₹{" "}
                             {Math.ceil(
-                                product.price - product.price * (product.discount / 100)
+                                product1.price - product1.price * (product1.discount / 100)
                             )}
                         </h6>
                         <span className="text-lg font-semibold line-through text-gray-400 max-sm:text-sm">
-                            ₹ {product.price}
+                            ₹ {product1.price}
                         </span>
-                        <span className="text-green-700 text-2xl font-semibold max-sm:text-lg">
-                            {product.discount}% off
+                        <span className="text-green-600 text-2xl font-semibold max-sm:text-lg">
+                            {product1.discount}% off
                         </span>
                     </div>
 
-                    <div className="flex flex-row gap-2 items-baseline">
-                        <span className="flex flex-row items-center gap-1 my-1 py-px px-2 bg-green-700 rounded-md max-w-fit text-white font-semibold max-sm:text-sm">
+                    {/* <div className="flex flex-row gap-2 items-baseline">
+                        <span className="flex flex-row items-center gap-1 my-1 py-px px-2 bg-pink-600 rounded-md max-w-fit text-white font-semibold max-sm:text-sm">
                             <MdOutlineStar /> 4.5
                         </span>
                         <p className="font-semibold max-sm:text-sm">(251 Reviews)</p>
-                    </div>
+                    </div> */}
                     {/* LIne */}
-                    <hr className="my-2" />
+                    <hr className="my-2 border-slate-400" />
 
                     {/* Color */}
                     <div className="flex flex-col">
-                        <span className="flex flex-row items-center gap-2 text-violet-800 font-semibold text-xl max-sm:text-lg">
+                        <span className="flex flex-row items-center gap-2 text-slate-800 font-semibold text-xl max-sm:text-lg">
                             <MdColorLens /> Color:
                         </span>
                         <div className="flex flex-row gap-2 pt-3 flex-wrap">
-                            {product.color.map((value, index) => {
+                            {product1.color.map((value, index) => {
                                 return (
                                     <button
                                         key={"Color" + index}
                                         className={
                                             activeColor === value
-                                                ? "p-3 rounded-full cursor-pointer border-white border-double border-5"
-                                                : "p-3 rounded-full cursor-pointer border-5 border-white hover:border-gray-500 hover:scale-110"
+                                                ? "p-3 rounded-full cursor-pointer border-[2px] border-primary border-double"
+                                                : "p-3 rounded-full cursor-pointer border-[2px] border-white hover:border-gray-500 hover:scale-110"
                                         }
                                         style={{ backgroundColor: value }}
                                         onClick={() => {
                                             setActiveColor(value);
-                                            setActiveImg(product.images[activeColor][0]);
+                                            setActiveImg(product1.images[activeColor][0]);
                                         }}
                                     ></button>
                                 );
@@ -217,17 +223,17 @@ const ProductDetails = () => {
 
                     {/* Size */}
                     <div className="flex flex-col mt-4">
-                        <span className="flex flex-row items-center gap-2 text-violet-800 font-semibold text-xl max-sm:text-lg">
+                        <span className="flex flex-row items-center gap-2 text-slate-800 font-semibold text-xl max-sm:text-lg">
                             <TbRulerMeasure /> Size:
                         </span>
                         <div className="flex flex-row gap-2 pt-3 flex-wrap">
-                            {product.size.map((value, index) => {
+                            {product1.size.map((value, index) => {
                                 return (
                                     <button
                                         key={"Size" + index}
                                         className={
                                             size === value
-                                                ? "px-3 py-1 rounded-full cursor-pointer font-semibold border-2 border-gray-400 product-size-active max-sm:text-xs"
+                                                ? "px-3 py-1 rounded-full cursor-pointer font-semibold border-2 border-primary text-primary product-size-active max-sm:text-xs"
                                                 : "px-3 py-1 rounded-full cursor-pointer border-2 border-gray-400 max-sm:text-xs"
                                         }
                                         onClick={() => setSize(value)}
@@ -240,23 +246,23 @@ const ProductDetails = () => {
                     </div>
 
                     {/* Line */}
-                    <hr className="my-3" />
+                    <hr className="my-3 border-slate-400" />
 
                     {/* Quantity */}
                     <div className="flex flex-row flex-wrap items-center gap-6">
-                        <span className="flex flex-row items-center gap-2 text-violet-800 font-semibold text-xl max-sm:text-lg">
+                        <span className="flex flex-row items-center gap-2 text-slate-800 font-semibold text-xl max-sm:text-lg">
                             <FaBoxes /> Quantity:
                         </span>
                         <div className="flex flex-row items-center">
                             <button
-                                className="bg-gray-200 py-2 px-2 rounded-lg text-violet-800 text-2xl max-sm:text-lg"
+                                className="bg-gray-200 py-2 px-2 rounded-lg text-slate-800 text-2xl max-sm:text-lg"
                                 onClick={() => handleQty("-")}
                             >
                                 <BiMinus />
                             </button>
                             <span className="py-4 px-3 rounded-lg max-sm:text-sm">{qty}</span>
                             <button
-                                className="bg-gray-200 py-2 px-2 rounded-lg text-violet-800 text-2xl max-sm:text-lg"
+                                className="bg-gray-200 py-2 px-2 rounded-lg text-slate-800 text-2xl max-sm:text-lg"
                                 onClick={() => handleQty("+")}
                             >
                                 <BiPlus />
@@ -266,24 +272,24 @@ const ProductDetails = () => {
 
                     {/* Add to Cart & Add to Whishlist */}
                     <div className="flex flex-row flex-wrap items-center gap-6 my-4">
-                        <button className="flex flex-row gap-1 items-center bg-white text-green-800 border-2 border-green-800 font-semibold py-2.5 px-10 rounded-lg h-full max-sm:px-3 max-sm:text-sm">
+                        <button className="flex flex-row gap-1 items-center bg-white text-primary border-2 border-primary font-semibold py-2.5 px-10 rounded-lg h-full max-sm:px-3 max-sm:text-sm">
                             <FaRegHeart />
                             Add to Whishlist
                         </button>
-                        <button className="flex flex-row gap-1 items-center bg-green-800 border-2 border-green-800 text-white font-semibold py-2.5 px-10 rounded-lg h-full max-sm:px-3 max-sm:text-sm">
+                        <button className="flex flex-row gap-1 items-center bg-primary border-2 border-primary text-white font-semibold py-2.5 px-10 rounded-lg h-full max-sm:px-3 max-sm:text-sm">
                             <HiOutlineShoppingCart /> Add to Cart
                         </button>
                     </div>
 
                     {/* Line */}
-                    <hr className="my-3" />
+                    <hr className="my-3 border-slate-400" />
 
                     {/* Preferances */}
                     <div>
                         <span className="flex flex-row items-center max-sm:text-sm">
                             <FaTruckFast className="pr-2 text-4xl text-gray-500" /> Delivery
                             by{" "}
-                            <b className="text-violet-800">
+                            <b className="text-primary">
                                 &nbsp; 10<sup>th</sup> Oct{" "}
                             </b>
                         </span>
@@ -291,7 +297,7 @@ const ProductDetails = () => {
                             <HiCash className="pr-2 text-4xl text-gray-500" />
                             <b className="font-semibold">Cash on Delivery |</b>
                             <b className="text-green-800">&nbsp; Available</b>
-                            <b className="text-red-800">&nbsp;Not Available</b>
+                            {/* <b className="text-red-800">&nbsp;Not Available</b> */}
                         </span>
                         <span className="flex flex-row items-center max-sm:text-sm">
                             <svg
@@ -314,23 +320,23 @@ const ProductDetails = () => {
                                     <path d="M1245 1125 l-180 -83 -3 -256 c-1 -141 1 -256 6 -256 5 0 89 37 188 83 l179 83 3 257 c1 141 -1 257 -5 256 -5 0 -89 -38 -188 -84z" />
                                 </g>
                             </svg>{" "}
-                            <b className="text-violet-800">10 Days Easy Return</b>
+                            <b className="text-primary">10 Days Easy Return</b>
                         </span>
                     </div>
 
-                    {/* LIne */}
-                    <hr className="my-2" />
-                    <ProductDesc />
+                    {/* LIne */}    
+                    <hr className="my-2 border-slate-400" />
+                    {/* <ProductDesc /> */}
                 </div>
             </div>
 
             {/* Rating and Reviews */}
-            <Reviews
+            {/* <Reviews
                 numRate={product.numrate}
                 numRev={product.numrev}
                 reviews={product.reviews}
                 limit={3}
-            />
+            /> */}
         </div>
     );
 }
