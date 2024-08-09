@@ -17,23 +17,27 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, 'product category is required']
   },
-  productFeatures: {
+  productFeatures: [{
     title: {
       type: String,
     },
     description: {
       type: String,
     }
-  },
+  }],
   variations: [{
     color: {
       type: String,
     },
-    imageUrls: [{
-      type: String // Store image URLs instead of image data
-    }],
     size: [{
       type: String,
+    }],
+    SKU: {
+      type: String,
+      required: [true, 'SKU is required for each variation']
+    },
+    imageUrls: [{
+      type: String // Store image URLs instead of image data
     }]
   }],
   productDescription: {
@@ -41,6 +45,15 @@ const productSchema = new mongoose.Schema({
   },
   productWashcare: {
     type: String,
+  },
+  material: {
+    type: String, // Optional field for material
+  },
+  productCode: {
+    type: String, // Optional unique code for the product
+  },
+  stockAvailability: {
+    type: Number, // Optional field for tracking stock levels
   },
   price: {
     type: Number,
