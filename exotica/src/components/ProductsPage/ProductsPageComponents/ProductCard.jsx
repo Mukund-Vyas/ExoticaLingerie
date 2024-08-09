@@ -8,6 +8,7 @@ import api from '@/src/utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
 import { getWishlists } from '@/src/services/wishlist';
+import Link from 'next/link';
 
 const ProductCard = ({ product, variation, getWishlist }) => {
   const discountedPrice = product.price - (product.price * (product.discount / 100));
@@ -16,9 +17,9 @@ const ProductCard = ({ product, variation, getWishlist }) => {
   const [selectedVariation, setSelectedVariation] = useState(null);
   const [isInWishlist, setIsInWishlist] = useState(false);
   // const authToken = useLocalStorage('authToken'); // Use the custom hook
-  const {authToken} = useSelector((state)=>state.user);
-  const {profileOpen} = useSelector((state) => state.profile);
-  const authdispatch = useDispatch(); 
+  const { authToken } = useSelector((state) => state.user);
+  const { profileOpen } = useSelector((state) => state.profile);
+  const authdispatch = useDispatch();
 
   useEffect(() => {
     const checkWishlistStatus = async () => {
@@ -37,10 +38,10 @@ const ProductCard = ({ product, variation, getWishlist }) => {
     if (authToken) {
       checkWishlistStatus();
     }
-    else{
+    else {
       setIsInWishlist(false);
     }
-    
+
   }, [product._id, variation._id, authToken]);
 
   const handleAddToCart = (variation) => {
@@ -80,7 +81,7 @@ const ProductCard = ({ product, variation, getWishlist }) => {
       getWishlist()
       toast.success('Product added to wishlist.');
     } catch (error) {
-      authdispatch(setProfileOpen({isOpen: !profileOpen}))
+      authdispatch(setProfileOpen({ isOpen: !profileOpen }))
       toast.error('Failed to add product to wishlist. Please Login first');
     }
   };
@@ -120,15 +121,17 @@ const ProductCard = ({ product, variation, getWishlist }) => {
           </div>
         </div>
       )}
-      <img
-        src={variation.imageUrls[0]}
-        alt={`${variation.color} ${product.productname}`}
-        className="w-full object-cover rounded-md bg-gray-100"
-      />
+      <Link href={`/products/${product._id}`}>
+        <img
+          src={variation.imageUrls[0].replace('dl=0', 'raw=1')}
+          alt={`${variation.color} ${product.productname}`}
+          className="w-full object-cover rounded-md bg-gray-100"
+        />
+      </Link>
       <div className="flex justify-between gap-2 mt-4 max-sm:text-sm">
         <div>
           <h2 className='text-sm'>
-            {product.brandname} {product.productname} - {variation.color}
+            {product.productname} - {variation.color}
           </h2>
         </div>
         <div className="flex flex-col items-end">

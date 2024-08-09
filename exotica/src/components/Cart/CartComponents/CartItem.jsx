@@ -16,7 +16,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity, isSelected, onSelect }) =>
                 onChange={() => onSelect(item)}
                 className='absolute top-2 left-2 h-4 w-4 accent-rose-500'
             />
-            <img src={item.variation.imageUrls[0]} alt={item.productname} className='w-24 rounded-md ml-4' />
+            <img src={item.variation.imageUrls[0].replace('dl=0', 'raw=1')} alt={item.productname} className='w-24 rounded-md ml-4' />
             <div className='flex-grow ml-4'>
                 <div className='flex justify-between items-start'>
                     <div>

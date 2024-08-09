@@ -3,6 +3,8 @@ import ProductCard from '../ProductsPage/ProductsPageComponents/ProductCard'
 import { getWishlists } from '@/src/services/wishlist'
 import { useSelector } from 'react-redux'
 import { Toaster } from 'react-hot-toast'
+import { IoHeartDislikeSharp } from "react-icons/io5";
+import Link from 'next/link'
 
 const WishlistLayout = () => {
     const[products, setProducts]=useState([])
@@ -23,7 +25,6 @@ const WishlistLayout = () => {
     return {...item?.product, variation}
   }
   );
-  console.log("::: allVariations :::", allVariations);
   
   return (
     <div className='bg-pink-50 divide-y divide-pink-200'>
@@ -37,6 +38,18 @@ const WishlistLayout = () => {
             getWishlist={getWishListHandler}
           />
         ))}
+
+        {allVariations.length === 0 && 
+          <div className='flex flex-col gap-2 items-center justify-center h-96 w-screen'>
+            <IoHeartDislikeSharp className='text-9xl text-primary'/>
+            <p className='font-medium text-2xl'>
+              Your wishlist is empty
+            </p>
+            <Link href={"/products"} className='bg-rose-500 px-5 py-2 rounded-md text-white font-medium'>
+              Let`s Shopping..!
+            </Link>
+          </div>
+        }
       </div>
     </div>
   )

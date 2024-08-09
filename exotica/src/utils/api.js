@@ -1,49 +1,49 @@
-import axios from 'axios';
+  import axios from 'axios';
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  withCredentials: true, // Ensure cookies are sent with requests
-});
+  const api = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    withCredentials: true, // Ensure cookies are sent with requests
+  });
 
-api.interceptors.response.use(
-  response => response,
-  async error => {
-    const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      const newToken = await refreshAuthToken();
-      if (newToken) {
-        originalRequest.headers['x-auth-token'] = newToken;
-        return api(originalRequest);
+  api.interceptors.response.use(
+    response => response,
+    async error => {
+      const originalRequest = error.config;
+      if (error.response.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        const newToken = await refreshAuthToken();
+        if (newToken) {
+          originalRequest.headers['x-auth-token'] = newToken;
+          return api(originalRequest);
+        }
       }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
+  );
 
-const refreshAuthToken = async () => {
-  try {
-    const response = await api.post('/refresh-token');
-    if (!response.data.accessToken) {
-      throw new Error('Failed to refresh token');
+  const refreshAuthToken = async () => {
+    try {
+      const response = await api.post('/refresh-token');
+      if (!response.data.accessToken) {
+        throw new Error('Failed to refresh token');
+      }
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('authToken', response.data.accessToken);
+      }
+      return response.data.accessToken;
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      clearAuthToken();
+      return null;
     }
+  };
+
+  const clearAuthToken = () => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('authToken', response.data.accessToken);
+      localStorage.removeItem('authToken');
     }
-    return response.data.accessToken;
-  } catch (error) {
-    console.error('Error refreshing token:', error);
-    clearAuthToken();
-    return null;
-  }
-};
+    // Replace gotoLogin with your actual logic to redirect to login page
+    // gotoLogin('login');
+  };
 
-const clearAuthToken = () => {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('authToken');
-  }
-  // Replace gotoLogin with your actual logic to redirect to login page
-  // gotoLogin('login');
-};
-
-export default api;
+  export default api;

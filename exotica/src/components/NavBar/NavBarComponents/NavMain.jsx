@@ -13,16 +13,20 @@ import { SlUserFemale } from "react-icons/sl";
 import ProfileLayout from '../../Profile/ProfileLayout'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice'
+import Link from 'next/link'
+import { auth } from '@/src/services/firebase'
+import { handleClientScriptLoad } from 'next/script'
 
 
 const NavMain = () => {
     const [cartOpen, setCartOpen] = useState(false);
     const [notificationOpen, setNotificationOpen] = useState(false);
-    // const [profileOpen, setProfileOpen] = useState(false);
     const { cart } = useCart(); // Access cart state
     const dispatch = useDispatch();
     const {profileOpen} = useSelector((state) => state.profile);
-    
+    const { authToken } = useSelector((state) => state.user);
+    const authdispatch = useDispatch();
+
     const toggleCart = () => {
         setCartOpen(!cartOpen);
     };
@@ -38,6 +42,9 @@ const NavMain = () => {
     // Calculate the total number of items in the cart
     const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
 
+    const handleWishlistClick = () => {
+        authdispatch(setProfileOpen({ isOpen: !profileOpen }))
+    }
     return (
         <div className='relative'>
             <div className='flex items-center justify-between w-full h-[80px] bg-pink-50 text-center px-24'>
@@ -90,9 +97,18 @@ const NavMain = () => {
                         </Tooltip>
                     </button>
                     <button className='text-gray-800 relative'>
-                        <Tooltip content="Whishlist">
-                            <BsFillHeartFill fontSize={"21px"} />
-                        </Tooltip>
+                        {authToken && 
+                            <Link href={"/wishlist"}>
+                                <Tooltip content="Whishlist">
+                                    <BsFillHeartFill fontSize={"21px"} />
+                                </Tooltip>
+                            </Link>
+                        }
+                        {!authToken && 
+                            <Tooltip content="Wishlist" onClick= {()=> handleWishlistClick}>
+                                <BsFillHeartFill fontSize={"21px"} />
+                            </Tooltip>
+                        }
                     </button>
                     <button className='text-gray-800 relative' onClick={toggleCart}>
                         <Tooltip content="Cart">

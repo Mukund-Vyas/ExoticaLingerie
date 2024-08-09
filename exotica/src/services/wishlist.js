@@ -7,7 +7,6 @@ export const getWishlists = async (token) => {
                 'x-auth-token': token,
             },
         });
-        console.log("::: wishlist :::", response.data.wishlist)
         return response.data.wishlist;
     } catch (error) {
         console.error('Error checking wishlist status:', error);

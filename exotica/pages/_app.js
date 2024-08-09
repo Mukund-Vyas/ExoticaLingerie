@@ -5,10 +5,14 @@ import Layout from "@/src/components/common/Layout";
 import { Provider } from "react-redux";
 import { store, persistor } from "@/Redux/store";
 import { PersistGate } from "redux-persist/integration/react";
+import Head from "next/head";
 
 export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
+      <Head>
+        <title>Buy Lingeries @ Exotica Lingerie</title>
+      </Head>
       <PersistGate loading={null} persistor={persistor}>
         <ProfileProvider>
           <CartProvider>
