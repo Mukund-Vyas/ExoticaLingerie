@@ -227,13 +227,13 @@ const ProductDetails = ({ product_id }) => {
                     {/* Price */}
                     <div className="flex flex-row items-baseline gap-2">
                         <h6 className="text-3xl font-semibold max-sm:text-2xl">
-                            ₹ {Math.ceil(product.price - product.price * (product.discount / 100))}
+                            ₹ {product.price}
                         </h6>
                         {
                             product.discount !== 0 && (
                                 <div className='flex gap-2 items-baseline'>
                                     <span className="text-lg font-semibold line-through text-gray-400 max-sm:text-sm">
-                                        ₹ {product.price}
+                                        ₹ {Math.ceil(product.price + product.price * (product.discount / 100))}
                                     </span>
                                     <span className="text-green-600 text-2xl font-semibold max-sm:text-lg">
                                         {product.discount}% off

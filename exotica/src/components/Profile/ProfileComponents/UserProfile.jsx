@@ -10,8 +10,11 @@ import { TbLogout } from "react-icons/tb";
 import EditProfile from './EditProfile';
 import OrderHistory from './OrderHistory';
 import UserReviews from './UserReviews';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@/Redux/Reducers/userSlice';
+import { redirect } from 'next/navigation';
+import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
+import Link from 'next/link';
 
 function UserProfile({ gotoLogin, toggleProfile }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +22,8 @@ function UserProfile({ gotoLogin, toggleProfile }) {
     const [currentPage, setCurrentPage] = useState('profile');
     const [userSubset, setUserSubset] = useState(null);
     const dispatch = useDispatch();
+    const { authToken } = useSelector((state) => state.user);
+    const {profileOpen} = useSelector((state) => state.profile)
 
     const refreshAuthToken = async () => {
         try {
@@ -41,13 +46,12 @@ function UserProfile({ gotoLogin, toggleProfile }) {
         }
     };
 
-    const getUserData = async () => {
-        let token = localStorage.getItem('authToken');
+    const getUserData = async () => {;
         try {
             let response = await fetch(process.env.NEXT_PUBLIC_GET_USER_DATA_URL, {
                 method: 'GET',
                 headers: {
-                    'x-auth-token': `${token}`,
+                    'x-auth-token': `${authToken}`,
                     'Content-Type': 'application/json',
                 },
             });
@@ -81,12 +85,11 @@ function UserProfile({ gotoLogin, toggleProfile }) {
     };
 
     const deleteAddress = async (addressId) => {
-        const token = localStorage.getItem('authToken');
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/addresses/${addressId}`, {
                 method: 'DELETE',
                 headers: {
-                    'x-auth-token': token,
+                    'x-auth-token': authToken,
                     'Content-Type': 'application/json',
                 },
             });
@@ -136,9 +139,19 @@ function UserProfile({ gotoLogin, toggleProfile }) {
     };
 
     const updateCurrentPage = (page) => {
-        setCurrentPage(page);
+        if(page === "wishlist"){
+            if(authToken){
+                redirect('/wishlist')
+            }
+        }
+        else{
+            setCurrentPage(page);
+        }
     };
 
+    const handleWishlistClick = () =>{
+        dispatch(setProfileOpen({ isOpen: !profileOpen }))
+    }
     return (
         <>
             {currentPage === 'profile' && (
@@ -168,14 +181,14 @@ function UserProfile({ gotoLogin, toggleProfile }) {
                                                 <p>Edit Profile</p>
                                             </div>
                                         </button>
-                                        <button className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2' onClick={() => updateCurrentPage('wishlist')}>
+                                        <Link href={'/wishlist'} className='w-full flex justify-between items-center cursor-pointer border rounded-xl border-stone-400 p-2' onClick={() => handleWishlistClick()}>
                                             <div className='flex items-center gap-2 font-serif hover:text-primary'>
                                                 <span className='bg-neutral-200 rounded-md p-1'>
                                                     <FcLike className='text-xl' />
                                                 </span>
                                                 <p>My Wishlist</p>
                                             </div>
-                                        </button>
+                                        </Link>
                                     </div>
 
                                     <div className='flex gap-4 text-stone-600 mb- text-sm'>

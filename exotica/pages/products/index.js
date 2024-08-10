@@ -45,7 +45,6 @@ export const getServerSideProps = async () => {
       };
     }
   } catch (error) {
-    setIsLoading(false);
     console.error('Error fetching products:', error);
     return {
       props: {

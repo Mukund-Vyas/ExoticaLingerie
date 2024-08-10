@@ -11,7 +11,7 @@ import { getWishlists } from '@/src/services/wishlist';
 import Link from 'next/link';
 
 const ProductCard = ({ product, variation, getWishlist }) => {
-  const discountedPrice = product.price - (product.price * (product.discount / 100));
+  const discountedPrice = product.price + (product.price * (product.discount / 100));
   const { dispatch } = useCart();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVariation, setSelectedVariation] = useState(null);
@@ -135,8 +135,8 @@ const ProductCard = ({ product, variation, getWishlist }) => {
           </h2>
         </div>
         <div className="flex flex-col items-end">
-          <h1 className='text-primary text-nowrap font-bold'>₹{discountedPrice.toFixed(2)}</h1>
-          <p className='text-gray-600 line-through text-sm'>₹{product.price.toFixed(2)}</p>
+          <h1 className='text-primary text-nowrap font-bold'>₹{product.price.toFixed(2)}</h1>
+          <p className='text-gray-600 line-through text-sm'>₹{discountedPrice.toFixed(2)}</p>
         </div>
       </div>
       <div className="flex justify-end mt-4">

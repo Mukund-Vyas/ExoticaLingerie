@@ -16,6 +16,7 @@ import { setProfileOpen } from '@/Redux/Reducers/profileSlice'
 import Link from 'next/link'
 import { auth } from '@/src/services/firebase'
 import { handleClientScriptLoad } from 'next/script'
+import toast from 'react-hot-toast'
 
 
 const NavMain = () => {
@@ -43,7 +44,10 @@ const NavMain = () => {
     const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
 
     const handleWishlistClick = () => {
+        console.log("Come come");
+        
         authdispatch(setProfileOpen({ isOpen: !profileOpen }))
+        toast.error("please login to view your wishlist..!");
     }
     return (
         <div className='relative'>
