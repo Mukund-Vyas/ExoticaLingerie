@@ -22,6 +22,7 @@ const allowedOrigins = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
     'http://exoticalingerie.in',
+    'https://exoticalingerie.in',
     'http://82.112.235.138:3000'
 ];
 
