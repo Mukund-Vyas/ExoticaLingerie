@@ -23,7 +23,10 @@ const allowedOrigins = [
     'http://localhost:3000',
     'http://exoticalingerie.in',
     'https://exoticalingerie.in',
-    'http://82.112.235.138:3000'
+    'http://82.112.235.138:3000',
+    'https://www.exoticalingerie.in',
+    'https://api.exoticalingerie.in',
+    'https://www.api.exoticalingerie.in',
 ];
 
 const corsOptions = {
