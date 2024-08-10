@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react'
 
 const StoreImageGrid = () => {
@@ -13,9 +14,9 @@ const StoreImageGrid = () => {
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
-                            <a href="http://localhost:3000/">
+                            <Link href="/products">
                                 <p className="imageTextStyle">Under 599 Store</p>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -27,9 +28,9 @@ const StoreImageGrid = () => {
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
-                            <a href="http://localhost:3000/">
+                            <Link href="/products">
                                 <p className="imageTextStyle">Under 699 Store</p>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -41,9 +42,9 @@ const StoreImageGrid = () => {
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
-                            <a href="http://localhost:3000/">
+                            <Link href="/products">
                                 <p className="imageTextStyle">Under 799 Store</p>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -55,9 +56,9 @@ const StoreImageGrid = () => {
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
-                            <a href="http://localhost:3000/">
+                            <Link href="/products">
                                 <p className="imageTextStyle">Under 499 Store</p>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

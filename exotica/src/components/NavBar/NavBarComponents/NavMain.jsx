@@ -48,7 +48,7 @@ const NavMain = () => {
     return (
         <div className='relative'>
             <div className='flex items-center justify-between w-full h-[80px] bg-pink-50 text-center px-24'>
-                <div className='flex gap-3 items-end'>
+                <Link href={"/"} className='flex gap-3 items-end'>
                     <div className='flex items-center justify-center'>
                         <Image
                             src={logo}
@@ -65,7 +65,7 @@ const NavMain = () => {
                             <font className="text-[38px] t2">XOTICA</font>
                         </p>
                     </div>
-                </div>
+                </Link>
                 <div className='flex-1'>
                     <div className="flex justify-start items-center relative px-12">
                         <input

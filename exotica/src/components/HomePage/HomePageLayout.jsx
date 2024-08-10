@@ -27,11 +27,11 @@ const HomePageLayout = () => {
   ];
   
   const image_url = [
-      'http://localhost:3000/',
-      'http://localhost:3000/',
-      'http://localhost:3000/',
-      'http://localhost:3000/',
-      'http://localhost:3000/',
+      '/products',
+      '/products',
+      '/products',
+      '/products',
+      '/products',
   ]
 
   return (

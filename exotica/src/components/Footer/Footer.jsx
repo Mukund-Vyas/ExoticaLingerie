@@ -61,34 +61,34 @@ const Footer = () => {
                         <ul>
                             <li>Categories</li>
                             <li>
-                                <Link href="http://localhost:3000/">New Arrivals</Link>
+                                <Link href="/products">New Arrivals</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Bras</Link>
+                                <Link href="/products">Bras</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Nightwear</Link>
+                                <Link href="/products">Nightwear</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Activewear</Link>
+                                <Link href="/products">Activewear</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Panties</Link>
+                                <Link href="/products">Panties</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Lingerie Set</Link>
+                                <Link href="/products">Lingerie Set</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Winterwear</Link>
+                                <Link href="/products">Winterwear</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Beauty</Link>
+                                <Link href="/products">Beauty</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Lingerie Sale & Offer</Link>
+                                <Link href="/products">Lingerie Sale & Offer</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Swimwear</Link>
+                                <Link href="/products">Swimwear</Link>
                             </li>
                         </ul>
                     </div>
@@ -130,25 +130,25 @@ const Footer = () => {
                         <ul>
                             <li>Quick Links</li>
                             <li>
-                                <Link href="http://localhost:3000/">About Exotica Lingerie</Link>
+                                <Link href="/">About Exotica Lingerie</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Blogs</Link>
+                                <Link href="/">Blogs</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Find Your Fit</Link>
+                                <Link href="/">Find Your Fit</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Bra Size Calculator</Link>
+                                <Link href="/">Bra Size Calculator</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Shop By Sizes</Link>
+                                <Link href="/">Shop By Sizes</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">Shop By Colours</Link>
+                                <Link href="/">Shop By Colours</Link>
                             </li>
                             <li>
-                                <Link href="http://localhost:3000/">FAQs</Link>
+                                <Link href="/">FAQs</Link>
                             </li>
                         </ul>
                     </div>

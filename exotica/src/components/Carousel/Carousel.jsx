@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { GrNext, GrPrevious } from 'react-icons/gr';
 import PropTypes from 'prop-types';
+import Link from 'next/link';
 
 const Carousel = ({ images, image_url }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -28,13 +29,13 @@ const Carousel = ({ images, image_url }) => {
   return (
     <div className="carousel">
       <div className="carousel-image-container">
-        <a href={image_url[currentImageIndex]}>
+        <Link href={image_url[currentImageIndex]}>
           <img
             className="carousel-image"
             src={images[currentImageIndex]}
             alt={`Slide ${currentImageIndex + 1}`}
           />
-        </a>
+        </Link>
       </div>
       <button className="carousel-button prev" onClick={goToPreviousImage}>
         <GrPrevious />

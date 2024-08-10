@@ -15,6 +15,7 @@ import ProfileLayout from '../../Profile/ProfileLayout';
 import { useCart } from '@/src/contexts/CartContext';
 import CartLayout from '../../Cart/CartLayout';
 import { GiShoppingCart } from 'react-icons/gi';
+import Link from 'next/link';
 
 
 const NavSmallMain = () => {
@@ -28,7 +29,7 @@ const NavSmallMain = () => {
         setMenuOpen(!menuOpen);
     };
 
-    const [showSubmenus, setShowSubmenus] = useState(Array(3).fill(false)); // Assuming you have 3 submenu items
+    const [showSubmenus, setShowSubmenus] = useState(Array(5).fill(false)); // Assuming you have 3 submenu items
 
     const toggleSubmenu = (index) => {
         const newSubmenus = [...showSubmenus];
@@ -94,44 +95,105 @@ const NavSmallMain = () => {
 
                 <div className='w-full px-4 h-full overflow-scroll'>
                     <ul className="text-lg">
-                        <li className="text-lg text-gray-800 my-2 pb-2 border-b-[1px] border-b-pink-700">
-                            <span className='px-1'>
-                                Main Menu Item 1
-                            </span>
-                        </li>
+                        {/* <Link href={"/products"}>
+                            <li className="text-lg text-gray-800 my-2 pb-2 border-b-[1px] border-b-pink-700">
+                                <span className='px-1'>
+                                    Main Menu Item 1
+                                </span>
+                            </li>
+                        </Link> */}
                         <li className="text-lg text-gray-800 my-2 pb-2 cursor-pointer border-b-[1px] border-b-pink-700" onClick={() => toggleSubmenu(0)}>
-                            <span className='flex flex-row justify-between w-full items-center px-1'>
-                                Main Menu Item 2
-                                <span className="ml-1">{showSubmenus[0] ? <MdOutlineKeyboardArrowUp className='text-2xl' /> : <MdOutlineKeyboardArrowDown className='text-2xl' />}</span>
-                            </span>
+                            <Link href={"products"}>
+                                <span className='flex flex-row justify-between w-full items-center px-1'>
+                                    New Arrivals
+                                    <span className="ml-1">{showSubmenus[0] ? <MdOutlineKeyboardArrowUp className='text-2xl' /> : <MdOutlineKeyboardArrowDown className='text-2xl' />}</span>
+                                </span>
+                            </Link>
                             {showSubmenus[0] && (
                                 <ul className="ml-4">
-                                    <li className="text-gray-600">Submenu Item 1</li>
-                                    <li className="text-gray-600">Submenu Item 2</li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Bras</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Activewear</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Panties</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Shapewear</Link></li>
                                 </ul>
                             )}
                         </li>
                         <li className="text-lg text-gray-800 my-2 pb-2 cursor-pointer border-b-[1px] border-b-pink-700" onClick={() => toggleSubmenu(1)}>
-                            <span className='flex flex-row justify-between w-full items-center px-1'>
-                                Main Menu Item 3
-                                <span className="ml-1">{showSubmenus[1] ? <MdOutlineKeyboardArrowUp className='text-2xl' /> : <MdOutlineKeyboardArrowDown className='text-2xl' />}</span>
-                            </span>
+                            <Link href={"products"}>
+                                <span className='flex flex-row justify-between w-full items-center px-1'>
+                                    Bras
+                                    <span className="ml-1">{showSubmenus[0] ? <MdOutlineKeyboardArrowUp className='text-2xl' /> : <MdOutlineKeyboardArrowDown className='text-2xl' />}</span>
+                                </span>
+                            </Link>
                             {showSubmenus[1] && (
                                 <ul className="ml-4">
-                                    <li className="text-gray-600">Submenu Item 1</li>
-                                    <li className="text-gray-600">Submenu Item 2</li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Bridal Bras</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Wired Bras</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>non-Wired Bras</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Padded Bras</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>non-Padded Bras</Link></li>
                                 </ul>
                             )}
                         </li>
                         <li className="text-lg text-gray-800 my-2 pb-2 cursor-pointer border-b-[1px] border-b-pink-700" onClick={() => toggleSubmenu(2)}>
-                            <span className='flex flex-row justify-between w-full items-center px-1'>
-                                Main Menu Item 4
-                                <span className="ml-1">{showSubmenus[2] ? <MdOutlineKeyboardArrowUp className='text-2xl' /> : <MdOutlineKeyboardArrowDown className='text-2xl' />}</span>
-                            </span>
+                            <Link href={"products"}>
+                                <span className='flex flex-row justify-between w-full items-center px-1'>
+                                    Activewear
+                                    <span className="ml-1">{showSubmenus[0] ? <MdOutlineKeyboardArrowUp className='text-2xl' /> : <MdOutlineKeyboardArrowDown className='text-2xl' />}</span>
+                                </span>
+                            </Link>
                             {showSubmenus[2] && (
                                 <ul className="ml-4">
-                                    <li className="text-gray-600">Submenu Item 1</li>
-                                    <li className="text-gray-600">Submenu Item 2</li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Sports wear</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Gym wear</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Yoga wear</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Running & Walking wear</Link></li>
+                                </ul>
+                            )}
+                        </li>
+                        <li className="text-lg text-gray-800 my-2 pb-2 cursor-pointer border-b-[1px] border-b-pink-700" onClick={() => toggleSubmenu(3)}>
+                            <Link href={"products"}>
+                                <span className='flex flex-row justify-between w-full items-center px-1'>
+                                    Panties
+                                    <span className="ml-1">{showSubmenus[0] ? <MdOutlineKeyboardArrowUp className='text-2xl' /> : <MdOutlineKeyboardArrowDown className='text-2xl' />}</span>
+                                </span>
+                            </Link>
+                            {showSubmenus[3] && (
+                                <ul className="ml-4">
+                                    <li><Link href={"/products"} className='hover:text-primary'>Seamless Panties</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Shaper Panties</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Pack of 2</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Pack of 4</Link></li>
+                                </ul>
+                            )}
+                        </li>
+                        <Link href={"/products"}>
+                            <li className="text-lg text-gray-800 my-2 pb-2 border-b-[1px] border-b-pink-700">
+                                <span className='px-1'>
+                                    Lingerie Set
+                                </span>
+                            </li>
+                        </Link>
+                        <Link href={"/products"}>
+                            <li className="text-lg text-gray-800 my-2 pb-2 border-b-[1px] border-b-pink-700">
+                                <span className='px-1'>
+                                    Shapewear
+                                </span>
+                            </li>
+                        </Link>
+                        <li className="text-lg text-gray-800 my-2 pb-2 cursor-pointer border-b-[1px] border-b-pink-700" onClick={() => toggleSubmenu(4)}>
+                            <Link href={"products"}>
+                                <span className='flex flex-row justify-between w-full items-center px-1'>
+                                    Offre ZOne
+                                    <span className="ml-1">{showSubmenus[0] ? <MdOutlineKeyboardArrowUp className='text-2xl' /> : <MdOutlineKeyboardArrowDown className='text-2xl' />}</span>
+                                </span>
+                            </Link>
+                            {showSubmenus[4] && (
+                                <ul className="ml-4">
+                                    <li><Link href={"/products"} className='hover:text-primary'>Flat 10% off</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Flat 15% off</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Flat 20% off</Link></li>
+                                    <li><Link href={"/products"} className='hover:text-primary'>Flat 40% off</Link></li>
                                 </ul>
                             )}
                         </li>
