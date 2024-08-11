@@ -30,6 +30,9 @@ const ProductDetails = ({ product_id }) => {
     const { profileOpen } = useSelector((state) => state.profile);
     const authdispatch = useDispatch();
 
+    // Find the selected variation based on activeColor
+    const selectedVariation = product?.variations?.find(v => v.color === activeColor) || {};
+
     useEffect(() => {
         setImageLoading(true);
     }, [selectedVariation, activeColor]);
@@ -156,9 +159,6 @@ const ProductDetails = ({ product_id }) => {
             toast.error('Failed to remove product from wishlist.');
         }
     };
-
-    // Find the selected variation based on activeColor
-    const selectedVariation = product.variations.find(v => v.color === activeColor) || {};
 
     return (
         <div className="py-10 max-sm:p-2 xl:px-48 md:px-16 lg:px-24 bg-pink-50">
