@@ -26,7 +26,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div ref={modalRef} className="relative bg-white pt-2 pl-4 pr-24 pb-12 rounded-md shadow-lg">
+            <div ref={modalRef} className="relative bg-white pt-2 pl-4 pr-24 pb-12 rounded-md shadow-lg max-sm:w-screen flex">
                 <button className="absolute bottom-2 right-4 font-serif text-primary border border-primary rounded-full px-4 py-1 hover:bg-primary hover:text-white" onClick={onClose}>
                     Cancel
                 </button>

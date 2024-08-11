@@ -6,7 +6,7 @@ const CartContext = createContext();
 const cartReducer = (state, action) => {
     switch (action.type) {
         case 'ADD_TO_CART': {
-            const existingItemIndex = state.findIndex(item => item._id === action.payload._id && item.size === action.payload.size);
+            const existingItemIndex = state.findIndex(item => item._id === action.payload._id && item.size === action.payload.size  && item.color === action.payload.color);
             if (existingItemIndex > -1) {
                 const updatedState = [...state];
                 updatedState[existingItemIndex] = {

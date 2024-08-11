@@ -49,13 +49,15 @@ const ProductCard = ({ product, variation, getWishlist }) => {
     setIsModalOpen(true);
   };
 
-  const handleSizeSelect = (size) => {
+  const handleSizeSelect = (size, color) => {
     const productToAdd = {
       ...product,
       variation: selectedVariation,
-      size,
-      discountedPrice,
+      size: size, 
+      color: color, 
+      discountedPrice: product.price,
     };
+
     dispatch({ type: 'ADD_TO_CART', payload: productToAdd });
     setIsModalOpen(false);
     toast.success('Product added to cart.', {
@@ -103,10 +105,10 @@ const ProductCard = ({ product, variation, getWishlist }) => {
   };
 
   return (
-    <div className="relative border p-3 rounded-md shadow-md bg-white">
-      <div className="absolute top-5 right-5">
+    <div className="relative border p-3 max-sm:p-1 rounded-md shadow-md bg-white">
+      <div className="absolute top-5 right-5 max-sm:top-1 max-sm:right-1">
         <button
-          className={`text-xl p-2 rounded-full ${isInWishlist ? 'text-red-500' : 'text-primary'} hover:text-red-500 bg-rose-100`}
+          className={`text-xl p-2 max-sm:text-lg max-sm:p-1.5 rounded-full ${isInWishlist ? 'text-red-500' : 'text-primary'} hover:text-red-500 bg-rose-100`}
           onClick={() => isInWishlist ? removeFromWishlist() : addToWishlist()}
         >
           {isInWishlist ? <GoHeartFill /> : <GoHeart />}
@@ -114,10 +116,10 @@ const ProductCard = ({ product, variation, getWishlist }) => {
       </div>
       {product.discount > 0 && (
         <div className="absolute top-1 -left-1">
-          <div className="relative bg-blue-500 text-white px-3 py-1 rounded-tl-md rounded-br-md transform -rotate-12 shadow-lg">
+          <div className="relative bg-blue-500 text-white px-3 max-sm:px-2 py-1 rounded-tl-md rounded-br-md transform -rotate-12 shadow-lg">
             <div className="absolute top-0 left-0 w-2 h-2 bg-blue-700 rounded-full"></div>
             <div className="absolute bottom-0 right-0 w-2 h-2 bg-blue-700 rounded-full"></div>
-            <span className="block text-xs font-bold">{product.discount}% off</span>
+            <span className="block text-xs font-bold max-sm:text-[0.50rem">{product.discount}% off</span>
           </div>
         </div>
       )}
@@ -130,13 +132,18 @@ const ProductCard = ({ product, variation, getWishlist }) => {
       </Link>
       <div className="flex justify-between gap-2 mt-4 max-sm:text-sm">
         <div>
-          <h2 className='text-sm'>
+          <h2 className='block text-sm max-sm:text-xs sm:hidden'>
+            {product.productname.length > 16
+            ? `${product.productname.slice(0, 36)}...`
+            : product.productname} - {variation.color}
+          </h2>
+          <h2 className='hidden text-sm max-sm:text-xs sm:block'>
             {product.productname} - {variation.color}
           </h2>
         </div>
         <div className="flex flex-col items-end">
-          <h1 className='text-primary text-nowrap font-bold'>₹{product.price.toFixed(2)}</h1>
-          <p className='text-gray-600 line-through text-sm'>₹{discountedPrice.toFixed(2)}</p>
+          <h1 className='text-primary text-nowrap font-bold max-sm:text-xs'>₹{product.price.toFixed(2)}</h1>
+          <p className='text-gray-600 line-through text-sm max-sm:text-xs'>₹{discountedPrice.toFixed(2)}</p>
         </div>
       </div>
       <div className="flex justify-end mt-4">
@@ -149,12 +156,12 @@ const ProductCard = ({ product, variation, getWishlist }) => {
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div>
+        <div className='min-w-fit'>
           <h2 className='font-serif'>Select Size</h2>
-          <ul className='flex gap-1 mt-2'>
+          <ul className='flex gap-1 mt-2 flex-wrap'>
             {selectedVariation?.size?.map(size => (
               <li key={size} className='text-gray-600 hover:text-primary px-4 py-1 border rounded-full hover:border-primary cursor-pointer'>
-                <button onClick={() => handleSizeSelect(size)}>
+                <button onClick={() => handleSizeSelect(size, variation.color)}>
                   {size}
                 </button>
               </li>

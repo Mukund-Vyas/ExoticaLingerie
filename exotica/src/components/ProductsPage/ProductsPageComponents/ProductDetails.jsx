@@ -14,19 +14,29 @@ import { MdColorLens, MdOutlineStar } from 'react-icons/md';
 import { TbRulerMeasure } from 'react-icons/tb';
 import { Oval } from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
+import Tooltip from '../../common/Tooltip';
+import { VscQuestion } from "react-icons/vsc";
 
 const ProductDetails = ({ product_id }) => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeColor, setActiveColor] = useState('');
     const [activeImg, setActiveImg] = useState('');
+    const [imageLoading, setImageLoading] = useState(true);
     const [size, setSize] = useState('');
-    const [qty, setQty] = useState(1);
     const { dispatch } = useCart();
     const [isInWishlist, setIsInWishlist] = useState(false);
     const { authToken } = useSelector((state) => state.user);
     const { profileOpen } = useSelector((state) => state.profile);
     const authdispatch = useDispatch();
+
+    useEffect(() => {
+        setImageLoading(true);
+    }, [selectedVariation, activeColor]);
+
+    const handleImageLoad = () => {
+        setImageLoading(false);
+    };
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -65,7 +75,7 @@ const ProductDetails = ({ product_id }) => {
                     setIsInWishlist(response.data.inWishlist);
                 }
             } catch (error) {
-                console.error('Error checking wishlist status:', error);
+                setIsInWishlist(false);
             }
         };
 
@@ -83,32 +93,18 @@ const ProductDetails = ({ product_id }) => {
     }
 
     if (!product) {
-        return null; // Or a fallback UI
+        return null;
     }
 
-
-    const handleQty = (action) => {
-        if (action === "-") {
-            if (qty - 1 >= 1) {
-                setQty(qty - 1);
-            }
-        } else if (action === "+") {
-            if (qty + 1 <= 12) {
-                setQty(qty + 1);
-            }
-        } else {
-            setQty(qty + 1);
-        }
-    };
-
-    const handleAddToCart = (variation, size) => {
-        const discountedPrice = product.price - (product.price * (product.discount / 100));
+    const handleAddToCart = (variation, size, color) => {
+        const discountedPrice = product.price
         console.log(discountedPrice);
 
         const productToAdd = {
             ...product,
             variation,
             size,
+            color,
             discountedPrice,
         };
         console.log(productToAdd);
@@ -169,7 +165,7 @@ const ProductDetails = ({ product_id }) => {
             <div><Toaster position="bottom-center" reverseOrder={false} /></div>
             <div className="flex flex-col justify-between lg:flex-row gap-16 lg:items-start max-sm:gap-4">
                 {/* Images Section */}
-                <div className="sticky flex max-sm:flex-col gap-6 max-sm:gap-2 lg:w-2/4">
+                <div className="flex max-sm:flex-col gap-6 max-sm:gap-2 lg:w-2/4">
                     <div className="max-sm:hidden sm:visited flex flex-col flex-wrap h-auto">
                         {selectedVariation.imageUrls.map((value, index) => (
                             <img
@@ -179,21 +175,33 @@ const ProductDetails = ({ product_id }) => {
                                 className={
                                     activeImg === value
                                         ? "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile border-primary border-2 "
-                                        : "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile opacity-75 border-gray-400 hover:border-2 hover:scale-110"
+                                        : "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110"
                                 }
                                 onClick={() => setActiveImg(value)}
                                 role="presentation"
+                                loading='lazy'
                             />
                         ))}
                     </div>
                     {/* Main Image */}
-                    <img
-                        src={activeImg.replace('dl=0', 'raw=1')}
-                        alt={`${product.variations[0]?.color || ''} ${product.productname}`}
-                        className="w-4/5 self-center object-cover rounded-xl max-sm:w-full border bg-white border-primary shadow-lg"
-                    />
+                    <div className='w-4/5 max-sm:w-full min-h-[30rem] rounded-xl self-center object-cover border bg-gray border-primary shadow-lg relative'>
+                        {imageLoading && (
+                            <div className='absolute w-full min-h-[30rem] rounded-xl inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50'>
+                                <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
+                            </div>
+                        )}
+                        {
+                            <img
+                                src={activeImg.replace('dl=0', 'raw=1')}
+                                alt={`${product.variations[0]?.color || ''} ${product.productname}`}
+                                className="w-full rounded-xl"
+                                onLoad={handleImageLoad}
+                                loading='lazy'
+                            />
+                        }
+                    </div>
                     {/* For the Mobile Device Image Gallery */}
-                    <div className="max-sm:visited sm:hidden flex flex-row justify-between flex-wrap h-auto">
+                    <div className="max-sm:visited sm:hidden flex flex-row gap-2 justify-between overflow-x-scroll h-auto">
                         {selectedVariation.imageUrls.map((value, index) => (
                             <img
                                 key={"Image" + index}
@@ -202,10 +210,11 @@ const ProductDetails = ({ product_id }) => {
                                 className={
                                     activeImg === value
                                         ? "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile border-primary border-2"
-                                        : "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile opacity-75 border-gray-400 hover:border-2 hover:scale-110"
+                                        : "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110"
                                 }
                                 onClick={() => setActiveImg(value)}
                                 role="presentation"
+                                loading='lazy'
                             />
                         ))}
                     </div>
@@ -217,7 +226,7 @@ const ProductDetails = ({ product_id }) => {
                         <span className="text-primary font-semibold max-sm:text-sm">
                             {product.brandname}
                         </span>
-                        <h2 className="text-3xl font-bold max-sm:text-xl">
+                        <h2 className="text-2xl font-bold max-sm:text-xl">
                             {product.productname}
                         </h2>
                     </div>
@@ -225,17 +234,17 @@ const ProductDetails = ({ product_id }) => {
                         Special Price
                     </p>
                     {/* Price */}
-                    <div className="flex flex-row items-baseline gap-2">
-                        <h6 className="text-3xl font-semibold max-sm:text-2xl">
+                    <div className="flex flex-row items-baseline gap-2 mb-10 max-sm:mb-4">
+                        <h6 className="text-2xl font-semibold max-sm:text-2xl">
                             ₹ {product.price}
                         </h6>
                         {
                             product.discount !== 0 && (
                                 <div className='flex gap-2 items-baseline'>
-                                    <span className="text-lg font-semibold line-through text-gray-400 max-sm:text-sm">
+                                    <span className="text-md font-semibold line-through text-gray-400 max-sm:text-sm">
                                         ₹ {Math.ceil(product.price + product.price * (product.discount / 100))}
                                     </span>
-                                    <span className="text-green-600 text-2xl font-semibold max-sm:text-lg">
+                                    <span className="text-green-600 text-xl font-semibold max-sm:text-lg">
                                         {product.discount}% off
                                     </span>
                                 </div>
@@ -254,8 +263,8 @@ const ProductDetails = ({ product_id }) => {
                                     key={"Color" + index}
                                     className={
                                         activeColor === variation.color
-                                            ? "p-3 rounded-full cursor-pointer border-[2px] border-primary border-double"
-                                            : "p-3 rounded-full cursor-pointer border-[2px] border-white hover:border-gray-500 hover:scale-110"
+                                            ? "p-4 rounded-full cursor-pointer border-4 border-pink-50 border-double"
+                                            : "p-4 rounded-full cursor-pointer border-4 border-pink-50 hover:border-primary hover:scale-100"
                                     }
                                     style={{ backgroundColor: variation.color == "#FFDB58" ? "" : variation.color }}
                                     onClick={() => {
@@ -268,7 +277,7 @@ const ProductDetails = ({ product_id }) => {
                     </div>
 
                     {/* Size */}
-                    <div className="flex flex-col mt-4">
+                    <div className="flex flex-col mt-4 mb-10 max-sm:mb-4">
                         <span className="flex flex-row items-center gap-2 text-slate-800 font-semibold text-xl max-sm:text-lg">
                             <TbRulerMeasure /> Size:
                         </span>
@@ -289,28 +298,6 @@ const ProductDetails = ({ product_id }) => {
                         </div>
                     </div>
 
-                    {/* Quantity */}
-                    <div className="flex flex-row flex-wrap items-center gap-6">
-                        <span className="flex flex-row items-center gap-2 text-slate-800 font-semibold text-xl max-sm:text-lg">
-                            <FaBoxes /> Quantity:
-                        </span>
-                        <div className="flex flex-row items-center">
-                            <button
-                                className="bg-gray-200 py-2 px-2 rounded-lg text-slate-800 text-2xl max-sm:text-lg"
-                                onClick={() => handleQty("-")}
-                            >
-                                <BiMinus />
-                            </button>
-                            <span className="py-4 px-3 rounded-lg max-sm:text-sm">{qty}</span>
-                            <button
-                                className="bg-gray-200 py-2 px-2 rounded-lg text-slate-800 text-2xl max-sm:text-lg"
-                                onClick={() => handleQty("+")}
-                            >
-                                <BiPlus />
-                            </button>
-                        </div>
-                    </div>
-
                     {/* Add to Cart & Add to Wishlist */}
                     <div className="flex flex-row flex-wrap items-center gap-6 my-4">
                         <button className="flex flex-row gap-1 items-center bg-white text-primary border-2 border-primary font-semibold py-2.5 px-5 rounded-lg h-full"
@@ -321,7 +308,7 @@ const ProductDetails = ({ product_id }) => {
                         </button>
                         <button
                             className="flex flex-row gap-1 items-center bg-primary text-white font-semibold py-2.5 px-10 rounded-lg h-full max-sm:px-3 max-sm:text-sm"
-                            onClick={() => handleAddToCart(selectedVariation, size)}
+                            onClick={() => handleAddToCart(selectedVariation, size, activeColor)}
                         >
                             <HiOutlineShoppingCart />
                             Add to Cart
@@ -329,13 +316,18 @@ const ProductDetails = ({ product_id }) => {
                     </div>
                     {/* Delivery & Payment Info */}
                     <div className="flex flex-col gap-4 mt-8">
-                        <div className="flex flex-row gap-2 items-center">
+                        <div className="flex flex-row gap-2 items-center max-sm:text-sm">
                             <FaTruckFast className="text-2xl text-primary" />
-                            <span className="font-semibold text-lg">Free Shipping</span>
+                            <span className="flex gap-1 items-center font-medium text-lg">Free Shipping
+                                <Tooltip content="On a minimum cart value of ₹999">
+                                    <VscQuestion />
+                                </Tooltip>
+                            </span>
+
                         </div>
-                        <div className="flex flex-row gap-2 items-center">
+                        <div className="flex flex-row gap-2 items-center max-sm:text-sm">
                             <HiCash className="text-2xl text-primary" />
-                            <span className="font-semibold text-lg">Cash on Delivery Available</span>
+                            <span className="font-medium text-lg">Cash on Delivery Available</span>
                         </div>
                         <span className="flex flex-row items-center max-sm:text-sm">
                             <svg
@@ -358,7 +350,7 @@ const ProductDetails = ({ product_id }) => {
                                     <path d="M1245 1125 l-180 -83 -3 -256 c-1 -141 1 -256 6 -256 5 0 89 37 188 83 l179 83 3 257 c1 141 -1 257 -5 256 -5 0 -89 -38 -188 -84z" />
                                 </g>
                             </svg>{" "}
-                            <b className="">10 Days Easy Return</b>
+                            <b className="text-lg font-medium">7 Days Easy Return</b>
                         </span>
                     </div>
 
@@ -366,6 +358,13 @@ const ProductDetails = ({ product_id }) => {
                     <div className="pt-6">
                         <h3 className="text-lg font-semibold">About Product:</h3>
                         <p className="text-justify">{product.productDescription}</p>
+                        {product?.productFeatures?.map((feature, index)=>(
+                            <div key={"feture"+index} className="w-full flex font-[400] my-2 max-sm:text-xs">
+                                <span className="w-1/3 flex items-start text-rose-500 font-semibold">{feature?.title}</span>
+                                <span className="w1/3 flex items-start ">{feature?.description}</span>
+                            </div>
+                        ))}
+                        
                     </div>
                 </div>
             </div>

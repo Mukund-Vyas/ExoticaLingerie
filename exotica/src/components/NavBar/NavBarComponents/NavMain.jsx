@@ -44,7 +44,6 @@ const NavMain = () => {
     const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
 
     const handleWishlistClick = () => {
-        console.log("Come come");
         
         authdispatch(setProfileOpen({ isOpen: !profileOpen }))
         toast.error("please login to view your wishlist..!");

@@ -3,7 +3,6 @@ import React from 'react'
 
 
 const TextBlockWithSubItem = ({data, key}) => {
-    // console.log(data, "::: data :::");
     return (
         <div key={key} className='flex flex-col gap-2'>
             <h2 className='text-xl font-semibold'>{data?.no ? `${data?.no}. ` : ""}{data?.title}</h2>

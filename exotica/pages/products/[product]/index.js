@@ -7,7 +7,6 @@ const Home = () => {
   const params = useRouter();
 
   const { product } = params.query
-  console.log(product);
   if (!product) {
     return (
       <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>

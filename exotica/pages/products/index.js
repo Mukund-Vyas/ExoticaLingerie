@@ -37,7 +37,6 @@ export const getServerSideProps = async () => {
         },
       };
     } else {
-      console.error('Failed to fetch products:', res.status, res.statusText);
       return {
         props: {
           products: [],
@@ -45,7 +44,6 @@ export const getServerSideProps = async () => {
       };
     }
   } catch (error) {
-    console.error('Error fetching products:', error);
     return {
       props: {
         products: [],
