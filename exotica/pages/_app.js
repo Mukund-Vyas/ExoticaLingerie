@@ -21,8 +21,10 @@ export default function App({ Component, pageProps }) {
         <meta property="og:site_name" content="Exotica Lingerie" />
         <meta property="og:description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
         <meta property="og:image" content="https://drive.google.com/uc?export=view&id=FMfcgzQVxlSVbMgSPccBDFTQcffdrGkB" />
+        <meta property="og:image:alt" content="Exotica Lingerie - Premium Women's Lingerie" />
         <meta property="og:url" content="https://www.exoticalingerie.in" />
         <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://www.exoticalingerie.in" />
         <meta name="twitter:title" content="Exotica Lingerie - Premium Women's Lingerie Online" />
         <meta name="twitter:description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
         <meta name="twitter:image" content="https://drive.google.com/uc?export=view&id=FMfcgzQVxlSVbMgSPccBDFTQcffdrGkB" />
