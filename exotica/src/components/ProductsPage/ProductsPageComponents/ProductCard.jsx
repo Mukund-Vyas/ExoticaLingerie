@@ -125,7 +125,7 @@ const ProductCard = ({ product, variation, getWishlist }) => {
         <img
           src={variation.imageUrls[0].replace('dl=0', 'raw=1')}
           alt={`${variation.color} ${product.productname}`}
-          className="w-full object-cover rounded-md bg-gray-100"
+          className="w-full object-cover rounded-md bg-gray-100 min-h-52"
         />
       </Link>
       <div className="flex justify-between gap-2 mt-4 max-sm:text-sm">

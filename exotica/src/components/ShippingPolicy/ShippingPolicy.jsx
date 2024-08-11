@@ -3,7 +3,23 @@ import TextBlockWithSubItem from '../PrivacyPolicy/PrivacyPolicyComponents/TextB
 
 const ShippingPolicy = () => {
     const data = [
-        {
+      {
+            title: "General",
+            description: "",
+            subTabs: [
+                {
+                    no: "1",
+                    heading: "",
+                    description: "Hiral Enterprise, with its registered office located at 108, Shriji Nagar - 2, Opp. Mad Over Grill, Ved Road, Surat - 395004, (“Hiral Enterprise”, “we”, “us” or “our”) operates the mobile application/website www.exoticalingerie.in (referred to as the “Exotica Lingerie Platform”). Through this platform, we offer a curated selection of women’s intimate wear, including bras, panties, sleepwear, activewear, shapewear, and more (“Products”). Our mission is to provide high-quality, comfortable, and stylish products to our Users (“User” or “Users” or “you” or “your”), ensuring an exceptional shopping experience."
+                },
+                {
+                    no: "2",
+                    heading: "",
+                    description: "This Shipping Policy (“Policy”), together with our Terms of Service, governs your use of the Exotica Lingerie Platform and outlines our practices regarding the processing, handling, and delivery of your orders. By accessing or using the Exotica Lingerie Platform, you agree to the terms described in this Policy."
+                },
+            ]
+        },  
+      {
           no: "1",
           title: "Shipping Destinations",
           subTabs: [
