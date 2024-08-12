@@ -20,35 +20,40 @@ const Carousel = ({ images, image_url }) => {
 
   useEffect(() => {
     const interval = setInterval(goToNextImage, 4000);
-
     return () => {
       clearInterval(interval);
     };
   }, [goToNextImage]);
 
   return (
-    <div className="carousel">
-      <div className="carousel-image-container">
+    <div className="relative overflow-hidden">
+      <div className="flex justify-center items-center w-full">
         <Link href={image_url[currentImageIndex]}>
           <img
-            className="carousel-image"
+            className="w-full h-auto object-cover"
             src={images[currentImageIndex]}
             alt={`Slide ${currentImageIndex + 1}`}
           />
         </Link>
       </div>
-      <button className="carousel-button prev" onClick={goToPreviousImage}>
+      <button
+        className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-2xl p-1 bg-rose-200 rounded-full border-4 border-white shadow-md focus:outline-none hover:bg-rose-400 max-sm:p-0.5 max-sm:text-sm max-sm:border-2"
+        onClick={goToPreviousImage}
+      >
         <GrPrevious />
       </button>
-      <button className="carousel-button next" onClick={goToNextImage}>
+      <button
+        className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-2xl p-1 bg-rose-200 rounded-full border-4 border-white shadow-md focus:outline-none hover:bg-rose-400 max-sm:p-0.5 max-sm:text-sm max-sm:border-2"
+        onClick={goToNextImage}
+      >
         <GrNext />
       </button>
-      <div className="carousel-indicators">
+      <div className="absolute bottom-4 max-sm:bottom-2 left-0 right-0 flex justify-center z-10">
         {images.map((_, index) => (
           <button
-            key={"indecator"+index}
-            className={`carousel-indicator ${
-              index === currentImageIndex ? 'active' : ''
+            key={`indicator-${index}`}
+            className={`w-4 h-4 rounded-full mx-1 max-sm:w-1 max-sm:h-1 ${
+              index === currentImageIndex ? 'bg-[#ff197d]' : 'bg-rose-200'
             }`}
             onClick={() => setCurrentImageIndex(index)}
           ></button>
