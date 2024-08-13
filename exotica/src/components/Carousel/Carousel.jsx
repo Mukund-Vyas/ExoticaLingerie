@@ -19,7 +19,7 @@ const Carousel = ({ images, image_url }) => {
   }, [images]);
 
   useEffect(() => {
-    const interval = setInterval(goToNextImage, 4000);
+    const interval = setInterval(goToNextImage, 6000);
     return () => {
       clearInterval(interval);
     };
@@ -33,6 +33,7 @@ const Carousel = ({ images, image_url }) => {
             className="w-full h-auto object-cover"
             src={images[currentImageIndex]}
             alt={`Slide ${currentImageIndex + 1}`}
+            loading='lazy'
           />
         </Link>
       </div>

@@ -20,7 +20,7 @@ import Link from 'next/link';
 
 const NavSmallMain = () => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const {profileOpen} = useSelector((state) => state.profile);
+    const { profileOpen } = useSelector((state) => state.profile);
     const dispatch = useDispatch();
     const [cartOpen, setCartOpen] = useState(false);
     const { cart } = useCart();
@@ -38,7 +38,7 @@ const NavSmallMain = () => {
     };
 
     const toggleProfile = () => {
-        dispatch(setProfileOpen({isOpen: !profileOpen}));
+        dispatch(setProfileOpen({ isOpen: !profileOpen }));
     };
 
     const toggleCart = () => {
@@ -60,16 +60,16 @@ const NavSmallMain = () => {
                         style={{ width: '55px', height: "auto" }}
                     />
                 </div>
-                <div className='flex justify-between items-center gap-2 text-xl text-gray-800'>
-                    <button><BsSearch /></button>
+                <div className='flex justify-between items-center gap-3 text-xl text-gray-800 pr-2' >
+                    <button><BsSearch className='text-xl' /></button>
                     <button className='text-gray-800 relative' onClick={toggleProfile}>
                         <Tooltip content="Profile">
-                            <FaUser />
+                            <FaUser className='text-xl' />
                         </Tooltip>
                     </button>
                     <button className='text-gray-800 relative' onClick={toggleCart}>
                         <Tooltip content="Cart">
-                            <FaShoppingCart fontSize={"22px"} />
+                            <FaShoppingCart className='text-[22px]' />
                         </Tooltip>
                         {cartItemCount > 0 && (
                             <span className='absolute -top-3 -right-3 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-semibold'>
@@ -79,8 +79,9 @@ const NavSmallMain = () => {
                     </button>
                 </div>
             </div>
+
             {/* Menu */}
-            <div className={`fixed left-0 top-0 z-50 h-screen w-3/4 bg-pink-50 transition-transform duration-500 ease-in-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className={`fixed left-0 top-0 z-50 h-screen w-full bg-pink-50 transition-transform duration-500 ease-in-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <button className='absolute right-2 top-2 text-2xl text-gray-800' onClick={toggleMenu}><IoClose /></button>
 
                 <div className='w-full flex justify-center items-center my-8'>
@@ -202,8 +203,8 @@ const NavSmallMain = () => {
                 </div>
             </div>
             {menuOpen && (
-                <div className='fixed left-0 top-0 z-40 h-screen w-screen bg-black opacity-20' onClick={toggleMenu}>
-                </div>
+                <button className='fixed left-0 top-0 z-40 h-screen w-screen bg-black opacity-20' onClick={toggleMenu}>
+                </button>
             )}
 
             {/* Shopping cart popup dialog */}
@@ -228,7 +229,7 @@ const NavSmallMain = () => {
                 </div>
 
                 <div id='cart-main' className='h-full'>
-                    <CartLayout toggleCart = {toggleCart}/>
+                    <CartLayout toggleCart={toggleCart} />
                 </div>
             </div>
             {cartOpen && (
@@ -242,7 +243,7 @@ const NavSmallMain = () => {
                     <div className='flex w-full items-center mb-2 px-2'>
                         <button className='flex items-center gap-2 left-2 top-2 text-lg text-primary font-bold' onClick={toggleProfile}>
                             <GoArrowLeft />
-                            <span className='text-xs'>  
+                            <span className='text-xs'>
                                 Close
                             </span>
                         </button>
@@ -253,7 +254,7 @@ const NavSmallMain = () => {
                 </div>
 
                 <div id='profile-main' className='h-full'>
-                    <ProfileLayout toggleProfile = {toggleProfile}/>
+                    <ProfileLayout toggleProfile={toggleProfile} />
                 </div>
             </div>
             {profileOpen && (
