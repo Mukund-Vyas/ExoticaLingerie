@@ -6,6 +6,7 @@ const userRoutes = require('./router/userRouters');
 const wishlistRoutes = require('./router/wishlistRouters');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const paymentRouters = require('./router/paymentRouters');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -27,6 +28,7 @@ const allowedOrigins = [
     'https://www.exoticalingerie.in',
     'https://api.exoticalingerie.in',
     'https://www.api.exoticalingerie.in',
+    'https://mercury-t2.phonepe.com',
 ];
 
 const corsOptions = {
@@ -47,6 +49,7 @@ app.use('/api/v1', productRoutes);
 app.use('/api/v1', otpRouter);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/', wishlistRoutes);
+app.use('/api/v1/payment', paymentRouters);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)

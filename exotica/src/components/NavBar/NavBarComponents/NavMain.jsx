@@ -14,22 +14,23 @@ import ProfileLayout from '../../Profile/ProfileLayout'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice'
 import Link from 'next/link'
-import { auth } from '@/src/services/firebase'
-import { handleClientScriptLoad } from 'next/script'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
+import { setCartOpen } from '@/Redux/Reducers/cartSlice'
 
 
 const NavMain = () => {
-    const [cartOpen, setCartOpen] = useState(false);
+    // const [cartOpen, setCartOpen] = useState(false);
     const [notificationOpen, setNotificationOpen] = useState(false);
-    const { cart } = useCart(); // Access cart state
+    const { state } = useCart(); // Access cart state
     const dispatch = useDispatch();
     const {profileOpen} = useSelector((state) => state.profile);
+    const {cartOpen} = useSelector((state) => state.cart);
     const { authToken } = useSelector((state) => state.user);
     const authdispatch = useDispatch();
+    const cartDispatch = useDispatch();
 
     const toggleCart = () => {
-        setCartOpen(!cartOpen);
+        cartDispatch(setCartOpen({isOpen: !cartOpen}));
     };
 
     const toggleNotification = () => {
@@ -41,11 +42,12 @@ const NavMain = () => {
     };
 
     // Calculate the total number of items in the cart
-    const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
+    const cartItemCount = state.cart.reduce((count, item) => count + item.quantity, 0);
 
     const handleWishlistClick = () => {
+        console.log("this runs");
         
-        authdispatch(setProfileOpen({ isOpen: !profileOpen }))
+        authdispatch(setProfileOpen({ isOpen: !profileOpen }));
         toast.error("please login to view your wishlist..!");
     }
     return (
@@ -91,34 +93,36 @@ const NavMain = () => {
                 <div className='flex items-end justify-between gap-4 pl-12'>
                     <button className='text-gray-800 relative' onClick={toggleProfile}>
                         <Tooltip content="Profile">
-                            <FaUser fontSize={"22px"} />
+                            <FaUser className='text-xl'/>
                         </Tooltip>
                     </button>
                     <button className='text-gray-800 relative' onClick={toggleNotification}>
                         <Tooltip content="Notifications">
-                            <FaBell fontSize={"22px"} />
+                            <FaBell className='text-xl' />
                         </Tooltip>
                     </button>
-                    <button className='text-gray-800 relative'>
-                        {authToken && 
+                    <div className="text-gray-800 relative">
+                        {authToken ? (
                             <Link href={"/wishlist"}>
-                                <Tooltip content="Whishlist">
-                                    <BsFillHeartFill fontSize={"21px"} />
+                                <Tooltip content="Wishlist">
+                                    <BsFillHeartFill className='text-xl' />
                                 </Tooltip>
                             </Link>
-                        }
-                        {!authToken && 
-                            <Tooltip content="Wishlist" onClick= {()=> handleWishlistClick}>
-                                <BsFillHeartFill fontSize={"21px"} />
-                            </Tooltip>
-                        }
-                    </button>
+                        ) : (
+                            <button onClick={() => handleWishlistClick()}>
+                                <Tooltip content="Wishlist">
+                                    <BsFillHeartFill className='text-xl' />
+                                </Tooltip>
+                            </button>
+                        )}
+                        </div>
+
                     <button className='text-gray-800 relative' onClick={toggleCart}>
                         <Tooltip content="Cart">
-                            <FaShoppingCart fontSize={"22px"} />
+                            <FaShoppingCart className='text-xl' />
                         </Tooltip>
                         {cartItemCount > 0 && (
-                            <span className='absolute -top-3 -right-3 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-semibold'>
+                            <span className='absolute -top-3 -right-3 bg-primary text-white rounded-full w-3.5 h-3.5 flex items-center justify-center text-xs font-semibold'>
                                 {cartItemCount}
                             </span>
                         )}

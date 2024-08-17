@@ -16,14 +16,14 @@ import { useCart } from '@/src/contexts/CartContext';
 import CartLayout from '../../Cart/CartLayout';
 import { GiShoppingCart } from 'react-icons/gi';
 import Link from 'next/link';
-
+import { setCartOpen } from '@/Redux/Reducers/cartSlice';
 
 const NavSmallMain = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const { profileOpen } = useSelector((state) => state.profile);
     const dispatch = useDispatch();
-    const [cartOpen, setCartOpen] = useState(false);
-    const { cart } = useCart();
+    const {cartOpen} = useSelector((state) => state.cart);
+    const { state } = useCart();
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
@@ -42,16 +42,16 @@ const NavSmallMain = () => {
     };
 
     const toggleCart = () => {
-        setCartOpen(!cartOpen);
+        dispatch(setCartOpen({isOpen: !cartOpen}));
     };
 
     // Calculate the total number of items in the cart
-    const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
+    const cartItemCount = state.cart.reduce((count, item) => count + item.quantity, 0);
     return (
         <div className='relative'>
             <div className='flex gap-2 w-full bg-pink-50 h-[60px] px-3 items-center justify-between'>
                 <button className='text-2xl text-gray-800' onClick={toggleMenu}><HiOutlineMenu /></button>
-                <div className='flex-1'>
+                <Link href={'/'} className='flex-1'>
                     <Image
                         src={logo}
                         alt='logo'
@@ -59,7 +59,7 @@ const NavSmallMain = () => {
                         width={0}
                         style={{ width: '55px', height: "auto" }}
                     />
-                </div>
+                </Link>
                 <div className='flex justify-between items-center gap-3 text-xl text-gray-800 pr-2' >
                     <button><BsSearch className='text-xl' /></button>
                     <button className='text-gray-800 relative' onClick={toggleProfile}>
@@ -208,7 +208,7 @@ const NavSmallMain = () => {
             )}
 
             {/* Shopping cart popup dialog */}
-            <div className={`fixed right-0 top-0 z-50 h-screen w-1/3 max-sm:w-full bg-pink-50 transition-transform duration-500 ease-in-out ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`fixed right-0 top-0 z-50 h-screen w-1/3 max-lg:w-1/2 max-md:w-2/3 max-sm:w-full bg-pink-50 transition-transform duration-500 ease-in-out ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div id='cart-header' className='shadow-md py-2'>
                     <div className='flex w-full items-center mb-2 px-2'>
                         <button className='flex items-center gap-2 left-2 top-2 text-lg text-primary font-bold' onClick={toggleCart}>

@@ -23,7 +23,7 @@ const Carousel = ({ images, image_url }) => {
     return () => {
       clearInterval(interval);
     };
-  }, [goToNextImage]);
+  }, []);
 
   return (
     <div className="relative overflow-hidden">

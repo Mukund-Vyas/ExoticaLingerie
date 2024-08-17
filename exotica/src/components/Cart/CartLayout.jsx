@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { useCart } from '@/src/contexts/CartContext';
 import CartItem from './CartComponents/CartItem';
@@ -10,48 +10,30 @@ import { toast } from 'react-hot-toast';
 import { FiTrash2 } from "react-icons/fi";
 import Link from 'next/link';
 import PropTypes from 'prop-types';
-import { BsExclamationLg } from 'react-icons/bs';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { setCartOpen } from '@/Redux/Reducers/cartSlice';
 
 const CartLayout = ({ toggleCart }) => {
-    const { cart, dispatch } = useCart();
-    const cartIsEmpty = cart.length === 0;
-    const [selectedItems, setSelectedItems] = useState([]);
-
-    useEffect(() => {
-        const updateSelectedItems = () => {
-            return selectedItems.filter(item =>
-                cart.some(cartItem => cartItem._id === item._id && cartItem.size === item.size)
-            );
-        };
-
-        setSelectedItems(updateSelectedItems());
-    }, [cart]);
+    const { state, dispatch } = useCart();
+    const cartIsEmpty = state.cart.length === 0;
+    const router = useRouter();
+    const cartDispatch = useDispatch();
 
     const handleSelectItem = (item) => {
-        setSelectedItems((prevSelected) => {
-            const exists = prevSelected.find(i => i._id === item._id && i.size === item.size);
-            if (exists) {
-                return prevSelected.filter(i => !(i._id === item._id && i.size === item.size));
-            }
-            return [...prevSelected, item];
-        });
+        dispatch({ type: 'SELECT_ITEM', payload: item });
     };
 
     const handleSelectAll = () => {
-        if (selectedItems.length === cart.length) {
-            setSelectedItems([]);
-        } else {
-            setSelectedItems(cart);
-        }
+        dispatch({ type: 'SELECT_ALL_ITEMS' });
     };
 
     const handleRemoveSelectedItems = () => {
         if (window.confirm('Are you sure you want to remove selected item from cart?')){
-            const itemsRemoved = selectedItems.length;
-            selectedItems.forEach(item => {
+            const itemsRemoved = state.selectedItems.length;
+            state.selectedItems.forEach(item => {
                 dispatch({ type: 'REMOVE_FROM_CART', payload: item });
             });
-            setSelectedItems([]);
 
             toast(`Removed ${itemsRemoved} item${itemsRemoved > 1 ? 's' : ''} from cart.`, {
                 style: {
@@ -84,21 +66,17 @@ const CartLayout = ({ toggleCart }) => {
     const handleQuantityChange = (item, quantity) => {
         if (quantity < 1 || quantity > 12) return;
         dispatch({ type: 'UPDATE_QUANTITY', payload: { ...item, quantity } });
-
-        // Update the selected item quantity if it's already selected
-        setSelectedItems(prevSelected => {
-            return prevSelected.map(i => i._id === item._id && i.size === item.size ? { ...i, quantity } : i);
-        });
     };
-
+    
     const calculateSavings = () => {
-        const totalMRP = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
-        const savings = totalMRP - getTotalPrice(selectedItems);
+        const totalMRP = state.selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        const savings = totalMRP - getTotalPrice(state.selectedItems);
+        
         return { totalMRP, savings, savingPercent: totalMRP ? (savings / totalMRP) * 100 : 0 };
     };
 
     const paymentDetails = calculateSavings();
-    const totalPrice = parseFloat(getTotalPrice(selectedItems));
+    const totalPrice = parseFloat(getTotalPrice(state.selectedItems));
     const shippingCharge = totalPrice > 999 ? 0 : 49;
     const convenienceCharge = 2;
     const orderTotal = totalPrice + shippingCharge + convenienceCharge;
@@ -107,12 +85,15 @@ const CartLayout = ({ toggleCart }) => {
         toggleCart();
     }
 
-    const handleCheckoutClick = () => {
-        toast('We apologize for the inconvenience, but we are currently unable to process your order. Please try again later or contact our support team for assistance.', {
-            icon: <div><BsExclamationLg className='text-6xl bg-rose-100 border border-neutral-600 rounded-full p-2' /></div>,
-            duration: 6000,
-        })
+    const handleCheckoutClick = async () => {
+        cartDispatch(setCartOpen(false));
+        router .push('/checkout');
+        // toast('We apologize for the inconvenience, but we are currently unable to process your order. Please try again later or contact our support team for assistance.', {
+        //     icon: <div><BsExclamationLg className='text-6xl bg-rose-100 border border-neutral-600 rounded-full p-2' /></div>,
+        //     duration: 6000,
+        // })
     }
+    
     return (
         <div className='relative h-full bg-gray-200 bg-opacity-45'>
             {/* Cart Body */}
@@ -136,44 +117,44 @@ const CartLayout = ({ toggleCart }) => {
                             <div className='flex items-center'>
                                 <input
                                     type="checkbox"
-                                    checked={selectedItems.length > 0}
+                                    checked={state.selectedItems.length > 0}
                                     onChange={handleSelectAll}
                                     className='h-4 w-4 accent-rose-500'
                                 />
                                 <span className='ml-2'>
-                                    {selectedItems.length}/{cart.length} items selected
+                                    {state.selectedItems.length}/{state.cart.length} items selected
                                 </span>
                             </div>
                             <button
                                 onClick={handleRemoveSelectedItems}
                                 className='text-xl text-primary hover:text-red-700'
-                                disabled={selectedItems.length === 0}
+                                disabled={state.selectedItems.length === 0}
                                 title="remove from cart"
                             >
                                 <HiOutlineTrash />
                             </button>
                         </div>
                         <div className='flex flex-col p-2 bg-white gap-2'>
-                            {cart.map((item) => (
+                            {state.cart.map((item) => (
                                 <CartItem
                                     key={item._id + item.size}
                                     item={item}
                                     onRemove={handleRemoveFromCart}
                                     onUpdateQuantity={handleQuantityChange}
-                                    isSelected={selectedItems.some(selectedItem => selectedItem._id === item._id && selectedItem.size === item.size)}
+                                    isSelected={state.selectedItems.some(selectedItem => selectedItem._id === item._id && selectedItem.size === item.size)}
                                     onSelect={handleSelectItem}
                                 />
                             ))}
                         </div>
                         <div className='flex flex-col w-full text-sm mt-4 gap-2 bg-white p-4'>
                             <p className='font-mono text-xl'>PRICE DETAILS</p>
-                            <p className='flex justify-between px-1 font-sans'><span>Total M.R.P :</span> ₹{selectedItems.length > 0 ? paymentDetails.totalMRP.toFixed(2) : '0.00'}</p>
-                            {selectedItems.length > 0 && (
+                            <p className='flex justify-between px-1 font-sans'><span>Total M.R.P :</span> ₹{state.selectedItems.length > 0 ? paymentDetails.totalMRP.toFixed(2) : '0.00'}</p>
+                            {state.selectedItems.length > 0 && (
                                 <>
                                     <p className='flex justify-between px-1 font-sans'><span>Savings on M.R.P :</span> <span className='text-rose-600'>- ₹{paymentDetails.savings.toFixed(2)}</span></p>
                                     <p className='flex justify-between px-1 font-sans'><span>Saving % :</span> <span className='text-green-600'>{paymentDetails.savingPercent.toFixed(1)}% off</span></p>
-                                    <p className='flex justify-between px-1 font-sans'><span>Sub-total :</span> ₹{getTotalPrice(selectedItems)}</p>
-                                    <p className='flex justify-between px-1 font-sans'>
+                                    <p className='flex justify-between px-1 font-sans'><span>Sub-total :</span> ₹{getTotalPrice(state.selectedItems)}</p>
+                                    <div className='flex justify-between px-1 font-sans'>
                                         <span className='flex items-center gap-1'>
                                             Shipping charges
                                             <Tooltip content="Order above ₹999 to avail free shipping">
@@ -182,8 +163,8 @@ const CartLayout = ({ toggleCart }) => {
                                             :
                                         </span>
                                         ₹{shippingCharge.toFixed(2)}
-                                    </p>
-                                    <p className='flex justify-between px-1 font-sans'>
+                                    </div>
+                                    <div className='flex justify-between px-1 font-sans'>
                                         <span className='flex items-center gap-1'>
                                             Convenience charges
                                             <Tooltip content="Applied for platform upkeep and support.">
@@ -192,7 +173,7 @@ const CartLayout = ({ toggleCart }) => {
                                             :
                                         </span>
                                         ₹{convenienceCharge.toFixed(2)}
-                                    </p>
+                                    </div>
                                     <p className='flex justify-between px-1 font-sans'><span>Order total :</span> ₹{orderTotal.toFixed(2)}</p>
                                     <p className='flex justify-between px-1 font-sans border-t-2 pt-1'><span>Net Payable :</span> <span className='text-rose-600'>₹{orderTotal.toFixed(2)}</span></p>
                                 </>
@@ -208,18 +189,18 @@ const CartLayout = ({ toggleCart }) => {
                         {/* Order Total Label */}
                         <span className='flex w-full items-center justify-between px-4 text-lg'>
                             <p className='font-serif'>Order Total</p>
-                            <p className='font-mono'>₹{selectedItems.length > 0 ? orderTotal.toFixed(2) : '0.00'}</p>
+                            <p className='font-mono'>₹{state.selectedItems.length > 0 ? orderTotal.toFixed(2) : '0.00'}</p>
                         </span>
 
                         {/* Net Payable Amount */}
                         <span className='flex w-full items-center justify-between px-4 text-sm text-primary'>
                             <p className='font-serif'>Net Payable</p>
-                            <p className='font-mono'>₹{selectedItems.length > 0 ? orderTotal.toFixed(2) : '0.00'}</p>
+                            <p className='font-mono'>₹{state.selectedItems.length > 0 ? orderTotal.toFixed(2) : '0.00'}</p>
                         </span>
                     </div>
                     <button
                         className='py-3 w-full bg-primary hover:bg-pink-600 text-white font-mono font-semibold text-lg'
-                        disabled={selectedItems.length === 0}
+                        disabled={state.selectedItems.length === 0}
                         onClick={() => handleCheckoutClick()}
                     >
                         Continue to Checkout

@@ -275,3 +275,22 @@ exports.refreshToken = async (req, res) => {
         res.sendStatus(500);
     }
 };
+
+//get all addresses of user
+
+exports.getUserAddresses = async (req, res) => {
+    try {
+        // Fetch the user data from the database, including addresses
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).send('User not found.');
+
+        // Decrypt the address fields
+        user.decryptAddressFields();
+
+        // Send the user data with decrypted addresses
+        res.status(200).send({ addresses: user.addresses });
+    } catch (error) {
+        console.error('Error fetching addresses:', error.message);
+        res.status(500).send('Internal server error.');
+    }
+};

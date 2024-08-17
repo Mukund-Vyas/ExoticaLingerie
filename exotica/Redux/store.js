@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 import userReducer from './Reducers/userSlice';
 import profileReducer from './Reducers/profileSlice';
 import wishlistReducer from './Reducers/wishlistSlice';
+import cartReducer from './Reducers/cartSlice';
 
 // Persist configuration for user slice
 const userPersistConfig = {
@@ -18,6 +19,7 @@ export const store = configureStore({
   reducer: {
     user: persistedUserReducer,
     profile: profileReducer,
+    cart: cartReducer,
     wishlist: wishlistReducer
   },
 });

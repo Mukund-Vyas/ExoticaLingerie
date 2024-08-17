@@ -220,7 +220,7 @@ function UserProfile({ gotoLogin, toggleProfile }) {
                                         </div>
 
                                         <div className=''>
-                                            {userData.addresses && userData.addresses.map((address, index) => (
+                                            {userData.addresses?.map((address, index) => (
                                                 <div key={"Key-" + index} className='w-full min-h-28 bg-zinc-50 flex flex-col justify-center my-2 p-2 border border-pink-200 text-sm rounded-md'>
                                                     <span className='font-medium flex justify-between'>
                                                         {address.firstName} {address.lastName}

@@ -19,6 +19,9 @@ router.post('/add-address', auth, userController.addAddress);
 // Delete address route
 router.delete('/addresses/:addressId', auth, userController.deleteAddress);
 
+// get Addresses
+router.get('/addresses', auth, userController.getUserAddresses);
+
 // get user data
 router.get('/get-user', auth, userController.getUserData);
 
@@ -27,5 +30,6 @@ router.post('/login', userController.login);
 
 // Refresh token
 router.post('/refresh-token', userController.refreshToken);
+
 
 module.exports = router;

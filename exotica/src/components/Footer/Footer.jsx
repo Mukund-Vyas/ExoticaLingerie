@@ -238,10 +238,10 @@ const Footer = () => {
                 <div className="footer-copyright">
                     <div className="footer-copyright-wrapper">
                         <p className="footer-copyright-text">
-                            <Link className="footer-copyright-link" href="/" target="_self">
+                            {/* <Link className="footer-copyright-link" href="/" target="_self">
                                 &copy; {new Date().getFullYear()} Exotica Lingerie. All rights
                                 reserved.
-                            </Link>
+                            </Link> */}
                         </p>
                     </div>
                 </div>
