@@ -100,7 +100,7 @@ const CheckoutLayout = () => {
     const handlePayNowClick = async () => {
         if(payOnline){
             try {
-                const response = await api.post('/payment/new-payment', { price: totalPayable },{
+                const response = await api.post('/payment/new-payment', { price: 1 },{
                     headers: {
                         'x-auth-token': authToken,
                     },
