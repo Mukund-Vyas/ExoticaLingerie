@@ -8,6 +8,7 @@ import { setCartOpen } from '@/Redux/Reducers/cartSlice';
 import api from '@/src/utils/api';
 import toast, { Toaster } from 'react-hot-toast';
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
+import Head from 'next/head';
 
 // date conversion
 const formatDate = (date) => {
@@ -123,6 +124,9 @@ const CheckoutLayout = () => {
 
     return (
         <>
+        <Head>
+            <meta name="referrer" content="strict-origin-when-cross-origin" />
+        </Head>
             {showCheckout && (
                 <div className='w-full p-10 px-28 bg-pink-50 max-sm:px-4'>
                     <Toaster position='bottom-center' />

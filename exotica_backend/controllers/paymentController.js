@@ -8,7 +8,7 @@ const newPayment = async (req, res) => {
     try {
         const merchantTransactionId = 'EXLTID' + Date.now() + crypto.randomBytes(4).toString('hex');;
         const { price } = req.body;
-        const user_id = req.user._id;  // Extract user_id from req.user
+        const user_id = req.user._id;// Extract user_id from req.user
 
         const user = await User.findById(user_id).select('mobile firstName lastName').exec();
         if (!user) {
@@ -79,8 +79,6 @@ const newPayment = async (req, res) => {
 };
 
 const checkStatus = async (req, res) => {
-    console.log("Comes for verification");
-    
     const merchantTransactionId = req.params['txnId'];
     const merchantId = process.env.MERCHANT_ID;
     const keyIndex = 1;
@@ -101,7 +99,6 @@ const checkStatus = async (req, res) => {
 
     try {
         const response = await axios.request(options);
-
         // Update the transaction status based on the response
         const status = response.data.success ? 'completed' : 'failed';
         await Transaction.updateOne(
@@ -110,8 +107,12 @@ const checkStatus = async (req, res) => {
         );
 
         if (response.data.success === true) {
-            console.log(response.data);
-            return res.status(200).send({ success: true, message: "Payment Success" });
+            if(response.data.code === 'PAYMENT_PENDING'){
+                return res.status(202).send({ success: true, message: "Payment Pending" });
+            }
+            else{
+                return res.status(200).send({ success: true, message: "Payment Success" });
+            }
         } else {
             return res.status(400).send({ success: false, message: "Payment Failure" });
         }
