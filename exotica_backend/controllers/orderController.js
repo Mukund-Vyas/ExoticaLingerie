@@ -1,6 +1,7 @@
 const { sendOrderConfirmationEmail } = require('../utils/otpmailer');
 const Order = require('../models/ordersModel');
 const User = require('../models/userModel');
+const transactionModel = require('../models/transactionModel');
 
 exports.createOrder = async (req, res) => {
     console.log("come for order");
@@ -156,11 +157,11 @@ exports.createOrder = async (req, res) => {
             `;
 
             // Send confirmation email to the customer
-            sendOrderConfirmationEmail(userEmail, 'Order Confirmation', customerEmailContent);
+            await sendOrderConfirmationEmail(userEmail, 'Order Confirmation', customerEmailContent);
 
             // Send acknowledgment email to the seller (replace with actual seller email)
-            const sellerEmail = 'hiralenterprise5400@gmail.com';
-            // const sellerEmail = 'cr.cait2020@gmail.com';
+            // const sellerEmail = 'hiralenterprise5400@gmail.com';
+            const sellerEmail = 'cr.cait2020@gmail.com';
             await sendOrderConfirmationEmail(sellerEmail, 'New Order Received', sellerEmailContent);
         }
         // Respond with the saved order
@@ -199,16 +200,24 @@ exports.getOrderById = async (req, res) => {
 exports.updateOrder = async (req, res) => {
     try {
         // Fetch the existing order data before updating
-        const orderId = req.params.id;
-        const existingOrder = await Order.findById(orderId);
+        const transactionId = req.params.id;
+        const transaction = await transactionModel.findOne({ transactionId: transactionId });
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+        const orderNumber = transaction.orderNumber;
+
+        const existingOrder = await Order.findOne({ orderNumber: orderNumber });
         if (!existingOrder) {
             return res.status(404).json({ message: 'Order not found' });
         }
 
+        console.log(req.body);
+        
         // Update the order
-        const updatedOrder = await Order.findByIdAndUpdate(orderId, req.body, { new: true });
+        const updatedOrder = await Order.findOneAndUpdate({ orderNumber: orderNumber }, req.body, { new: true });
 
-        // Check if orderStatus is updated to 1
+        // Check if orderStatus is updated to 1 updatedOrder.orderStatus === 1 && existingOrder.orderStatus !== 1
         if (updatedOrder.orderStatus === 1 && existingOrder.orderStatus !== 1) {
             const userId = updatedOrder.user;
             const user = await User.findById(userId);
@@ -219,7 +228,7 @@ exports.updateOrder = async (req, res) => {
 
             // Email content for customer
             let productDetails = '';
-            savedOrder.items.forEach(item => {
+            updatedOrder.items.forEach(item => {
                 productDetails += `
                     <div>
                         <p>Product Name: ${item.productName}</p>
@@ -233,6 +242,17 @@ exports.updateOrder = async (req, res) => {
                 `;
             });
 
+            let productDetailsCustomer = '';
+            updatedOrder.items.forEach(item => {
+                productDetailsCustomer += `
+                    <div>
+                        <p>Product Name: ${item.productName}</p>
+                        <p>Quantity: ${item.Quantity}</p>
+                        <p>Total: ₹${item.Quantity * (item.Price - item.itemDiscount)}</p>
+                        <hr>
+                    </div>
+                `;
+            });
             // Email content
             const customerEmailContent = `
                 <!DOCTYPE html>
@@ -315,18 +335,18 @@ exports.updateOrder = async (req, res) => {
                         <div class="content">
                             <h1>Your Order is On Its Way!</h1>
                             <p>Awesome news! Your order has been successfully placed and is now being processed. 🎉</p>
-                            <p><span class="highlight">Order Number:</span> ${savedOrder.orderNumber}</p>
-                            <p><span class="highlight">Order Date:</span> ${savedOrder.orderDate}</p>
-                            <p><span class="highlight">Expected Delivery Date:</span> ${savedOrder.expDeliveryDate}</p>
+                            <p><span class="highlight">Order Number:</span> ${updatedOrder.orderNumber}</p>
+                            <p><span class="highlight">Order Date:</span> ${updatedOrder.orderDate}</p>
+                            <p><span class="highlight">Expected Delivery Date:</span> ${updatedOrder.expDeliveryDate}</p>
                             
                             <div class="order-summary">
                                 <h2>Order Summary</h2>
                                 <div>
-                                    <p><span class="highlight">Total Amount:</span> ₹${savedOrder.orderTotal}</p>
+                                    <p><span class="highlight">Total Amount:</span> ₹${updatedOrder.orderTotal}</p>
                                 </div>
                                 <div>
                                     <h3>What's in Your Cart:</h3>
-                                    ${productDetails}
+                                    ${productDetailsCustomer}
                                 </div>
                             </div>
                         </div>
@@ -342,8 +362,8 @@ exports.updateOrder = async (req, res) => {
             const sellerEmailContent = `
                 <h1>New Order Received</h1>
                 <p>A new order has been placed!</p>
-                <p>Order Number: ${savedOrder.orderNumber}</p>
-                <p>Order Total: ₹${savedOrder.orderTotal}</p>
+                <p>Order Number: ${updatedOrder.orderNumber}</p>
+                <p>Order Total: ₹${updatedOrder.orderTotal}</p>
                 <h2>Product Details:</h2>
                 ${productDetails}
             `;

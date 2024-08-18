@@ -81,9 +81,9 @@ const CheckoutStatus = ({ transactionId }) => {
         }
     };
 
-    const updateOrderStatus = async (orderId, status) => {
+    const updateOrderStatus = async (transactionId, status) => {
         try {
-            const response = await api.put(`/order/${orderId}`,
+            const response = await api.put(`/order/${transactionId}`,
                 { status }, {
                 headers: {
                     'x-auth-token': authToken,
