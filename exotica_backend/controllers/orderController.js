@@ -214,8 +214,12 @@ exports.updateOrder = async (req, res) => {
 
         console.log(req.body);
         
+        const updater = {
+            orderStatus: req.body.status,
+            paymentTransactionId: transactionId,
+        }
         // Update the order
-        const updatedOrder = await Order.findOneAndUpdate({ orderNumber: orderNumber }, req.body, { new: true });
+        const updatedOrder = await Order.findOneAndUpdate({ orderNumber: orderNumber }, updater, { new: true });
 
         // Check if orderStatus is updated to 1 updatedOrder.orderStatus === 1 && existingOrder.orderStatus !== 1
         if (updatedOrder.orderStatus === 1 && existingOrder.orderStatus !== 1) {
