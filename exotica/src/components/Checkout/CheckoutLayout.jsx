@@ -9,6 +9,9 @@ import api from '@/src/utils/api';
 import toast, { Toaster } from 'react-hot-toast';
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
 import Head from 'next/head';
+import AddressSelectionModel from './CheckoutComponents/AddressSelectionModel';
+import { Oval } from 'react-loader-spinner';
+import { useRouter } from 'next/router';
 
 // date conversion
 const formatDate = (date) => {
@@ -19,8 +22,8 @@ const formatDate = (date) => {
 
 const CheckoutLayout = () => {
     const [payOnline, setPayOnline] = useState(true);
-    const { state } = useCart();
-    const dispatch = useDispatch();
+    const { state, dispatch } = useCart();
+    const cartDispatch = useDispatch();
     const hasDispatched = useRef(false);
     const [totalPayable, setTotalPayable] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -28,8 +31,13 @@ const CheckoutLayout = () => {
     const [afterDiscount, setAfterDiscount] = useState(0);
     const { authToken } = useSelector((state) => state.user);
     const [showCheckout, setShowCheckout] = useState(false);
-    const {profileOpen} = useSelector((state) => state.profile);
+    const { profileOpen } = useSelector((state) => state.profile);
     const [address, setAddress] = useState(null);
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [isAddModelOpen, setIsAddModelOpen] = useState(false);
+    const [isNewAdded, setIsNewAdded] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         // Compute total discount and payable amounts
@@ -45,7 +53,7 @@ const CheckoutLayout = () => {
     }, [state.selectedItems, payOnline]);
 
     if (state.selectedItems.length === 0 && !hasDispatched.current) {
-        dispatch(setCartOpen({ isOpen: true }));
+        cartDispatch(setCartOpen({ isOpen: true }));
         hasDispatched.current = true;
     }
 
@@ -74,6 +82,7 @@ const CheckoutLayout = () => {
             });
             if (response.status === 200) {
                 setAddress(response.data.addresses);
+                setSelectedAddress(response.data.addresses[0])
                 setShowCheckout(true);
             }
         } catch (error) {
@@ -91,42 +100,160 @@ const CheckoutLayout = () => {
 
     useEffect(() => {
         handaleGetAddress();
-    }, [authToken]);
+    }, [authToken, isNewAdded]);
 
-    const toggleProfile = () =>{
-        dispatch(setProfileOpen({isOpen: !profileOpen}));
+    const toggleProfile = () => {
+        cartDispatch(setProfileOpen({ isOpen: !profileOpen }));
     }
 
+    const generateOrderNumber = () => {
+        return `EXO${Date.now()}`;
+    };
+
+    const prepareOrderData = (orderNumber, orderStatus) => {
+        const items = state.selectedItems.map(item => ({
+            OrderItemId: item?.variation?._id, // Use appropriate property for OrderItemId
+            Sku: item?.variation?.SKU,
+            productName: item?.productname,
+            Quantity: item?.quantity,
+            Price: item.price,
+            itemDiscount: item.discountedPrice ? item.price - item.discountedPrice : 0,
+        }));
+
+        return {
+            orderType: "retailorder",
+            marketplaceId: 10,
+            orderNumber: orderNumber,
+            orderTotal: totalPayable,
+            orderDate: new Date(),
+            expDeliveryDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+            shippingCost: afterDiscount < 999 ? 49 : 0,
+            discount: totalDiscount,
+            walletDiscount: 0,
+            promoCodeDiscount: 0,
+            prepaidDiscount: 0,
+            paymentMode: payOnline ? 1 : 0, // Example: 1 for online, 0 for COD
+            paymentGateway: payOnline ? "Phonepe" : "NA", // Example value
+            shippingMethod: 1, // Example value
+            packageWeight: 100, // Example value
+            packageHeight: 10, // Example value
+            packageWidth: 10, // Example value
+            packageLength: 10, // Example value
+            paymentTransactionId: 0, // Example value, will be updated after payment
+            orderStatus,
+            items,
+            customer: {
+                billing: {
+                    name: `${selectedAddress?.firstName} ${selectedAddress?.lastName}`,
+                    addressLine1: selectedAddress.street,
+                    addressLine2: '',
+                    postalCode: selectedAddress.pinCode,
+                    city: selectedAddress.city,
+                    state: selectedAddress.state,
+                    country: selectedAddress.country,
+                    contact: selectedAddress.mobile,
+                },
+                shipping: {
+                    name: `${selectedAddress?.firstName} ${selectedAddress?.lastName}`,
+                    addressLine1: selectedAddress.street,
+                    addressLine2: '',
+                    postalCode: selectedAddress.pinCode,
+                    city: selectedAddress.city,
+                    state: selectedAddress.state,
+                    country: selectedAddress.country,
+                    contact: selectedAddress.mobile,
+                }
+            },
+        };
+    };
+
+    const handleCreateOrder = async (orderNumber, orderStatus) => {
+        const orderData = prepareOrderData(orderNumber, orderStatus);
+
+        try {
+            const response = await api.post('/order/new-order', orderData, {
+                headers: {
+                    'x-auth-token': authToken,
+                },
+                withCredentials: true
+            });
+
+            if (response.status === 201) {
+                dispatch({ type: 'REMOVE_SPECIFIC_ITEMS', payload: state.selectedItems });
+                toast.success('Order placed successfully!');
+            } else {
+                toast.error('Failed to place order. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error placing order:', error);
+            toast.error('An error occurred while placing your order. Please try again.');
+        }
+    };
+
     const handlePayNowClick = async () => {
-        if(payOnline){
+        setIsLoading(true);
+        const orderNumber = generateOrderNumber(); // Generate unique order number
+
+        if (payOnline) {
             try {
-                const response = await api.post('/payment/new-payment', { price: 1 },{
+                await handleCreateOrder(orderNumber, 0);
+                const response = await api.post('/payment/new-payment', { price: 1, orderNumber: orderNumber }, {
                     headers: {
                         'x-auth-token': authToken,
                     },
-                    withCredentials: true 
+                    withCredentials: true
                 });
-                
+
                 if (response.status === 200) {
                     window.location.href = response.data.redirectUrl;
                 } else {
                     toast.error('Unable to initiate payment. Please try again later.');
                 }
             } catch (error) {
+                console.error('Error processing payment:', error);
                 toast.error('An error occurred while processing your payment. Please try again.');
             }
+        } else {
+            try {
+                await handleCreateOrder(orderNumber, 1); // Place the order for COD
+                router.push("/checkout/Completed");
+            } catch (error) {
+                console.error('Error placing COD order:', error);
+                toast.error('An error occurred while placing your order. Please try again.');
+            }
         }
-        // toast('We apologize for the inconvenience, but we are currently unable to process your order. Please try again later or contact our support team for assistance.', {
-        //     icon: <div><BsExclamationLg className='text-6xl bg-rose-100 border border-neutral-600 rounded-full p-2' /></div>,
-        //     duration: 6000,
-        // })
+        setIsLoading(false);
+    };
+
+
+    // Address flow
+    const handleSelectedAddress = (address) => {
+        setSelectedAddress(address);
     }
 
+    const handleAddressModelOpen = () => {
+        setIsAddModelOpen(!isAddModelOpen);
+    }
+
+    const handleSetIsNewAdded = () => {
+        setIsNewAdded(!isNewAdded);
+    }
     return (
         <>
-        <Head>
-            <meta name="referrer" content="strict-origin-when-cross-origin" />
-        </Head>
+            <Head>
+                <meta name="referrer" content="strict-origin-when-cross-origin" />
+            </Head>
+            {isLoading && (
+                    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+                        <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
+                    </div>
+                )
+            }
+            {isAddModelOpen && (
+                <div className='relative'>
+                    <AddressSelectionModel address={address} handleSelectedAddress={handleSelectedAddress} handleAddressModelOpen={handleAddressModelOpen} handleSetIsNewAdded={handleSetIsNewAdded} />
+                </div>
+            )}
             {showCheckout && (
                 <div className='w-full p-10 px-28 bg-pink-50 max-sm:px-4'>
                     <Toaster position='bottom-center' />
@@ -196,7 +323,7 @@ const CheckoutLayout = () => {
                             <div className='w-full flex justify-center items-center gap-2 py-2'>
                                 <RiSecurePaymentFill className='text-2xl' />
                                 <p className='text-center'>Secure Payment : Powerd by </p>
-                                <img src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8yIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjAiIHk9IjAiIHZpZXdCb3g9IjAgMCAxMzIgNDgiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxzdHlsZT4uc3Qwe2ZpbGw6IzVmMjU5Zn08L3N0eWxlPjxjaXJjbGUgdHJhbnNmb3JtPSJyb3RhdGUoLTc2LjcxNCAxNy44NyAyNC4wMDEpIiBjbGFzcz0ic3QwIiBjeD0iMTcuOSIgY3k9IjI0IiByPSIxNy45Ii8+PHBhdGggY2xhc3M9InN0MCIgZD0iTTkwLjUgMzQuMnYtNi41YzAtMS42LS42LTIuNC0yLjEtMi40LS42IDAtMS4zLjEtMS43LjJWMzVjMCAuMy0uMy42LS42LjZoLTIuM2MtLjMgMC0uNi0uMy0uNi0uNlYyMy45YzAtLjQuMy0uNy42LS44IDEuNS0uNSAzLS44IDQuNi0uOCAzLjYgMCA1LjYgMS45IDUuNiA1LjR2Ny40YzAgLjMtLjMuNi0uNi42SDkyYy0uOSAwLTEuNS0uNy0xLjUtMS41em05LTMuOWwtLjEuOWMwIDEuMi44IDEuOSAyLjEgMS45IDEgMCAxLjktLjMgMi45LS44LjEgMCAuMi0uMS4zLS4xLjIgMCAuMy4xLjQuMi4xLjEuMy40LjMuNC4yLjMuNC43LjQgMSAwIC41LS4zIDEtLjcgMS4yLTEuMS42LTIuNC45LTMuOC45LTEuNiAwLTIuOS0uNC0zLjktMS4yLTEtLjktMS42LTIuMS0xLjYtMy42di0zLjljMC0zLjEgMi01IDUuNC01IDMuMyAwIDUuMiAxLjggNS4yIDV2Mi40YzAgLjMtLjMuNi0uNi42aC02LjN6bS0uMS0yLjJIMTAzLjJ2LTFjMC0xLjItLjctMi0xLjktMnMtMS45LjctMS45IDJ2MXptMjUuNSAyLjJsLS4xLjljMCAxLjIuOCAxLjkgMi4xIDEuOSAxIDAgMS45LS4zIDIuOS0uOC4xIDAgLjItLjEuMy0uMS4yIDAgLjMuMS40LjIuMS4xLjMuNC4zLjQuMi4zLjQuNy40IDEgMCAuNS0uMyAxLS43IDEuMi0xLjEuNi0yLjQuOS0zLjguOS0xLjYgMC0yLjktLjQtMy45LTEuMi0xLS45LTEuNi0yLjEtMS42LTMuNnYtMy45YzAtMy4xIDItNSA1LjQtNSAzLjMgMCA1LjIgMS44IDUuMiA1djIuNGMwIC4zLS4zLjYtLjYuNmgtNi4zem0tLjEtMi4ySDEyOC42di0xYzAtMS4yLS43LTItMS45LTJzLTEuOS43LTEuOSAydjF6TTY2IDM1LjdoMS40Yy4zIDAgLjYtLjMuNi0uNnYtNy40YzAtMy40LTEuOC01LjQtNC44LTUuNC0uOSAwLTEuOS4yLTIuNS40VjE5YzAtLjgtLjctMS41LTEuNS0xLjVoLTEuNGMtLjMgMC0uNi4zLS42LjZ2MTdjMCAuMy4zLjYuNi42aDIuM2MuMyAwIC42LS4zLjYtLjZ2LTkuNGMuNS0uMiAxLjItLjMgMS43LS4zIDEuNSAwIDIuMS43IDIuMSAyLjR2Ni41Yy4xLjcuNyAxLjQgMS41IDEuNHptMTUuMS04LjRWMzFjMCAzLjEtMi4xIDUtNS42IDUtMy40IDAtNS42LTEuOS01LjYtNXYtMy43YzAtMy4xIDIuMS01IDUuNi01IDMuNSAwIDUuNiAxLjkgNS42IDV6bS0zLjUgMGMwLTEuMi0uNy0yLTItMnMtMiAuNy0yIDJWMzFjMCAxLjIuNyAxLjkgMiAxLjlzMi0uNyAyLTEuOXYtMy43em0tMjIuMy0xLjdjMCAzLjItMi40IDUuNC01LjYgNS40LS44IDAtMS41LS4xLTIuMi0uNHY0LjVjMCAuMy0uMy42LS42LjZoLTIuM2MtLjMgMC0uNi0uMy0uNi0uNlYxOS4yYzAtLjQuMy0uNy42LS44IDEuNS0uNSAzLS44IDQuNi0uOCAzLjYgMCA2LjEgMi4yIDYuMSA1LjZ2Mi40ek01MS43IDIzYzAtMS42LTEuMS0yLjQtMi42LTIuNC0uOSAwLTEuNS4zLTEuNS4zdjYuNmMuNi4zLjkuNCAxLjYuNCAxLjUgMCAyLjYtLjkgMi42LTIuNFYyM3ptNjguMiAyLjZjMCAzLjItMi40IDUuNC01LjYgNS40LS44IDAtMS41LS4xLTIuMi0uNHY0LjVjMCAuMy0uMy42LS42LjZoLTIuM2MtLjMgMC0uNi0uMy0uNi0uNlYxOS4yYzAtLjQuMy0uNy42LS44IDEuNS0uNSAzLS44IDQuNi0uOCAzLjYgMCA2LjEgMi4yIDYuMSA1LjZ2Mi40em0tMy42LTIuNmMwLTEuNi0xLjEtMi40LTIuNi0yLjQtLjkgMC0xLjUuMy0xLjUuM3Y2LjZjLjYuMy45LjQgMS42LjQgMS41IDAgMi42LS45IDIuNi0yLjRWMjN6Ii8+PHBhdGggZD0iTTI2IDE5LjNjMC0uNy0uNi0xLjMtMS4zLTEuM2gtMi40bC01LjUtNi4zYy0uNS0uNi0xLjMtLjgtMi4xLS42bC0xLjkuNmMtLjMuMS0uNC41LS4yLjdsNiA1LjdIOS41Yy0uMyAwLS41LjItLjUuNXYxYzAgLjcuNiAxLjMgMS4zIDEuM2gxLjR2NC44YzAgMy42IDEuOSA1LjcgNS4xIDUuNyAxIDAgMS44LS4xIDIuOC0uNXYzLjJjMCAuOS43IDEuNiAxLjYgMS42aDEuNGMuMyAwIC42LS4zLjYtLjZWMjAuOGgyLjNjLjMgMCAuNS0uMi41LS41di0xem0tNi40IDguNmMtLjYuMy0xLjQuNC0yIC40LTEuNiAwLTIuNC0uOC0yLjQtMi42di00LjhoNC40djd6IiBmaWxsPSIjZmZmIi8+PC9zdmc+" alt="phonepe logo" className='h-5' />
+                                <img src="https://w7.pngwing.com/pngs/345/591/png-transparent-phonepe-hd-logo.png" title='Phonepe' alt="phonepe logo" className='h-5' />
                             </div>
                         </div>
                         {/* Rigth Side */}
@@ -205,22 +332,22 @@ const CheckoutLayout = () => {
                             <div className='border bg-white border-slate-400 rounded-md px-3'>
                                 <div className='py-2 border-b-[1px] border-gray-400 flex justify-between items-center'>
                                     <span className='font-medium'>Deliver To</span>
-                                    <button className='text-primary font-light text-sm font-serif hover:underline' title='Change your deliver address'>
+                                    <button className='text-primary font-light text-sm font-serif hover:underline' title='Change your deliver address' onClick={() => handleAddressModelOpen()}>
                                         Change
                                     </button>
                                 </div>
                                 <div className='py-1'>
-                                    {address?.map((add, index) => (
-                                        <div key={"Address" + index} className='w-full min-h-28 bg-zinc-50 flex flex-col justify-center my-2 p-2 border border-pink-200 text-sm rounded-md'>
+                                    {selectedAddress && (
+                                        <div className='w-full min-h-28 bg-zinc-50 flex flex-col justify-center my-2 p-2 border border-pink-200 text-sm rounded-md'>
                                             <span className='font-medium flex justify-between'>
-                                                {add?.firstName} {add?.lastName}
+                                                {selectedAddress?.firstName} {selectedAddress?.lastName}
                                             </span>
-                                            <span className='text-wrap'>{add?.street}</span>
-                                            <span>{add?.city}, {add?.state} - {add?.pinCode}</span>
-                                            <span>{add?.country}</span>
-                                            <span className='font-medium'>Contact No: 9978605400</span>
+                                            <span className='text-wrap'>{selectedAddress?.street}</span>
+                                            <span>{selectedAddress?.city}, {selectedAddress?.state} - {selectedAddress?.pinCode}</span>
+                                            <span>{selectedAddress?.country}</span>
+                                            <span className='font-medium'>Contact No: {selectedAddress?.mobile}</span>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
 
@@ -264,8 +391,8 @@ const CheckoutLayout = () => {
                             </div>
 
                             {/* Pay Button */}
-                            <button className='w-full bg-primary rounded-md text-white font-semibold py-2' onClick={()=>handlePayNowClick()}>
-                                Pay Now
+                            <button className='w-full bg-primary rounded-md text-white font-semibold py-2' onClick={() => handlePayNowClick()} disabled={address.length === 0}>
+                                {payOnline ? 'Pay Now' : 'Place Order'}
                             </button>
                         </div>
                     </div>)}
@@ -273,9 +400,9 @@ const CheckoutLayout = () => {
             )}
             {!showCheckout && (
                 <div className=' flex flex-col items-center justify-center gap-4 min-h-96 bg-pink-50'>
-                    <RiUserUnfollowFill className='text-5xl text-primary'/>
+                    <RiUserUnfollowFill className='text-5xl text-primary' />
                     <p className='text-lg'>Please log in first to continue.</p>
-                    <button className='bg-primary py-2 px-5 rounded-md font-medium text-white' onClick={()=>toggleProfile()}>Click here to Log in!</button>
+                    <button className='bg-primary py-2 px-5 rounded-md font-medium text-white' onClick={() => toggleProfile()}>Click here to Log in!</button>
                 </div>
             )}
         </>

@@ -7,7 +7,7 @@ const User = require('../models/userModel');  // Ensure you have the User model 
 const newPayment = async (req, res) => {
     try {
         const merchantTransactionId = 'EXLTID' + Date.now() + crypto.randomBytes(4).toString('hex');;
-        const { price } = req.body;
+        const { price, orderNumber } = req.body;
         const user_id = req.user._id;// Extract user_id from req.user
 
         const user = await User.findById(user_id).select('mobile firstName lastName').exec();
@@ -59,6 +59,7 @@ const newPayment = async (req, res) => {
         await Transaction.create({
             user: user_id,
             transactionId: merchantTransactionId,
+            orderNumber:orderNumber,
             amount: price / 100,
             status: 'pending',
             paymentDetails: {

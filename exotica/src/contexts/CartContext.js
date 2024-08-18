@@ -51,6 +51,17 @@ const cartReducer = (state, action) => {
                 return { ...state, selectedItems: [] };
             }
             return { ...state, selectedItems: state.cart };
+        case 'REMOVE_SPECIFIC_ITEMS': {
+            const itemsToRemove = action.payload; // Array of items to remove
+            const updatedCart = state.cart.filter(item =>
+                !itemsToRemove.find(i => i._id === item._id && i.size === item.size && i.color === item.color)
+            );
+            const updatedSelectedItems = state.selectedItems.filter(item =>
+                !itemsToRemove.find(i => i._id === item._id && i.size === item.size && i.color === item.color)
+            );
+            return { ...state, cart: updatedCart, selectedItems: updatedSelectedItems };
+        }
+
         default:
             return state;
     }
@@ -62,7 +73,7 @@ const initializeCart = () => {
         const localCart = localStorage.getItem('cart');
         const localSelectedItems = localStorage.getItem('selectedItems');
         return {
-            cart: localCart ? JSON.parse(localCart) : [],   
+            cart: localCart ? JSON.parse(localCart) : [],
             selectedItems: localSelectedItems ? JSON.parse(localSelectedItems) : [],
         };
     }

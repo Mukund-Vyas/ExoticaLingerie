@@ -2,21 +2,21 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
 });
 
 const sendOtpEmail = async (to, otp) => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject: 'One-time verification code',
-    html: `
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to,
+        subject: 'One-time verification code',
+        html: `
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -98,24 +98,41 @@ const sendOtpEmail = async (to, otp) => {
                         </p>
                     </div>
                     <div class="footer">
-                        <p>&copy; 2024 Exotica Lingerie. All rights reserved. This message was sent from Exotica Lingerie.</p>
+                        <pThis message was sent from Exotica Lingerie.</p>
+                        <!-- >&copy; 2024 Exotica Lingerie. All rights reserved. -->
                     </div>
                 </div>
             </body>
             </html>
         `,
-  };
+    };
 
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('Email sent');
-  } catch (error) {
-    console.error('Error sending email:', error);
-  }
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent');
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
 };
 
 const generateOtp = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+    return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-module.exports = { sendOtpEmail, generateOtp };
+const sendOrderConfirmationEmail = async (to, subject, htmlContent) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to,
+        subject,
+        html: htmlContent,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent to:', to);
+    } catch (error) {
+        console.error('Error sending email to:', to, error);
+    }
+};
+
+module.exports = { sendOtpEmail, generateOtp, sendOrderConfirmationEmail };
