@@ -197,7 +197,7 @@ const CheckoutLayout = () => {
         if (payOnline) {
             try {
                 await handleCreateOrder(orderNumber, 0);
-                const response = await api.post('/payment/new-payment', { price: 1, orderNumber: orderNumber }, {
+                const response = await api.post('/payment/new-payment', { price: totalPayable, orderNumber: orderNumber }, {
                     headers: {
                         'x-auth-token': authToken,
                     },

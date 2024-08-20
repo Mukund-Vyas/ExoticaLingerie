@@ -52,11 +52,11 @@ const ProductCard = ({ product, variation, getWishlist }) => {
   const handleSizeSelect = (size, color) => {
     const productToAdd = {
       ...product,
-      
+
       price: product.price,
       variation: selectedVariation,
-      size: size, 
-      color: color, 
+      size: size,
+      color: color,
       discountedPrice: product.price - (product.price * (product.discount / 100)),
     };
 
@@ -107,56 +107,62 @@ const ProductCard = ({ product, variation, getWishlist }) => {
   };
 
   return (
-    <div className="relative border p-3 max-sm:p-1 rounded-md shadow-md bg-white">
-      <div className="absolute top-5 right-5 max-sm:top-1 max-sm:right-1">
-        <button
-          className={`text-xl p-2 max-sm:text-lg max-sm:p-1.5 rounded-full ${isInWishlist ? 'text-red-500' : 'text-primary'} hover:text-red-500 bg-rose-100`}
-          onClick={() => isInWishlist ? removeFromWishlist() : addToWishlist()}
-        >
-          {isInWishlist ? <GoHeartFill /> : <GoHeart />}
-        </button>
-      </div>
-      {product.discount > 0 && (
-        <div className="absolute top-1 -left-1">
-          <div className="relative bg-blue-500 text-white px-3 max-sm:px-2 py-1 rounded-tl-md rounded-br-md transform -rotate-12 shadow-lg">
-            <div className="absolute top-0 left-0 w-2 h-2 bg-blue-700 rounded-full"></div>
-            <div className="absolute bottom-0 right-0 w-2 h-2 bg-blue-700 rounded-full"></div>
-            <span className="block text-xs font-bold max-sm:text-[0.50rem">{product.discount}% off</span>
+    <>
+      <div className="relative flex flex-col justify-end border p-3 max-sm:p-1 rounded-md shadow-md bg-white">
+        <div className="absolute top-5 right-5 max-sm:top-1 max-sm:right-1">
+          <button
+            className={`text-xl p-2 max-sm:text-lg max-sm:p-1.5 rounded-full ${isInWishlist ? 'text-red-500' : 'text-primary'} hover:text-red-500 bg-rose-100`}
+            onClick={() => isInWishlist ? removeFromWishlist() : addToWishlist()}
+          >
+            {isInWishlist ? <GoHeartFill /> : <GoHeart />}
+          </button>
+        </div>
+        {product.discount > 0 && (
+          <div className="absolute top-1 -left-1">
+            <div className="relative bg-blue-500 text-white px-3 max-sm:px-2 py-1 rounded-tl-md rounded-br-md transform -rotate-12 shadow-lg">
+              <div className="absolute top-0 left-0 w-2 h-2 bg-blue-700 rounded-full"></div>
+              <div className="absolute bottom-0 right-0 w-2 h-2 bg-blue-700 rounded-full"></div>
+              <span className="block text-xs font-bold max-sm:text-[0.50rem">{product.discount}% off</span>
+            </div>
+          </div>
+        )}
+        <Link href={`/products/${product._id}`}>
+          <img
+            src={variation.imageUrls[0].replace('dl=0', 'raw=1')}
+            alt={`${variation.color} ${product.productname}`}
+            className="w-full object-cover rounded-md bg-gray-100 min-h-52"
+            loading='lazy'
+          />
+        </Link>
+        <div >
+          <div>
+            <div className="flex justify-between gap-2 mt-4 max-sm:text-sm">
+              <h2 className='block text-sm max-sm:text-xs sm:hidden'>
+                {product.productname.length > 16
+                  ? `${product.productname.slice(0, 36)}...`
+                  : product.productname} - {variation.color}
+              </h2>
+              <h2 className='hidden text-sm max-sm:text-xs sm:block'>
+                {product.productname} - {variation.color}
+              </h2>
+            </div>
+            <div className="flex flex-col items-end">
+              <h1 className='text-primary text-nowrap font-bold max-sm:text-xs'>₹{discountedPrice.toFixed(2)}</h1>
+              <p className='text-gray-600 line-through text-xs'>M.R.P.:{product.price.toFixed(2)}</p>
+            </div>
+          </div>
+
+          <div className="flex justify-end mt-4">
+            <button
+              className="bg-primary text-white px-4 py-1.5 max-sm:px-3 max-sm:py-1 max-sm:text-sm font-medium rounded-full shadow hover:bg-rose-600"
+              onClick={() => handleAddToCart(variation)}
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
-      )}
-      <Link href={`/products/${product._id}`}>
-        <img
-          src={variation.imageUrls[0].replace('dl=0', 'raw=1')}
-          alt={`${variation.color} ${product.productname}`}
-          className="w-full object-cover rounded-md bg-gray-100 min-h-52"
-        />
-      </Link>
-      <div className="flex justify-between gap-2 mt-4 max-sm:text-sm">
-        <div>
-          <h2 className='block text-sm max-sm:text-xs sm:hidden'>
-            {product.productname.length > 16
-            ? `${product.productname.slice(0, 36)}...`
-            : product.productname} - {variation.color}
-          </h2>
-          <h2 className='hidden text-sm max-sm:text-xs sm:block'>
-            {product.productname} - {variation.color}
-          </h2>
-        </div>
-        <div className="flex flex-col items-end">
-          <h1 className='text-primary text-nowrap font-bold max-sm:text-xs'>₹{discountedPrice.toFixed(2)}</h1>
-          <p className='text-gray-600 line-through text-xs'>M.R.P.:{product.price.toFixed(2)}</p>
-        </div>
-      </div>
-      <div className="flex justify-end mt-4">
-        <button
-          className="bg-primary text-white px-4 py-1.5 max-sm:px-3 max-sm:py-1 max-sm:text-sm font-medium rounded-full shadow hover:bg-rose-600"
-          onClick={() => handleAddToCart(variation)}
-        >
-          Add to Cart
-        </button>
-      </div>
 
+      </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className='min-w-fit'>
           <h2 className='font-serif'>Select Size</h2>
@@ -171,7 +177,7 @@ const ProductCard = ({ product, variation, getWishlist }) => {
           </ul>
         </div>
       </Modal>
-    </div>
+    </>
   );
 };
 

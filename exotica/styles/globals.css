@@ -34,6 +34,7 @@ body {
     }
 }
 
+
 /* ---------------------------------------- Navbar Title CSS ---------------------------------------- */
 .t1 {
     font-family: 'Libre Baskerville';
@@ -1011,7 +1012,7 @@ body {
     text-align: center;
 }
 
-.styleImage-item h2 {
+.h2 {
     text-transform: uppercase;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -1021,7 +1022,7 @@ body {
     text-align: left;
 }
 
-.styleImage-item h3 {
+.h3 {
     color: yellow;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     font-size: xx-large;
@@ -1031,10 +1032,10 @@ body {
     vertical-align: middle;
 }
 
-.styleImage-item img {
+/* .styleImage-item img {
     width: 400px;
     height: 400px;
-}
+} */
 
 /* 
  *************************************************************

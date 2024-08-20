@@ -2,6 +2,8 @@ const { sendOrderConfirmationEmail } = require('../utils/otpmailer');
 const Order = require('../models/ordersModel');
 const User = require('../models/userModel');
 const transactionModel = require('../models/transactionModel');
+const { default: axios } = require('axios');
+const { getEasyEcomAuthToken } = require('../utils/easyEcomUtils');
 
 exports.createOrder = async (req, res) => {
     console.log("come for order");
@@ -26,6 +28,49 @@ exports.createOrder = async (req, res) => {
 
         // Check if orderStatus is 1 before sending emails
         if (savedOrder.orderStatus === 1) {
+            const authToken = await getEasyEcomAuthToken();
+
+            // Create order on EasyEcom
+            let easyEcomOrderData = {
+                orderType: "retailorder",
+                orderNumber: savedOrder.orderNumber,
+                orderTotal: parseFloat(savedOrder.orderTotal),
+                orderDate: Date.now(), // You can use the appropriate date here
+                expDeliveryDate: Date.now() + 7 * 24 * 60 * 60 * 1000, // Example: 7 days from now
+                shippingCost: parseFloat(savedOrder.shippingCost),
+                discount: parseFloat(savedOrder.discount),
+                walletDiscount: 0,
+                promoCodeDiscount: 0,
+                prepaidDiscount: 0,
+                paymentMode: 2,
+                paymentGateway: "",
+                shippingMethod: 1,
+                packageWeight: 250,
+                packageHeight: 2,
+                packageWidth: 4,
+                packageLength: 7,
+                paymentTransactionId: savedOrder.paymentTransactionId || "NA",
+                orderStatus: 1,
+                items: savedOrder.items.map(item => ({
+                    OrderItemId: item._id,
+                    Sku: item.Sku,
+                    productName: item.productName,
+                    Quantity: item.Quantity,
+                    Price: parseFloat(item.Price),
+                    itemDiscount: parseFloat(item.itemDiscount),
+                })),
+                customer: savedOrder.customer
+            };
+
+            let easyeres = await axios.post('https://api.easyecom.io/webhook/v2/createOrder', easyEcomOrderData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+
+            console.log(easyeres.data);
+
             let productDetails = '';
             savedOrder.items.forEach(item => {
                 productDetails += `
@@ -35,6 +80,18 @@ exports.createOrder = async (req, res) => {
                         <p>Quantity: ${item.Quantity}</p>
                         <p>Price: ₹${item.Price}</p>
                         <p>Item Discount: ₹${item.itemDiscount}</p>
+                        <p>Total: ₹${item.Quantity * (item.Price - item.itemDiscount)}</p>
+                        <hr>
+                    </div>
+                `;
+            });
+
+            let productDetailsCustomer = '';
+            updatedOrder.items.forEach(item => {
+                productDetailsCustomer += `
+                    <div>
+                        <p>Product Name: ${item.productName}</p>
+                        <p>Quantity: ${item.Quantity}</p>
                         <p>Total: ₹${item.Quantity * (item.Price - item.itemDiscount)}</p>
                         <hr>
                     </div>
@@ -134,7 +191,7 @@ exports.createOrder = async (req, res) => {
                                 </div>
                                 <div>
                                     <h3>What's in Your Cart:</h3>
-                                    ${productDetails}
+                                    ${productDetailsCustomer}
                                 </div>
                             </div>
                         </div>
@@ -161,7 +218,7 @@ exports.createOrder = async (req, res) => {
 
             // Send acknowledgment email to the seller (replace with actual seller email)
             // const sellerEmail = 'hiralenterprise5400@gmail.com';
-            const sellerEmail = 'cr.cait2020@gmail.com';
+            const sellerEmail = process.env.SELLER_EMAIL;
             await sendOrderConfirmationEmail(sellerEmail, 'New Order Received', sellerEmailContent);
         }
         // Respond with the saved order
@@ -213,7 +270,7 @@ exports.updateOrder = async (req, res) => {
         }
 
         console.log(req.body);
-        
+
         const updater = {
             orderStatus: req.body.status,
             paymentTransactionId: transactionId,
@@ -372,11 +429,54 @@ exports.updateOrder = async (req, res) => {
                 ${productDetails}
             `;
 
+            const authToken = await getEasyEcomAuthToken();
+
+            // Create order on EasyEcom
+            let easyEcomOrderData = {
+                orderType: "retailorder",
+                orderNumber: updatedOrder.orderNumber,
+                orderTotal: updatedOrder.orderTotal,
+                orderDate: Date.now(), // You can use the appropriate date here
+                expDeliveryDate: Date.now() + 7 * 24 * 60 * 60 * 1000, // Example: 7 days from now
+                shippingCost: updatedOrder.shippingCost,
+                discount: updatedOrder.discount,
+                walletDiscount: 0,
+                promoCodeDiscount: 0,
+                prepaidDiscount: 0,
+                paymentMode: 2,
+                paymentGateway: "",
+                shippingMethod: 1,
+                packageWeight: updatedOrder.packageWeight,
+                packageHeight: updatedOrder.packageHeight,
+                packageWidth: updatedOrder.packageWidth,
+                packageLength: updatedOrder.packageLength,
+                paymentTransactionId: updatedOrder.paymentTransactionId || "NA",
+                orderStatus: 1,
+                items: updatedOrder.items.map(item => ({
+                    OrderItemId: item._id,
+                    Sku: item.Sku,
+                    productName: item.productName,
+                    Quantity: item.Quantity,
+                    Price: item.Price,
+                    itemDiscount: item.itemDiscount
+                })),
+                customer: updatedOrder.customer
+            };
+
+            const easyResponse = await axios.post('https://api.easyecom.io/webhook/v2/createOrder', easyEcomOrderData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+
+            console.log(easyResponse);
+
             // Send confirmation email to the customer
             await sendOrderConfirmationEmail(userEmail, 'Order Confirmation', customerEmailContent);
 
             // Send acknowledgment email to the seller (replace with actual seller email)
-            const sellerEmail = 'hiralenterprise5400@gmail.com';
+            const sellerEmail = process.env.SELLER_EMAIL;
             await sendOrderConfirmationEmail(sellerEmail, 'New Order Received', sellerEmailContent);
         }
 

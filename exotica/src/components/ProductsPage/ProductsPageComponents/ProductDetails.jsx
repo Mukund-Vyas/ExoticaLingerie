@@ -160,12 +160,38 @@ const ProductDetails = ({ product_id }) => {
         }
     };
 
+    // Color pallet for colors panel and set color
+    const colorPalette = {
+        'maroon': '#821517',
+        'light maroon': '#b15970',
+        'purple': '#644667',
+        'pink': '#da8d97',
+        'orange': '#936144',
+        'skin': '#e9c3a4',
+        'nevy': '#23243f',
+        'nevy blue': '#23243f',
+        'gray': '#cecac2',
+        'white': '#ffffff',
+        'green': '#226030',
+        'rani': '#b3105c',
+        'black': '#2f2f2f',
+        'blue': '#000176',
+        'sky': '#9cc8eb',
+        'red': '#cb0000',
+        'light red': '#f26b79',
+        'mustard': '#ba6c36',
+        'brown': '#8f646e',
+        'cream': '#dfb090',
+        'mint': '#788d8b',
+        // Add more colors as needed
+    };
+
     return (
         <div className="py-10 max-sm:p-2 xl:px-48 md:px-16 lg:px-24 bg-pink-50">
             <div><Toaster position="bottom-center" reverseOrder={false} /></div>
             <div className="flex flex-col justify-between lg:flex-row gap-16 lg:items-start max-sm:gap-4">
                 {/* Images Section */}
-                <div className="flex max-sm:flex-col gap-6 max-sm:gap-2 lg:w-2/4">
+                <div className="static flex max-sm:flex-col gap-6 max-sm:gap-2 lg:w-2/4">
                     <div className="max-sm:hidden sm:visited flex flex-col flex-wrap h-auto">
                         {selectedVariation.imageUrls.map((value, index) => (
                             <img
@@ -184,9 +210,9 @@ const ProductDetails = ({ product_id }) => {
                         ))}
                     </div>
                     {/* Main Image */}
-                    <div className='w-4/5 max-sm:w-full min-h-[30rem] rounded-xl self-center object-cover border bg-gray border-primary shadow-lg relative'>
+                    <div className='w-4/5 max-sm:w-full min-h-[30rem] rounded-xl object-cover border bg-gray border-primary shadow-lg relative'>
                         {imageLoading && (
-                            <div className='absolute w-full min-h-[30rem] rounded-xl inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50'>
+                            <div className='absolute w-full rounded-xl inset-0 bg-black bg-opacity-20 flex items-center justify-center z-10'>
                                 <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
                             </div>
                         )}
@@ -199,6 +225,10 @@ const ProductDetails = ({ product_id }) => {
                                 loading='lazy'
                             />
                         }
+                        {/* <ProductImage 
+                            imageUrl={activeImg.replace('dl=0', 'raw=1')} 
+                            placeholderUrl="../../../ /images/placeholder.png"
+                        /> */}
                     </div>
                     {/* For the Mobile Device Image Gallery */}
                     <div className="max-sm:visited sm:hidden flex flex-row gap-2 justify-between overflow-x-scroll h-auto">
@@ -258,21 +288,25 @@ const ProductDetails = ({ product_id }) => {
                             <MdColorLens /> Color:
                         </span>
                         <div className="flex flex-row gap-2 pt-3 flex-wrap">
-                            {product.variations.map((variation, index) => (
-                                <button
+                            {product.variations.map((variation, index) => {
+                                let colorKey = variation.color.toLowerCase();
+                                let backgroundColor = colorPalette[colorKey] || variation.color;
+                                return <button
                                     key={"Color" + index}
                                     className={
                                         activeColor === variation.color
                                             ? "p-4 rounded-full cursor-pointer border-4 border-pink-50 border-double"
                                             : "p-4 rounded-full cursor-pointer border-4 border-pink-50 hover:border-primary hover:scale-100"
                                     }
-                                    style={{ backgroundColor: variation.color == "#FFDB58" ? "" : variation.color }}
+                                    style={{ backgroundColor: backgroundColor }}
                                     onClick={() => {
                                         setActiveColor(variation.color);
                                         setActiveImg(variation.imageUrls[0]);
                                     }}
+                                    title={variation.color}
                                 ></button>
-                            ))}
+                            }
+                            )}
                         </div>
                     </div>
 
@@ -358,13 +392,13 @@ const ProductDetails = ({ product_id }) => {
                     <div className="pt-6">
                         <h3 className="text-lg font-semibold">About Product:</h3>
                         <p className="text-justify">{product.productDescription}</p>
-                        {product?.productFeatures?.map((feature, index)=>(
-                            <div key={"feture"+index} className="w-full flex font-[400] my-2 max-sm:text-xs">
+                        {product?.productFeatures?.map((feature, index) => (
+                            <div key={"feture" + index} className="w-full flex font-[400] my-2 max-sm:text-xs">
                                 <span className="w-1/3 flex items-start text-rose-500 font-semibold">{feature?.title}</span>
                                 <span className="w1/3 flex items-start ">{feature?.description}</span>
                             </div>
                         ))}
-                        
+
                     </div>
                 </div>
             </div>

@@ -10,7 +10,8 @@ const StoreImageGrid = () => {
                     <div className="imageWrapper">
                         <img
                             src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687587836/clovia-picture-cotton-rich-padded-non-wired-spacer-cup-t-shirt-bra-1-413186_r5u0ri.jpg"
-                            alt="discountImage"
+                            alt="under 599 bra for women"
+                            title='under 599 bra for women'
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
@@ -24,7 +25,8 @@ const StoreImageGrid = () => {
                     <div className="imageWrapper">
                         <img
                             src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687592607/goh5bpf8_how-to-buy-a-sports-bra_625x300_28_March_22_uotyo6.jpg"
-                            alt="discountImage"
+                            alt="under 699 bra for women"
+                            title='under 699 bra for women'
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
@@ -38,7 +40,8 @@ const StoreImageGrid = () => {
                     <div className="imageWrapper">
                         <img
                             src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687590819/51GDlRcxzOS._SX679__hgy6se.jpg"
-                            alt="discountImage"
+                            alt="under 799 bra for women"
+                            title='under 799 bra for women'
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
@@ -52,7 +55,8 @@ const StoreImageGrid = () => {
                     <div className="imageWrapper">
                         <img
                             src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687591188/P_1_lkfuj9.jpg"
-                            alt="discountImage"
+                            alt="under 499 bra for women"
+                            title='under 499 bra for women'
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">

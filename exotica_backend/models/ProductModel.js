@@ -17,6 +17,9 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, 'product category is required']
   },
+  productSubCategory: {
+    type: String,
+  },
   productFeatures: [{
     title: {
       type: String,

@@ -18,7 +18,7 @@ mongoose.connect(mongoURI)
     console.error('Error connecting to MongoDB:', err);
   });
 
-const filePath = path.join("C:/Users/Admin/Downloads/Bra.csv");
+const filePath = path.join("C:/Users/Admin/Downloads/new_listing.csv");
 csvtojson()
   .fromFile(filePath)
   .then(async (jsonObj) => {
@@ -31,10 +31,11 @@ csvtojson()
 
       if (!groupedProducts[key]) {
         groupedProducts[key] = {
-          productSKU: item['ItemSKU'],
+          productSKU: item['StyleCode'],
           brandname: item['brandname'],
           productname: item['productname'],
           productCategory: item['productCategory'],
+          productSubCategory: item['SubCategory'],
           productFeatures: [
             { title: "PackType", description: item['PackType'] },
             { title: "StyleType", description: item['StyleType'] },
@@ -55,7 +56,7 @@ csvtojson()
           stockAvailability: parseInt(item['stock']),
           price: parseFloat(item['price']),
           discount: parseFloat(item['discount']),
-          GST: "663784b143bae7e8f341ad6e", // Example GST ID, adjust as needed
+          GST: "663784b143bae7e8f341ad6e",
         };
       }
 
@@ -63,7 +64,7 @@ csvtojson()
       const newVariation = {
         color: item['Color'],
         size: item['Size'] ? [item['Size']] : [],
-        SKU: item['ItemSKU'] + "-" + item['Size'],
+        SKU: item['ItemSKU'],
         imageUrls: [item['imageUrl1'], item['imageUrl2'], item['imageUrl3'], item['imageUrl4'], item['imageUrl5']].filter(url => url)
       };
 
