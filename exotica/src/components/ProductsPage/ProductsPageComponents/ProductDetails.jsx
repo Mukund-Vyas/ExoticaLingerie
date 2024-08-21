@@ -2,7 +2,7 @@ import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
 import { useCart } from '@/src/contexts/CartContext';
 import api from '@/src/utils/api';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { BiMinus, BiPlus } from 'react-icons/bi';
 import { FaBoxes, FaRegHeart } from 'react-icons/fa';
@@ -17,10 +17,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from '../../common/Tooltip';
 import { VscQuestion } from "react-icons/vsc";
 
-const ProductDetails = ({ product_id }) => {
+const ProductDetails = ({ product_id, color }) => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeColor, setActiveColor] = useState('');
+    const [activeColor, setActiveColor] = useState(color);
     const [activeImg, setActiveImg] = useState('');
     const [imageLoading, setImageLoading] = useState(true);
     const [size, setSize] = useState('');
@@ -29,6 +29,11 @@ const ProductDetails = ({ product_id }) => {
     const { authToken } = useSelector((state) => state.user);
     const { profileOpen } = useSelector((state) => state.profile);
     const authdispatch = useDispatch();
+
+    const zoomRef = useRef(null);
+    const zoomBoxRef = useRef(null);
+    const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+    const [zoomVisible, setZoomVisible] = useState(false);
 
     // Find the selected variation based on activeColor
     const selectedVariation = product?.variations?.find(v => v.color === activeColor) || {};
@@ -42,17 +47,35 @@ const ProductDetails = ({ product_id }) => {
     };
 
     useEffect(() => {
+        const img = new Image();
+        img.src = activeImg;
+        img.onload = () => setImageLoading(false);
+        setImageLoading(true); // Set loading state before the image starts loading
+
+        return () => img.onload = null;
+    }, [activeImg]);
+
+    useEffect(() => {
         const fetchProduct = async () => {
             setLoading(true);
             try {
                 const response = await api.get(`/products/${product_id}`);
                 setProduct(response.data);
 
-                // Initialize activeColor and size
                 if (response.data.variations.length > 0) {
-                    setActiveColor(response.data.variations[0].color);
-                    setActiveImg(response.data.variations[0].imageUrls[0]);
-                    setSize(response.data.variations[0].size[0]);
+                    // Find the variation that matches the activeColor
+                    const matchingVariation = response.data.variations.find(v => v.color.toLowerCase() === color.toLowerCase());
+
+                    // If a matching variation is found, set it as active, otherwise default to the first variation
+                    if (matchingVariation) {
+                        setActiveColor(matchingVariation.color);
+                        setActiveImg(matchingVariation.imageUrls[0]);
+                        setSize(matchingVariation.size[0]);
+                    } else {
+                        setActiveColor(response.data.variations[0].color);
+                        setActiveImg(response.data.variations[0].imageUrls[0]);
+                        setSize(response.data.variations[0].size[0]);
+                    }
                 }
 
                 setLoading(false);
@@ -63,14 +86,13 @@ const ProductDetails = ({ product_id }) => {
         };
 
         fetchProduct();
-    }, [product_id]);
+    }, [product_id, color]);
 
     useEffect(() => {
         const checkWishlistStatus = async () => {
             try {
-                // Assuming the first variation is used for wishlist check
                 if (product.variations.length > 0) {
-                    const response = await api.get(`/wishlist/check/${product._id}/${product.variations[0]._id}`, {
+                    const response = await api.get(`/wishlist/check/${product._id}/${selectedVariation._id}`, {
                         headers: {
                             'x-auth-token': authToken,
                         },
@@ -100,29 +122,13 @@ const ProductDetails = ({ product_id }) => {
     }
 
     const handleAddToCart = (variation, size, color) => {
-        const discountedPrice = product.price
-        console.log(discountedPrice);
-
-        const productToAdd = {
-            ...product,
-            variation,
-            size,
-            color,
-            discountedPrice,
-        };
-        console.log(productToAdd);
-
+        const discountedPrice = product.price - (product.price * (product.discount / 100));
+        const productToAdd = { ...product, variation, size, color, discountedPrice };
         dispatch({ type: 'ADD_TO_CART', payload: productToAdd });
 
         toast.success('Product added to cart.', {
-            style: {
-                border: '1px solid #ff197d',
-                padding: '16px',
-            },
-            iconTheme: {
-                primary: 'rgb(15 118 110)',
-                secondary: '#FFFAEE',
-            },
+            style: { border: '1px solid #ff197d', padding: '16px' },
+            iconTheme: { primary: 'rgb(15 118 110)', secondary: '#FFFAEE' },
         });
     };
 
@@ -130,9 +136,7 @@ const ProductDetails = ({ product_id }) => {
         try {
             if (product.variations.length > 0) {
                 await api.post('/wishlist', { productId: product._id, variationId: product.variations[0]._id }, {
-                    headers: {
-                        'x-auth-token': authToken,
-                    },
+                    headers: { 'x-auth-token': authToken },
                 });
                 setIsInWishlist(true);
                 toast.success('Product added to wishlist.');
@@ -147,20 +151,32 @@ const ProductDetails = ({ product_id }) => {
         try {
             if (product.variations.length > 0) {
                 await api.delete(`/wishlist/${product._id}/${product.variations[0]._id}`, {
-                    headers: {
-                        'x-auth-token': authToken,
-                    },
+                    headers: { 'x-auth-token': authToken },
                 });
                 setIsInWishlist(false);
                 toast.success('Product removed from wishlist.');
             }
         } catch (error) {
-            console.error('Error removing from wishlist:', error);
             toast.error('Failed to remove product from wishlist.');
         }
     };
 
-    // Color pallet for colors panel and set color
+    const handleMouseMove = (e) => {
+        const { left, top, width, height } = zoomRef.current.getBoundingClientRect();
+        const x = ((e.clientX - left) / width) * 100;
+        const y = ((e.clientY - top) / height) * 100;
+
+        setZoomPosition({ x, y });
+    };
+
+    const handleMouseEnter = () => {
+        setZoomVisible(true);
+    };
+
+    const handleMouseLeave = () => {
+        setZoomVisible(false);
+    };
+
     const colorPalette = {
         'maroon': '#821517',
         'light maroon': '#b15970',
@@ -183,7 +199,6 @@ const ProductDetails = ({ product_id }) => {
         'brown': '#8f646e',
         'cream': '#dfb090',
         'mint': '#788d8b',
-        // Add more colors as needed
     };
 
     return (
@@ -191,62 +206,51 @@ const ProductDetails = ({ product_id }) => {
             <div><Toaster position="bottom-center" reverseOrder={false} /></div>
             <div className="flex flex-col justify-between lg:flex-row gap-16 lg:items-start max-sm:gap-4">
                 {/* Images Section */}
-                <div className="static flex max-sm:flex-col gap-6 max-sm:gap-2 lg:w-2/4">
-                    <div className="max-sm:hidden sm:visited flex flex-col flex-wrap h-auto">
+                <div className="relative flex flex-col lg:flex-row gap-6 max-sm:gap-2 lg:w-2/4">
+                    <div className="flex lg:flex-col gap-2 h-auto max-lg:w-full max-lg:overflow-x-auto max-lg:scrollbar-thin scrollbar-thumb-rounded-lg scrollbar-thumb-gray-500">
                         {selectedVariation.imageUrls.map((value, index) => (
                             <img
                                 key={"Image" + index}
                                 src={value.replace('dl=0', 'raw=1')}
                                 alt={"image" + index}
-                                className={
-                                    activeImg === value
-                                        ? "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile border-primary border-2 "
-                                        : "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110"
-                                }
+                                className={activeImg === value ? "w-20 h-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer border-primary border-2 transition-transform duration-300" : "w-20 h-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
                                 onClick={() => setActiveImg(value)}
-                                role="presentation"
-                                loading='lazy'
+                                loading="lazy"
                             />
                         ))}
                     </div>
-                    {/* Main Image */}
-                    <div className='w-4/5 max-sm:w-full min-h-[30rem] rounded-xl object-cover border bg-gray border-primary shadow-lg relative'>
+
+                    <div
+                        className="relative w-full min-h-[30rem] max-lg:min-h-[20rem] rounded-xl border bg-gray border-primary shadow-lg flex items-center justify-center"
+                        ref={zoomRef}
+                        onMouseMove={handleMouseMove}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    >
                         {imageLoading && (
-                            <div className='absolute w-full rounded-xl inset-0 bg-black bg-opacity-20 flex items-center justify-center z-10'>
+                            <div className="absolute rounded-xl inset-0 bg-black bg-opacity-20 flex items-center justify-center z-10">
                                 <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
                             </div>
                         )}
-                        {
-                            <img
-                                src={activeImg.replace('dl=0', 'raw=1')}
-                                alt={`${product.variations[0]?.color || ''} ${product.productname}`}
-                                className="w-full rounded-xl"
-                                onLoad={handleImageLoad}
-                                loading='lazy'
-                            />
-                        }
-                        {/* <ProductImage 
-                            imageUrl={activeImg.replace('dl=0', 'raw=1')} 
-                            placeholderUrl="../../../ /images/placeholder.png"
-                        /> */}
-                    </div>
-                    {/* For the Mobile Device Image Gallery */}
-                    <div className="max-sm:visited sm:hidden flex flex-row gap-2 justify-between overflow-x-scroll h-auto">
-                        {selectedVariation.imageUrls.map((value, index) => (
-                            <img
-                                key={"Image" + index}
-                                src={value.replace('dl=0', 'raw=1')}
-                                alt={"image" + index}
-                                className={
-                                    activeImg === value
-                                        ? "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile border-primary border-2"
-                                        : "w-24 bg-white rounded-md mb-2 cursor-pointer imgRowMobile opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110"
-                                }
-                                onClick={() => setActiveImg(value)}
-                                role="presentation"
-                                loading='lazy'
-                            />
-                        ))}
+                        <img
+                            src={activeImg.replace('dl=0', 'raw=1')}
+                            alt="product-image"
+                            className="w-full h-full object-cover rounded-xl"
+                            onLoad={handleImageLoad}
+                            loading="lazy"
+                        />
+                        {zoomVisible && (
+                            <div
+                                ref={zoomBoxRef}
+                                className="absolute w-44 h-44 bg-no-repeat rounded-full border border-neutral-400 shadow-md z-20"
+                                style={{
+                                    backgroundImage: `url(${activeImg.replace('dl=0', 'raw=1')})`,
+                                    backgroundSize: '500%',
+                                    backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                                    transform: `translate(${zoomPosition.x}px, ${zoomPosition.y}px)`,
+                                }}
+                            ></div>
+                        )}
                     </div>
                 </div>
                 {/* Product Details */}
@@ -266,13 +270,13 @@ const ProductDetails = ({ product_id }) => {
                     {/* Price */}
                     <div className="flex flex-row items-baseline gap-2 mb-10 max-sm:mb-4">
                         <h6 className="text-2xl font-semibold max-sm:text-2xl">
-                            ₹ {product.price}
+                            ₹ {product.price - product.price * (product.discount / 100)}
                         </h6>
                         {
                             product.discount !== 0 && (
                                 <div className='flex gap-2 items-baseline'>
                                     <span className="text-md font-semibold line-through text-gray-400 max-sm:text-sm">
-                                        ₹ {Math.ceil(product.price + product.price * (product.discount / 100))}
+                                        ₹ {product.price}
                                     </span>
                                     <span className="text-green-600 text-xl font-semibold max-sm:text-lg">
                                         {product.discount}% off
@@ -361,7 +365,11 @@ const ProductDetails = ({ product_id }) => {
                         </div>
                         <div className="flex flex-row gap-2 items-center max-sm:text-sm">
                             <HiCash className="text-2xl text-primary" />
-                            <span className="font-medium text-lg">Cash on Delivery Available</span>
+                            <span className="flex gap-1 items-center font-medium text-lg">Cash on Delivery Available
+                                <Tooltip content="Additional COD charges may apply.">
+                                    <VscQuestion />
+                                </Tooltip>
+                            </span>
                         </div>
                         <span className="flex flex-row items-center max-sm:text-sm">
                             <svg
@@ -393,11 +401,14 @@ const ProductDetails = ({ product_id }) => {
                         <h3 className="text-lg font-semibold">About Product:</h3>
                         <p className="text-justify">{product.productDescription}</p>
                         {product?.productFeatures?.map((feature, index) => (
-                            <div key={"feture" + index} className="w-full flex font-[400] my-2 max-sm:text-xs">
-                                <span className="w-1/3 flex items-start text-rose-500 font-semibold">{feature?.title}</span>
-                                <span className="w1/3 flex items-start ">{feature?.description}</span>
-                            </div>
+                            feature?.description && (
+                                <div key={"feature" + index} className="w-full flex font-[400] my-2 max-sm:text-xs">
+                                    <span className="w-1/3 flex items-start text-rose-500 font-semibold">{feature?.title}</span>
+                                    <span className="w-2/3 flex items-start">{feature?.description}</span>
+                                </div>
+                            )
                         ))}
+
 
                     </div>
                 </div>

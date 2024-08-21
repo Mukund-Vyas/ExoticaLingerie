@@ -6,7 +6,10 @@ import { Oval } from 'react-loader-spinner';
 const Home = () => {
   const params = useRouter();
 
-  const { product } = params.query
+  const { product, color } = params.query
+  console.log(product);
+  console.log(color);
+  
   if (!product) {
     return (
       <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
@@ -17,7 +20,7 @@ const Home = () => {
 
   return (
     <div>
-      {product && <ProductDetails product_id={product} />}
+      {product && <ProductDetails product_id={product} color={color}/>}
     </div>
   )
 }

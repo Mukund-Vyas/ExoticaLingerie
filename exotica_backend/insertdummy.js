@@ -18,7 +18,7 @@ mongoose.connect(mongoURI)
     console.error('Error connecting to MongoDB:', err);
   });
 
-const filePath = path.join("C:/Users/Admin/Downloads/new_listing.csv");
+const filePath = path.join("C:/Users/Admin/Downloads/Bra (final).xlsx - Bra.csv");
 csvtojson()
   .fromFile(filePath)
   .then(async (jsonObj) => {

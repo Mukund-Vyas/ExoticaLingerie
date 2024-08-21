@@ -137,7 +137,7 @@ const CartLayout = ({ toggleCart }) => {
                         <div className='flex flex-col p-2 bg-white gap-2'>
                             {state.cart.map((item) => (
                                 <CartItem
-                                    key={item._id + item.size}
+                                    key={"cart-item-" + item._id + item.color}
                                     item={item}
                                     onRemove={handleRemoveFromCart}
                                     onUpdateQuantity={handleQuantityChange}
