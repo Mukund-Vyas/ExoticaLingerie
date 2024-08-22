@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const paymentRouters = require('./router/paymentRouters');
 const orderRoutes = require('./router/orderRouters'); 
+const path = require('path');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -18,8 +19,10 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Enable CORS
+// Images url
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
+// Enable CORS
 const allowedOrigins = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
