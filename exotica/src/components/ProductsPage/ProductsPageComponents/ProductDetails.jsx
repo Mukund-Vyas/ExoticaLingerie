@@ -50,11 +50,11 @@ const ProductDetails = ({ product_id, color }) => {
         const img = new Image();
         img.src = activeImg;
         img.onload = () => setImageLoading(false);
-        setImageLoading(true); // Set loading state before the image starts loading
-
+            setImageLoading(true); // Set loading state before the image starts loading
+    
         return () => img.onload = null;
     }, [activeImg]);
-
+    
     useEffect(() => {
         const fetchProduct = async () => {
             setLoading(true);
@@ -213,7 +213,7 @@ const ProductDetails = ({ product_id, color }) => {
                                 key={"Image" + index}
                                 src={value.replace('dl=0', 'raw=1')}
                                 alt={"image" + index}
-                                className={activeImg === value ? "w-20 h-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer border-primary border-2 transition-transform duration-300" : "w-20 h-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
+                                className={activeImg === value ? "w-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer border-primary border-2 transition-transform duration-300" : "w-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
                                 onClick={() => setActiveImg(value)}
                                 loading="lazy"
                             />

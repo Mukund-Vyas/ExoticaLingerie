@@ -288,7 +288,7 @@ const AddressSelectionModel = ({ address, handleSelectedAddress, handleAddressMo
                                             onChange={(e) => handleAreaChange(e)}
                                         >
                                             <option value="" className='bg-transparent'>--Select--</option>
-                                            {area?.map((item, index) => {
+                                            {area && area?.map((item, index) => {
                                                     return (
                                                         <option key={"option" + index} value={item} className='bg-transparent text-wrap'>
                                                             {item}
