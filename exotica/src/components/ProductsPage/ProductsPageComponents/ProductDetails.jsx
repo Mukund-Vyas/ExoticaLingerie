@@ -50,11 +50,11 @@ const ProductDetails = ({ product_id, color }) => {
         const img = new Image();
         img.src = activeImg;
         img.onload = () => setImageLoading(false);
-            setImageLoading(true); // Set loading state before the image starts loading
-    
+        setImageLoading(true); // Set loading state before the image starts loading
+
         return () => img.onload = null;
     }, [activeImg]);
-    
+
     useEffect(() => {
         const fetchProduct = async () => {
             setLoading(true);
@@ -399,17 +399,15 @@ const ProductDetails = ({ product_id, color }) => {
                     {/* Product Description */}
                     <div className="pt-6">
                         <h3 className="text-lg font-semibold">About Product:</h3>
-                        <p className="text-justify">{product.productDescription}</p>
                         {product?.productFeatures?.map((feature, index) => (
                             feature?.description && (
                                 <div key={"feature" + index} className="w-full flex font-[400] my-2 max-sm:text-xs">
-                                    <span className="w-1/3 flex items-start text-rose-500 font-semibold">{feature?.title}</span>
+                                    <span className="w-1/3 flex items-start text-primary font-semibold">{feature?.title}</span>
                                     <span className="w-2/3 flex items-start">{feature?.description}</span>
                                 </div>
                             )
                         ))}
-
-
+                        <p className="text-justify">{product.productDescription}</p>
                     </div>
                 </div>
             </div>

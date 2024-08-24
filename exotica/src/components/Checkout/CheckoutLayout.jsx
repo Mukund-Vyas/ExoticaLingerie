@@ -87,7 +87,7 @@ const CheckoutLayout = () => {
             }
         } catch (error) {
             setShowCheckout(false);
-            toggleProfile()
+            cartDispatch(setProfileOpen({ isOpen: true }));
             if (error.response && error.response.status === 401) {
                 console.log("unautjorised");
                 toast.error("Unauthorized, please loagin first")
@@ -112,12 +112,12 @@ const CheckoutLayout = () => {
 
     const prepareOrderData = (orderNumber, orderStatus) => {
         const items = state.selectedItems.map(item => ({
-            OrderItemId: item?.variation?._id, // Use appropriate property for OrderItemId
+            OrderItemId: item?.variation?._id,
             Sku: item?.variation?.SKU,
             productName: item?.productname,
             Quantity: item?.quantity,
             Price: item.price,
-            itemDiscount: item.discountedPrice ? item.price - item.discountedPrice : 0,
+            itemDiscount: item.discountedPrice ? ((item.price - item.discountedPrice)/ item.price)*100 : 0,
         }));
 
         return {
@@ -134,12 +134,12 @@ const CheckoutLayout = () => {
             prepaidDiscount: 0,
             paymentMode: payOnline ? 1 : 0, // Example: 1 for online, 0 for COD
             paymentGateway: payOnline ? "Phonepe" : "NA", // Example value
-            shippingMethod: 1, // Example value
-            packageWeight: 100, // Example value
-            packageHeight: 10, // Example value
-            packageWidth: 10, // Example value
-            packageLength: 10, // Example value
-            paymentTransactionId: 0, // Example value, will be updated after payment
+            shippingMethod: 1,
+            packageWeight: 250,
+            packageHeight: 2,
+            packageWidth: 4, 
+            packageLength: 7,
+            paymentTransactionId: 0,
             orderStatus,
             items,
             customer: {
