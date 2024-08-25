@@ -987,8 +987,6 @@ body {
     background-size: cover;
     background-position: center;
     text-align: center;
-    padding: 10px 10%;
-    margin-top: 5px;
 }
 
 .styleImage-container h1 {
@@ -1012,22 +1010,20 @@ body {
     text-align: center;
 }
 
-.h2 {
+.styleImage-h2 {
     text-transform: uppercase;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    font-size: 46px;
+    font-size: 34px;
     font-family: 'Roboto Slab';
-    padding-left: 40px;
     text-align: left;
 }
 
-.h3 {
+.styleImage-h3 {
     color: yellow;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    font-size: xx-large;
+    font-size: 28px;
     font-family: 'Roboto Slab';
-    padding-left: 40px;
     text-align: left;
     vertical-align: middle;
 }
@@ -1275,10 +1271,6 @@ body {
 
     /* Style Image Grid styles */
 
-    .styleImage-container {
-        padding: 10px 0px;
-    }
-
     .styleImage-item img {
         width: 350px;
         height: 350px;
@@ -1340,27 +1332,12 @@ body {
 
     /* Style Image Grid styles */
 
-    .styleImage-container {
-        padding: 10px 0px;
-    }
-
-    .styleImage-item img {
-        width: 250px;
-        height: 250px;
-    }
-
-    .styleImage-container h1 {
-        font-size: 40px;
-    }
-
-    .styleImage-item h2 {
+    .styleImage-h2 {
         font-size: 36px;
-        padding-left: 40px;
     }
 
-    .styleImage-item h3 {
+    .styleImage-h3 {
         font-size: large;
-        padding-left: 40px;
     }
 
     /* 
@@ -1450,11 +1427,6 @@ body {
     }
 
     /* Style Image Grid styles */
-
-    .styleImage-container {
-        padding: 10px 0px;
-    }
-
     .styleImage-item img {
         width: 200px;
         height: 200px;
@@ -1464,14 +1436,12 @@ body {
         font-size: 36px;
     }
 
-    .styleImage-item h2 {
+    .styleImage-h2 {
         font-size: 24px;
-        padding-left: 40px;
     }
 
-    .styleImage-item h3 {
+    .styleImage-h3 {
         font-size: large;
-        padding-left: 40px;
     }
 
     /* 
@@ -1611,14 +1581,12 @@ body {
         font-size: 32px;
     }
 
-    .styleImage-item h2 {
+    .styleImage-h2 {
         font-size: 24px;
-        padding-left: 0px;
     }
 
-    .styleImage-item h3 {
+    .styleImage-h3 {
         font-size: large;
-        padding-left: 0px;
     }
 
     /* 
@@ -1818,14 +1786,12 @@ body {
         font-size: 24px;
     }
 
-    .styleImage-item h2 {
-        font-size: 20px;
-        padding-left: 20px;
+    .styleImage-h2 {
+        font-size: 16px;
     }
 
-    .styleImage-item h3 {
-        font-size: large;
-        padding-left: 20px;
+    .styleImage-h3 {
+        font-size: 12px;
     }
 
     /* 
@@ -1973,14 +1939,12 @@ body {
         height: 125px;
     }
 
-    .styleImage-item h2 {
+    .styleImage-h2 {
         font-size: 16px;
-        padding-left: 5px;
     }
 
-    .styleImage-item h3 {
+    .styleImage-h3 {
         font-size: medium;
-        padding-left: 5px;
     }
 
     /* 

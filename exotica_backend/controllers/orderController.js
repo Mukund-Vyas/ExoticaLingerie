@@ -36,6 +36,7 @@ exports.createOrder = async (req, res) => {
 
             let easyEcomOrderData = {
                 orderType: "retailorder",
+                marketplaceId: 832,
                 orderNumber: savedOrder.orderNumber,
                 orderTotal: parseFloat(savedOrder.orderTotal),
                 orderDate: orderDate, // You can use the appropriate date here
@@ -62,7 +63,7 @@ exports.createOrder = async (req, res) => {
                     Price: parseFloat(item.Price),
                     itemDiscount: parseFloat(item.itemDiscount),
                 })),
-                customer: savedOrder.customer
+                customer: [savedOrder.customer]
             };
             console.log(easyEcomOrderData);
 
@@ -462,6 +463,7 @@ exports.updateOrder = async (req, res) => {
             // Create order on EasyEcom
             let easyEcomOrderData = {
                 orderType: "retailorder",
+                marketplaceId: 832,
                 orderNumber: updatedOrder.orderNumber,
                 orderTotal: parseFloat(updatedOrder.orderTotal),
                 orderDate: orderDate,
@@ -488,7 +490,7 @@ exports.updateOrder = async (req, res) => {
                     Price: parseFloat(item.Price),
                     itemDiscount: parseFloat(item.itemDiscount),
                 })),
-                customer: updatedOrder.customer
+                customer: [updatedOrder.customer],
             };
             try {
                 const easyResponse = await axios.post('https://api.easyecom.io/webhook/v2/createOrder', easyEcomOrderData, {
@@ -524,7 +526,6 @@ exports.updateOrder = async (req, res) => {
                 }
 
             }
-
         }
 
         // Respond with the updated order

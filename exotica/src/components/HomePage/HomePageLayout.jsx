@@ -40,12 +40,12 @@ const HomePageLayout = () => {
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1722968660/blisa4vxlhz8nyvjuein.png',
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1722968749/zuubab4ygo7b0o5vuzig.png',
 
-    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1723488767/kdl8ho78l9nmgghfycvc.png',
-    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1723488556/jytkwtb5xpq8f4tzdz44.png',
-    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1723488837/chkx4djdmupufurray3k.png',
-    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1723488838/wgugibj4wsbgfq226k8q.png',
-    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1723488558/jkridswoj5ieubzfzksq.png',
-    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1723488563/gughnxx4etpuhyvwmngl.png',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571054/mi9hgsialxlcntrdufez.webp',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571054/ytoyym8gqiri2rvbwdse.webp',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/zfuvpugydlnvz1uktavo.webp',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/gyiv07t9rmhtyhjje21j.webp',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/hng11skkxqf8g0o58nfv.webp',
+    'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/wym4hrun6ef0heisq0jh.webp',
     // Add more image paths here
   ];
 
@@ -62,46 +62,56 @@ const HomePageLayout = () => {
     <div>
       <div><Toaster position="bottom-center" reverseOrder={false} /></div>
       {!isLargeScreen &&
-        <div className='flex gap-4 h-24 bg-pink-50 w-screen border-b-4 border-white items-center justify-center overflow-x-scroll'>
+        <div className='flex gap-3 h-24 bg-pink-50 w-screen border-b-4 border-white items-center justify-center overflow-x-scroll'>
           <Link href={"/products"} className='flex flex-col items-center'>
-            <div className='relative bg-rose-200 p-8 rounded-full border-4 border-white shadow-md'>
+            <div className='relative bg-rose-200 p-6 rounded-full border-4 border-white shadow-md'>
               <img
                 src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687418266/13001_hpk_1_ab8vvz.png"
                 alt="Bras"
                 className='absolute left-0 -top-4 hover:scale-110'
               />
             </div>
-            <p className='text-sm font-medium font-serif'>Bras</p>
+            <p className='text-xs font-medium font-serif'>Bras</p>
           </Link>
           <Link href={"/products"} className='flex flex-col items-center'>
-            <div className='relative bg-emerald-200 p-8 rounded-full border-4 border-white shadow-md'>
+            <div className='relative bg-emerald-200 p-6 rounded-full border-4 border-white shadow-md'>
               <img
                 src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687418356/Active-removebg-preview_b9snwp.png"
                 alt="Panties"
                 className='absolute left-0 top-1 scale-125 hover:scale-150'
               />
             </div>
-            <p className='text-sm font-medium font-serif'>Panties</p>
+            <p className='text-xs font-medium font-serif'>Panties</p>
           </Link>
           <Link href={"/products"} className='flex flex-col items-center'>
-            <div className='relative bg-orange-200 p-8 rounded-full border-4 border-white shadow-md'>
+            <div className='relative bg-orange-200 p-6 rounded-full border-4 border-white shadow-md'>
               <img
                 src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687423249/image-removebg-preview_ybtrta.png"
                 alt="Lingerie Set"
                 className='absolute left-0 -top-2 scale-110 hover:scale-125'
               />
             </div>
-            <p className='text-sm font-medium font-serif'>Lingerie Set</p>
+            <p className='text-xs font-medium font-serif'>Lingerie Set</p>
           </Link>
           <Link href={"/products"} className='flex flex-col items-center'>
-            <div className='relative bg-purple-200 p-8 rounded-full border-4 border-white shadow-md'>
+            <div className='relative bg-orange-200 p-6 rounded-full border-4 border-white shadow-md'>
+              <img
+                src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687425439/Active_yvgq4h.png"
+                alt="Lingerie Set"
+                className='absolute left-0 -top-2 scale-110 hover:scale-125'
+              />
+            </div>
+            <p className='text-xs font-medium font-serif'>Shapewear</p>
+          </Link>
+          <Link href={"/products"} className='flex flex-col items-center'>
+            <div className='relative bg-purple-200 p-6 rounded-full border-4 border-white shadow-md'>
               <img
                 src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687426521/Offer_umit8e.png"
                 alt="Offer"
                 className='absolute -left-0 -top-1 scale-110 hover:scale-125'
               />
             </div>
-            <p className='text-sm font-medium font-serif'>Offers</p>
+            <p className='text-xs font-medium font-serif'>Offers</p>
           </Link>
         </div>
       }
