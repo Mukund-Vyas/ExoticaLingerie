@@ -7,7 +7,7 @@ const StyleImageGrid = () => {
             className="styleImage-container mt-1.5"
             style={{
                 backgroundImage:
-                    'url("https://www.camille.co.uk/blog/wp-content/uploads/2019/05/GettyImages-949598644-1080x720.jpg")',
+                    'url("https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724611519/eztyn8qet2coppnsnhnl.jpg")',
             }}
         >
             <div className='bg-black bg-opacity-40'>

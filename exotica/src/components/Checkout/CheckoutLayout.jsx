@@ -109,15 +109,16 @@ const CheckoutLayout = () => {
     const generateOrderNumber = () => {
         return `EXO${Date.now()}`;
     };
-
+    console.log(state.selectedItems);
+    
     const prepareOrderData = (orderNumber, orderStatus) => {
-        const items = state.selectedItems.map(item => ({
-            OrderItemId: item?.variation?._id,
+        const items = state.selectedItems.map((item, index) => ({
+            OrderItemId: `${orderNumber}${index + 1}`,
             Sku: item?.variation?.SKU,
             productName: item?.productname,
             Quantity: item?.quantity,
             Price: item.price,
-            itemDiscount: item.discountedPrice ? ((item.price - item.discountedPrice)/ item.price)*100 : 0,
+            itemDiscount: item.discountedPrice ? (item.price - item.discountedPrice) : 0,
         }));
 
         return {
@@ -128,13 +129,13 @@ const CheckoutLayout = () => {
             orderDate: new Date(),
             expDeliveryDate: new Date(new Date().setDate(new Date().getDate() + 7)),
             shippingCost: afterDiscount < 999 ? 49 : 0,
-            discount: totalDiscount,
+            discount: 0,
             walletDiscount: 0,
             promoCodeDiscount: 0,
             prepaidDiscount: 0,
             paymentMode: payOnline ? 1 : 0, // Example: 1 for online, 0 for COD
             paymentGateway: payOnline ? "Phonepe" : "NA", // Example value
-            shippingMethod: 1,
+            shippingMethod: payOnline ? 3 : 1,
             packageWeight: 250,
             packageHeight: 2,
             packageWidth: 4, 

@@ -5,7 +5,7 @@ const Advertising = () => {
         <div className="relative h-[90vh] mt-1">
             <picture className="absolute inset-0 h-full">
                 <source
-                    srcSet="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724603151/deiwqdiyerzstq5hsg2a.webp"
+                    srcSet="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724672564/budjy5dhez90octixbnx.webp"
                     media="(max-width: 640px)"
                 />
                 <img
