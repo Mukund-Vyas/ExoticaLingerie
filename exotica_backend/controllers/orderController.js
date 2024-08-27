@@ -223,12 +223,12 @@ exports.createOrder = async (req, res) => {
                 `;
 
                 // Send confirmation email to the customer
-                // sendOrderConfirmationEmail(userEmail, 'Order Confirmation', customerEmailContent);
+                sendOrderConfirmationEmail(userEmail, 'Order Confirmation', customerEmailContent);
 
                 // Send acknowledgment email to the seller (replace with actual seller email)
-                const sellerEmail = 'cr.cait2020@gmail.com';
-                // const sellerEmail = process.env.SELLER_EMAIL;
-                // sendOrderConfirmationEmail(sellerEmail, 'New Order Received', sellerEmailContent);
+                // const sellerEmail = 'cr.cait2020@gmail.com';
+                const sellerEmail = process.env.SELLER_EMAIL;
+                sendOrderConfirmationEmail(sellerEmail, 'New Order Received', sellerEmailContent);
             } catch (apiError) {
                 console.error("Error creating order on EasyEcom:", apiError.response?.data || apiError.message);
 
