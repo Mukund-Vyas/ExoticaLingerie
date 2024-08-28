@@ -128,7 +128,8 @@ const ProductCard = ({ product, variation, getWishlist }) => {
         )}
         <Link href={`/products/${product._id}?color=${variation.color}`}>
           <img
-            src={variation.imageUrls[0].replace('dl=0', 'raw=1')}
+            // src={variation.imageUrls[0].replace('dl=0', 'raw=1')}
+            src={process.env.NEXT_PUBLIC_Image_URL +"/"+ variation.imageUrls[0]}
             alt={`${variation.color} ${product.productname}`}
             className="w-full object-cover rounded-md bg-gray-100 min-h-52"
             loading='lazy'

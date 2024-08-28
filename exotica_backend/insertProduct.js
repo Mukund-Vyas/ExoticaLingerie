@@ -18,8 +18,6 @@ mongoose.connect(mongoURI)
   .catch(err => {
     console.error('Error connecting to MongoDB:', err);
   });
-// CSV file path
-const filePath = path.join("D:/Mukund/EL/csvs/Bra (final)(Bra).csv");
 
 // Helper function to convert Dropbox URL to a direct download URL
 const convertDropboxUrl = (url) => {
@@ -58,18 +56,35 @@ const downloadImage = async (url, filename) => {
     });
 };
 
-csvtojson()
-    .fromFile(filePath)
-    .then(async (jsonObj) => {
-        // Filter out rows that have empty or missing fields
+// Helper function to download a file from Google Drive
+const downloadCSVFromGoogleDrive = async (fileId) => {
+    const url = `https://drive.google.com/uc?export=download&id=${fileId}`;
+    const response = await axios.get(url, { responseType: 'stream' });
+    const filePath = path.join(__dirname, 'temp.csv');
+    const writer = fs.createWriteStream(filePath);
+
+    return new Promise((resolve, reject) => {
+        response.data.pipe(writer);
+        writer.on('finish', () => resolve(filePath));
+        writer.on('error', reject);
+    });
+};
+
+(async () => {
+    try {
+        const fileId = '1EgI45fwobddaKiaDQ4IaveJ2SEQU6tPW';  // Replace with your Google Drive file ID
+        const csvFilePath = await downloadCSVFromGoogleDrive(fileId);  // Download CSV to local temp file
+
+        const jsonObj = await csvtojson().fromFile(csvFilePath);  // Parse CSV to JSON
+
+        // Filter out rows with missing fields
         const trimmedJsonObj = jsonObj.filter(item => {
-            // Ensure that critical fields (like productname, StyleCode, etc.) are present
-            return item['StyleCode'] && item['productname'] && item['price'] && item['StyleCode'];  // Add other required fields as needed
+            return item['StyleCode'] && item['productname'] && item['price'] && item['StyleCode'];
         });
 
         const groupedProducts = {};
 
-        for (const item of trimmedJsonObj) {  // Use trimmedJsonObj instead of jsonObj
+        for (const item of trimmedJsonObj) {
             const key = `${item['StyleCode']}-${item['productname']}`;
 
             if (!groupedProducts[key]) {
@@ -149,8 +164,7 @@ csvtojson()
         } finally {
             mongoose.connection.close();  // Close the MongoDB connection
         }
-    })
-    .catch(err => {
-        console.error('Error parsing CSV:', err);
-    });
-
+    } catch (error) {
+        console.error('Error:', error);
+    }
+})();

@@ -1,16 +1,13 @@
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
 import { useCart } from '@/src/contexts/CartContext';
 import api from '@/src/utils/api';
-import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { BiMinus, BiPlus } from 'react-icons/bi';
-import { FaBoxes, FaRegHeart } from 'react-icons/fa';
 import { FaTruckFast } from 'react-icons/fa6';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { HiCash } from 'react-icons/hi';
 import { HiOutlineShoppingCart } from 'react-icons/hi2';
-import { MdColorLens, MdOutlineStar } from 'react-icons/md';
+import { MdColorLens } from 'react-icons/md';
 import { TbRulerMeasure } from 'react-icons/tb';
 import { Oval } from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -211,7 +208,8 @@ const ProductDetails = ({ product_id, color }) => {
                         {selectedVariation.imageUrls.map((value, index) => (
                             <img
                                 key={"Image" + index}
-                                src={value.replace('dl=0', 'raw=1')}
+                                // src={value.replace('dl=0', 'raw=1')}
+                                src={process.env.NEXT_PUBLIC_Image_URL +"/"+ value}
                                 alt={"image" + index}
                                 className={activeImg === value ? "w-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer border-primary border-2 transition-transform duration-300" : "w-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
                                 onClick={() => setActiveImg(value)}
@@ -233,7 +231,8 @@ const ProductDetails = ({ product_id, color }) => {
                             </div>
                         )}
                         <img
-                            src={activeImg.replace('dl=0', 'raw=1')}
+                            // src={activeImg.replace('dl=0', 'raw=1')}
+                            src={process.env.NEXT_PUBLIC_Image_URL +"/"+ activeImg}
                             alt="product-image"
                             className="w-full h-full object-cover rounded-xl"
                             onLoad={handleImageLoad}
@@ -244,8 +243,8 @@ const ProductDetails = ({ product_id, color }) => {
                                 ref={zoomBoxRef}
                                 className="absolute w-44 h-44 bg-no-repeat rounded-full border border-neutral-400 shadow-md z-20"
                                 style={{
-                                    backgroundImage: `url(${activeImg.replace('dl=0', 'raw=1')})`,
-                                    backgroundSize: '500%',
+                                    backgroundImage: `url(${process.env.NEXT_PUBLIC_Image_URL +"/"+ activeImg})`,
+                                    backgroundSize: '600%',
                                     backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
                                     transform: `translate(${zoomPosition.x}px, ${zoomPosition.y}px)`,
                                 }}

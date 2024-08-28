@@ -20,7 +20,26 @@ const app = express();
 app.use(express.json());
 
 // Images url
-app.use('/images', express.static(path.join(__dirname, 'images')));
+// Set valid image extensions
+const validExtensions = ['.png', '.jpg', '.jpeg', '.webp'];
+
+// Middleware to validate file extensions
+app.use('/images', (req, res, next) => {
+    const ext = path.extname(req.url).toLowerCase(); // Get the file extension
+    if (!validExtensions.includes(ext)) {
+        return res.status(403).send('Forbidden: Invalid file type');
+    }
+    next();
+});
+
+// Serve static images with caching
+app.use('/images', express.static(path.join(__dirname, 'images'), {
+    maxAge: '1d',  // Cache images for 1 day
+    fallthrough: false,  // Prevent further routing when a file is served
+    setHeaders: (res, path) => {
+        res.setHeader('Cache-Control', 'public, max-age=86400');  // Cache headers for 1 day (86400 seconds)
+    }
+}));
 
 // Enable CORS
 const allowedOrigins = [

@@ -269,7 +269,7 @@ const CheckoutLayout = () => {
                                 <div className='flex gap-2 flex-wrap'>
                                     {state.selectedItems?.map((item, index) => (
                                         <div key={"cart item" + index} className='border border-secondary w-fit rounded-md flex items-center min-h-12'>
-                                            <img src={item?.variation?.imageUrls[0].replace('dl=0', 'raw=1')} alt="cart-item" title='cart-item-1' className='h-12 rounded-l-md' />
+                                            <img src={process.env.NEXT_PUBLIC_Image_URL + "/"+ item?.variation?.imageUrls[0]} alt="cart-item" title='cart-item-1' className='h-12 rounded-l-md' />
                                             <div className='px-4 text-xs'>
                                                 <h2 className='font-sans'>Estimated Delivery By:</h2>
                                                 <p className='text-primary'>{formattedDate}</p>
