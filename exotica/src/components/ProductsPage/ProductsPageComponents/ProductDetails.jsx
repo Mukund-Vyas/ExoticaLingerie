@@ -163,8 +163,8 @@ const ProductDetails = ({ product_id, color }) => {
     
         // Ensure the zoomBoxRef exists before accessing its properties
         if (zoomBoxRef.current) {
-            const x = e.clientX - left - zoomBoxRef.current.offsetWidth / 1.25;
-            const y = e.clientY - top - zoomBoxRef.current.offsetHeight / 1.25;
+            const x = e.clientX - left - zoomBoxRef.current.offsetWidth / 1.1;
+            const y = e.clientY - top - zoomBoxRef.current.offsetHeight - 50;
             
             // Calculate zoom percentage positions
             const zoomX = ((e.clientX - left) / width) * 100;
