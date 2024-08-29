@@ -72,11 +72,38 @@ const deleteProductById = async (req, res) => {
   }
 };
 
+const getProductsBySubcategory = async (req, res) => {
+  try {
+    // Extract the subcategory from request query parameters
+    const subcategory = req.params.subcategory;
+
+    // Check if the subcategory is provided
+    if (!subcategory) {
+      return res.status(400).json({ message: 'Subcategory is required' });
+    }
+
+    // Find products matching the given subcategory
+    const products = await Product.find({ productSubCategory: subcategory });
+
+    // If no products found, return a 404 status
+    if (products.length === 0) {
+      return res.status(404).json({ message: 'No products found for this subcategory' });
+    }
+
+    // Return the products
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products by subcategory:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   getProducts,
   getLimitedProducts,
   getProductById,
   addProduct,
   updateProductById,
-  deleteProductById
+  deleteProductById,
+  getProductsBySubcategory
 };

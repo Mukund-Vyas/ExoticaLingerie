@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
 import { useRouter } from 'next/router';
+import { useCart } from '@/src/contexts/CartContext';
 
 const CheckoutStatus = ({ transactionId }) => {
     const { authToken } = useSelector((state) => state.user);
@@ -11,6 +12,7 @@ const CheckoutStatus = ({ transactionId }) => {
     const [responseMessage, setResponseMessage] = useState(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { state, dispatch } = useCart();
 
     const handleCheckoutStatus = async () => {
         if (transactionId) {
@@ -30,9 +32,10 @@ const CheckoutStatus = ({ transactionId }) => {
                     setResponseCode(response.status);   
                     setResponseMessage(response.data.message || 'Payment processed successfully.');
                     toast.success(response.data.message || 'Payment processed successfully.');
-                    router.push("/checkout/Completed");
                     // Update order status to 1 (completed)
                     await updateOrderStatus(transactionId, 1);
+
+                    router.push("/checkout/Completed");
                 } else {
                     setResponseCode(response.status);
                     setResponseMessage(response.data.message || 'An error occurred.');
@@ -90,11 +93,12 @@ const CheckoutStatus = ({ transactionId }) => {
                 }
             });
             if (response.status === 200) {
-                toast.success('Order status updated successfully');
+                toast.success('Order successfully placed...');
+                dispatch({ type: 'REMOVE_SPECIFIC_ITEMS', payload: state.selectedItems });
             } else {
-                toast.error('Failed to update order status. Please try again.');
+                toast.error('Failed to place order. Please try again.!');
             }
-        } catch (error) {
+        } catch (error) {   
             console.error('Error updating order status:', error);
             toast.error('An error occurred while updating order status. Please try again.');
         }

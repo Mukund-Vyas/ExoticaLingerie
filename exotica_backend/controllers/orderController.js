@@ -69,16 +69,27 @@ exports.createOrder = async (req, res) => {
             console.log(easyEcomOrderData);
 
             try {
-                let easyeres = await axios.post('https://api.easyecom.io/webhook/v2/createOrder', easyEcomOrderData, {
+                let easyResponse = await axios.post('https://api.easyecom.io/webhook/v2/createOrder', easyEcomOrderData, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${authToken}`
                     }
                 });
 
-                console.log(easyeres.data);
-                console.log(easyeres.data.data[0]);
-                console.log(savedOrder.items);
+                const responseData = easyResponse.data;
+                if (responseData.code !== 200) {
+                    console.error("Error creating order on EasyEcom:", responseData.message, responseData.data);
+            
+                    // Handle the error based on the content of the response
+                    return res.status(400).json({
+                        message: "Failed to create order on EasyEcom",
+                        error: responseData.message,
+                        details: responseData.data
+                    });
+                }
+
+                console.log(easyResponse.data);
+                console.log(easyResponse.data.data[0]);
 
                 let productDetails = '';
                 savedOrder.items.forEach(item => {
@@ -245,9 +256,7 @@ exports.createOrder = async (req, res) => {
                         error: apiError.message
                     });
                 }
-
             }
-
         }
         // Respond with the saved order
         res.status(201).json(savedOrder);
@@ -296,8 +305,6 @@ exports.updateOrder = async (req, res) => {
         if (!existingOrder) {
             return res.status(404).json({ message: 'Order not found' });
         }
-
-        console.log(req.body);
 
         const updater = {
             orderStatus: req.body.status,
@@ -493,6 +500,7 @@ exports.updateOrder = async (req, res) => {
                 })),
                 customer: [updatedOrder.customer],
             };
+
             try {
                 const easyResponse = await axios.post('https://api.easyecom.io/webhook/v2/createOrder', easyEcomOrderData, {
                     headers: {
@@ -501,7 +509,20 @@ exports.updateOrder = async (req, res) => {
                     }
                 });
 
-                console.log(easyResponse);
+                const responseData = easyResponse.data;
+                if (responseData.code !== 200) {
+                    console.error("Error creating order on EasyEcom:", responseData.message, responseData.data);
+            
+                    // Handle the error based on the content of the response
+                    return res.status(400).json({
+                        message: "Failed to create order on EasyEcom",
+                        error: responseData.message,
+                        details: responseData.data
+                    });
+                }
+
+                console.log(easyResponse.data);
+                console.log(easyResponse.data.data[0]);
 
                 // Send confirmation email to the customer
                 sendOrderConfirmationEmail(userEmail, 'Order Confirmation', customerEmailContent);
@@ -525,10 +546,8 @@ exports.updateOrder = async (req, res) => {
                         error: apiError.message
                     });
                 }
-
             }
         }
-
         // Respond with the updated order
         res.status(200).json(updatedOrder);
     } catch (error) {

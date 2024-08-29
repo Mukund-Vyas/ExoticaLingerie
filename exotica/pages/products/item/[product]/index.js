@@ -3,12 +3,9 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { Oval } from 'react-loader-spinner';
 
-const Home = () => {
+const ProductPage = () => {
   const params = useRouter();
-
-  const { product, color } = params.query
-  console.log(product);
-  console.log(color);
+  const { product, color } = params.query;
   
   if (!product) {
     return (
@@ -22,7 +19,7 @@ const Home = () => {
     <div>
       {product && <ProductDetails product_id={product} color={color}/>}
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default ProductPage;

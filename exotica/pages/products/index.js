@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import ProductsPageLayout from '@/src/components/ProductsPage/ProductsPageLayout';
-import { useState } from 'react';
 import { Oval } from 'react-loader-spinner';
 
 
@@ -16,7 +15,6 @@ export default function Home({ products }) {
       {products &&
         <ProductsPageLayout products={products} />
       }
-
     </>
   );
 }

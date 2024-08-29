@@ -180,7 +180,6 @@ const CheckoutLayout = () => {
             });
 
             if (response.status === 201) {
-                dispatch({ type: 'REMOVE_SPECIFIC_ITEMS', payload: state.selectedItems });
                 toast.success('Order placed successfully!');
             } else {
                 toast.error('Failed to place order. Please try again.');
@@ -197,7 +196,6 @@ const CheckoutLayout = () => {
 
         if (payOnline) {
             try {
-                await handleCreateOrder(orderNumber, 0);
                 const response = await api.post('/payment/new-payment', { price: totalPayable, orderNumber: orderNumber }, {
                     headers: {
                         'x-auth-token': authToken,
@@ -206,6 +204,7 @@ const CheckoutLayout = () => {
                 });
 
                 if (response.status === 200) {
+                    await handleCreateOrder(orderNumber, 0);
                     window.location.href = response.data.redirectUrl;
                 } else {
                     toast.error('Unable to initiate payment. Please try again later.');
@@ -217,6 +216,7 @@ const CheckoutLayout = () => {
         } else {
             try {
                 await handleCreateOrder(orderNumber, 1); // Place the order for COD
+                dispatch({ type: 'REMOVE_SPECIFIC_ITEMS', payload: state.selectedItems });
                 router.push("/checkout/Completed");
             } catch (error) {
                 console.error('Error placing COD order:', error);

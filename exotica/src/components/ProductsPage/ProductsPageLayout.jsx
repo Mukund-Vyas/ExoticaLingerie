@@ -39,7 +39,7 @@ const ProductsPageLayout = ({ products }) => {
   return (
     <div className='bg-pink-50 divide-y divide-pink-200'>
       <div><Toaster position="bottom-center" reverseOrder={false} /></div>
-      <div className='text-center px-10'>
+      {/* <div className='text-center px-10'>
         <h1 className='font-mono font-bold text-2xl pt-2'>Bra</h1>
         <div className='text-center mx-auto mb-2'>
           <p>
@@ -51,7 +51,7 @@ const ProductsPageLayout = ({ products }) => {
             </button>
           </p>
         </div>
-      </div>
+      </div> */}
       <div className="container mx-auto py-4 px-4 sm:px-2 md:px-6 lg:px-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {shuffledVariations.map((item, index) => (
           <ProductCard

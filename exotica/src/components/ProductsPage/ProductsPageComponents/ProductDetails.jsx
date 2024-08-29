@@ -29,7 +29,7 @@ const ProductDetails = ({ product_id, color }) => {
 
     const zoomRef = useRef(null);
     const zoomBoxRef = useRef(null);
-    const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+    const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0, zoomX: 0, zoomY: 0});
     const [zoomVisible, setZoomVisible] = useState(false);
 
     // Find the selected variation based on activeColor
@@ -160,10 +160,20 @@ const ProductDetails = ({ product_id, color }) => {
 
     const handleMouseMove = (e) => {
         const { left, top, width, height } = zoomRef.current.getBoundingClientRect();
-        const x = ((e.clientX - left) / width) * 100;
-        const y = ((e.clientY - top) / height) * 100;
-
-        setZoomPosition({ x, y });
+    
+        // Ensure the zoomBoxRef exists before accessing its properties
+        if (zoomBoxRef.current) {
+            const x = e.clientX - left - zoomBoxRef.current.offsetWidth / 1.25;
+            const y = e.clientY - top - zoomBoxRef.current.offsetHeight / 1.25;
+            
+            // Calculate zoom percentage positions
+            const zoomX = ((e.clientX - left) / width) * 100;
+            const zoomY = ((e.clientY - top) / height) * 100;
+    
+            // Update zoomBox position and background using CSS transforms
+            zoomBoxRef.current.style.transform = `translate(${x}px, ${y}px)`;
+            zoomBoxRef.current.style.backgroundPosition = `${zoomX}% ${zoomY}%`;
+        }
     };
 
     const handleMouseEnter = () => {
@@ -210,7 +220,7 @@ const ProductDetails = ({ product_id, color }) => {
                                 key={"Image" + index}
                                 // src={value.replace('dl=0', 'raw=1')}
                                 src={process.env.NEXT_PUBLIC_Image_URL +"/"+ value}
-                                alt={"image" + index}
+                                alt={value.split(".")[0]}
                                 className={activeImg === value ? "w-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer border-primary border-2 transition-transform duration-300" : "w-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
                                 onClick={() => setActiveImg(value)}
                                 loading="lazy"
@@ -220,33 +230,32 @@ const ProductDetails = ({ product_id, color }) => {
 
                     <div
                         className="relative w-full min-h-[30rem] max-lg:min-h-[20rem] rounded-xl border bg-gray border-primary shadow-lg flex items-center justify-center"
-                        ref={zoomRef}
-                        onMouseMove={handleMouseMove}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
                     >
-                        {imageLoading && (
+                        {/* {imageLoading && (
                             <div className="absolute rounded-xl inset-0 bg-black bg-opacity-20 flex items-center justify-center z-10">
                                 <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
                             </div>
-                        )}
+                        )} */}
                         <img
                             // src={activeImg.replace('dl=0', 'raw=1')}
                             src={process.env.NEXT_PUBLIC_Image_URL +"/"+ activeImg}
-                            alt="product-image"
+                            alt={activeImg.split(".")[0]}
                             className="w-full h-full object-cover rounded-xl"
-                            onLoad={handleImageLoad}
+                            // onLoad={handleImageLoad}
+                            onError={(e) => e.currentTarget.src = '/Images/placeholder.png'} 
                             loading="lazy"
+                            ref={zoomRef}
+                            onMouseMove={handleMouseMove}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
                         />
                         {zoomVisible && (
                             <div
                                 ref={zoomBoxRef}
                                 className="absolute w-44 h-44 bg-no-repeat rounded-full border border-neutral-400 shadow-md z-20"
                                 style={{
-                                    backgroundImage: `url(${process.env.NEXT_PUBLIC_Image_URL +"/"+ activeImg})`,
-                                    backgroundSize: '600%',
-                                    backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                                    transform: `translate(${zoomPosition.x}px, ${zoomPosition.y}px)`,
+                                    backgroundImage: `url(${encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg)})`,
+                                    backgroundSize: '500%',
                                 }}
                             ></div>
                         )}

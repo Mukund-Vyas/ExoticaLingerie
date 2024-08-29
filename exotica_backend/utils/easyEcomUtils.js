@@ -9,7 +9,6 @@ async function getEasyEcomAuthToken() {
         }, {
             headers: { 'Content-Type': 'application/json' }
         });
-        console.log(response.data.data.token);
         
         return response.data.data.token.jwt_token;
     } catch (error) {

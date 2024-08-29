@@ -11,6 +11,9 @@ router.get('/productsLayoutList', productController.getLimitedProducts);
 // Route to fetch a product by ID
 router.get('/products/:id', productController.getProductById);
 
+// Route to fetch a product by subcategory
+router.get('/products/subcategory/:subcategory', productController.getProductsBySubcategory);
+
 // Route to add a new product
 router.post('/products', productController.addProduct);
 

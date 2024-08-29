@@ -16,7 +16,14 @@ const CartItem = ({ item, onRemove, onUpdateQuantity, isSelected, onSelect }) =>
                 onChange={() => onSelect(item)}
                 className='absolute top-2 left-2 h-4 w-4 accent-rose-500'
             />
-            <img src={process.env.NEXT_PUBLIC_Image_URL + "/"+ item.variation.imageUrls[0]  } alt={item.productname} className='w-24 rounded-md ml-4' />
+            <img 
+                src={item.variation.imageUrls[0] 
+                    ? `${process.env.NEXT_PUBLIC_Image_URL}/${item.variation.imageUrls[0]}` 
+                    : '/Images/placeholder.png'}
+                alt={item.variation.imageUrls[0]?.split('.')[0] || 'placeholder-image'} 
+                className='w-24 rounded-md ml-4' 
+            />
+
             <div className='flex-grow ml-4'>
                 <div className='flex justify-between items-start'>
                     <div>
