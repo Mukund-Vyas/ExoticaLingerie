@@ -161,20 +161,18 @@ const ProductDetails = ({ product_id, color }) => {
     const handleMouseMove = (e) => {
         const { left, top, width, height } = zoomRef.current.getBoundingClientRect();
     
-        // Ensure the zoomBoxRef exists before accessing its properties
         if (zoomBoxRef.current) {
-            const x = e.clientX - left - zoomBoxRef.current.offsetWidth / 1.1;
-            const y = e.clientY - top - zoomBoxRef.current.offsetHeight - 50;
-            
-            // Calculate zoom percentage positions
-            const zoomX = ((e.clientX - left) / width) * 100;
-            const zoomY = ((e.clientY - top) / height) * 100;
+          const x = e.clientX - left - zoomBoxRef.current.offsetWidth - 45;
+          const y = e.clientY - top - zoomBoxRef.current.offsetHeight*1.25;
     
-            // Update zoomBox position and background using CSS transforms
-            zoomBoxRef.current.style.transform = `translate(${x}px, ${y}px)`;
-            zoomBoxRef.current.style.backgroundPosition = `${zoomX}% ${zoomY}%`;
+          const zoomX = ((e.clientX - left) / width) * 100;
+          const zoomY = ((e.clientY - top) / height) * 100;
+    
+          zoomBoxRef.current.style.transform = `translate(${x}px, ${y}px)`;
+          zoomBoxRef.current.style.backgroundPosition = `${zoomX}% ${zoomY}%`;
         }
-    };
+      };
+    
 
     const handleMouseEnter = () => {
         setZoomVisible(true);
@@ -200,8 +198,10 @@ const ProductDetails = ({ product_id, color }) => {
         'black': '#2f2f2f',
         'blue': '#000176',
         'sky': '#9cc8eb',
+        'skay': '#9cc8eb',
         'red': '#cb0000',
         'light red': '#f26b79',
+        'light purple': '#8b5b77',
         'mustard': '#ba6c36',
         'brown': '#8f646e',
         'cream': '#dfb090',
@@ -240,7 +240,7 @@ const ProductDetails = ({ product_id, color }) => {
                             // src={activeImg.replace('dl=0', 'raw=1')}
                             src={process.env.NEXT_PUBLIC_Image_URL +"/"+ activeImg}
                             alt={activeImg.split(".")[0]}
-                            className="w-full h-full object-cover rounded-xl"
+                            className="w-full h-full object-cover rounded-xl cursor-none"
                             // onLoad={handleImageLoad}
                             onError={(e) => e.currentTarget.src = '/Images/placeholder.png'} 
                             loading="lazy"
@@ -252,7 +252,7 @@ const ProductDetails = ({ product_id, color }) => {
                         {zoomVisible && (
                             <div
                                 ref={zoomBoxRef}
-                                className="absolute w-44 h-44 bg-no-repeat rounded-full border border-neutral-400 shadow-md z-20"
+                                className="absolute w-44 h-44 bg-no-repeat rounded-full border border-neutral-400 shadow-md z-20 pointer-events-none"
                                 style={{
                                     backgroundImage: `url(${encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg)})`,
                                     backgroundSize: '500%',

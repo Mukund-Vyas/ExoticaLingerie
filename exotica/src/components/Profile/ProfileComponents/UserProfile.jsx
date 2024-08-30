@@ -15,6 +15,7 @@ import { logout } from '@/Redux/Reducers/userSlice';
 import { redirect } from 'next/navigation';
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 function UserProfile({ gotoLogin, toggleProfile }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -98,10 +99,12 @@ function UserProfile({ gotoLogin, toggleProfile }) {
                 throw new Error('Network response was not ok');
             }
 
-            const updatedUser = await response.json(); // Assuming backend returns updated user data
+            const updatedUser = await response.json();
             setUserData(updatedUser);
+            toast.success('Address deleted successfully');
         } catch (error) {
             console.error('Error deleting address:', error);
+            toast.error('Failed to delete address');
         }
     };
 
@@ -248,9 +251,9 @@ function UserProfile({ gotoLogin, toggleProfile }) {
                                             <span className='hover:text-primary'>FAQs</span>
                                             <span className='hover:text-primary'>Contact Us</span>
                                             <span className='hover:text-primary'>About Us</span>
-                                            <span className='hover:text-primary'>Return Policy</span>
-                                            <span className='hover:text-primary'>Privacy Policy</span>
-                                            <span className='hover:text-primary'>Terms of Use</span>
+                                            <Link href={"/return-policy"} className='hover:text-primary' onClick={()=>dispatch(setProfileOpen({ isOpen: false }))}>Return Policy</Link>
+                                            <Link href={"/privacy-policy"} className='hover:text-primary' onClick={()=>dispatch(setProfileOpen({ isOpen: false }))}>Privacy Policy</Link>
+                                            <Link href={"/terms-of-use"} className='hover:text-primary' onClick={()=>dispatch(setProfileOpen({ isOpen: false }))}>Terms of Use</Link>
                                         </div>
                                     </div>
 

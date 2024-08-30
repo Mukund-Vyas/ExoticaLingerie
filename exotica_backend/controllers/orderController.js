@@ -569,3 +569,42 @@ exports.deleteOrder = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+const convertDecimal128ToFloat = (obj) => {
+    if (Array.isArray(obj)) {
+      return obj.map(item => convertDecimal128ToFloat(item));
+    } else if (obj && typeof obj === 'object') {
+      if (obj instanceof Date) {
+        return obj; // Preserve Date objects
+      }
+      return Object.keys(obj).reduce((acc, key) => {
+        if (obj[key] && obj[key]._bsontype === 'Decimal128') {
+          acc[key] = parseFloat(obj[key].toString()); // Convert to float
+        } else if (typeof obj[key] === 'object') {
+          acc[key] = convertDecimal128ToFloat(obj[key]);
+        } else {
+          acc[key] = obj[key];
+        }
+        return acc;
+      }, {});
+    }
+    return obj;
+  };
+
+exports.getOrdersByUser = async (req, res) => {
+    // console.log("come to get order");
+    try {
+        const userId = req.user._id;
+        const orders = await Order.find({ user: userId }).populate('user');
+        
+        if (orders.length > 0) {
+            const ordersWithConvertedDecimals = orders.map(order => convertDecimal128ToFloat(order.toObject()));
+            // console.log(ordersWithConvertedDecimals);
+            res.status(200).json(ordersWithConvertedDecimals);
+        } else {
+            res.status(404).json({ message: 'No orders found for this user' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
