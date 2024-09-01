@@ -24,23 +24,23 @@ const downloadImage = async (url, filename) => {
 
   // Check if the image already exists
   if (await fs.pathExists(writePath)) {
-      console.log(`Image already exists: ${writePath}`);
-      return writePath;  // Skip download and return existing path
+    console.log(`Image already exists: ${writePath}`);
+    return writePath;  // Skip download and return existing path
   }
 
   // If not found, download the image
   const response = await axios({
-      url,
-      responseType: 'stream'
+    url,
+    responseType: 'stream'
   });
 
   await fs.ensureDir(path.dirname(writePath));  // Ensure the directory exists
 
   const writer = fs.createWriteStream(writePath);
   return new Promise((resolve, reject) => {
-      response.data.pipe(writer);
-      writer.on('finish', () => resolve(writePath));
-      writer.on('error', reject);
+    response.data.pipe(writer);
+    writer.on('finish', () => resolve(writePath));
+    writer.on('error', reject);
   });
 };
 // ============================= Helper Functions =============================
@@ -147,7 +147,7 @@ const getProductsBySubcategory = async (req, res) => {
 // Controller function to handle POST request to add products to db with csv
 const uploadCSVProducts = async (req, res) => {
   console.log("comes for add");
-  
+
   try {
     // Check for the passKey in request headers
     const passKey = req.headers['passkey'];
@@ -239,7 +239,18 @@ const uploadCSVProducts = async (req, res) => {
         }
       } else {
         // If the SKU does not exist, add it to the groupedProducts for insertion later
-        groupedProducts[key].variations.push(newVariation);
+        const existingVariationIndex = groupedProducts[key].variations.findIndex(variation =>
+          variation.color === newVariation.color
+        );
+
+        if (existingVariationIndex !== -1) {
+          // If variation exists, merge sizes and image URLs
+          groupedProducts[key].variations[existingVariationIndex].size.push(...newVariation.size);
+          groupedProducts[key].variations[existingVariationIndex].imageUrls.push(...newVariation.imageUrls);
+          groupedProducts[key].variations[existingVariationIndex].imageUrls = [...new Set(groupedProducts[key].variations[existingVariationIndex].imageUrls)];  // Remove duplicate URLs
+        } else {
+          groupedProducts[key].variations.push(newVariation);  // Add new variation
+        }
       }
     }
 
@@ -247,7 +258,7 @@ const uploadCSVProducts = async (req, res) => {
     const productsToInsert = Object.values(groupedProducts).filter(product => product.variations.length > 0);
 
     console.log(productsToInsert.length);
-    
+
     if (productsToInsert.length > 0) {
       await Product.insertMany(productsToInsert);  // Insert new products into MongoDB
       console.log("Products inserted");
