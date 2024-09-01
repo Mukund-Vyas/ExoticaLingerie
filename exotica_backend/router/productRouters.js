@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
+const upload = require('../middleware/uploadMiddleware');
 
 // Route to fetch all products
 router.get('/products', productController.getProducts);
@@ -23,4 +24,6 @@ router.put('/products/:id', productController.updateProductById);
 // Route to delete a product by ID
 router.delete('/products/:id', productController.deleteProductById);
 
+// Admin Routes
+router.post('/products/upload-csv', upload.single('file'), productController.uploadCSVProducts);
 module.exports = router;

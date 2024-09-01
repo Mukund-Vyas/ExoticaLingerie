@@ -79,7 +79,7 @@ const downloadCSVFromGoogleDrive = async (fileId) => {
 
         // Filter out rows with missing fields
         const trimmedJsonObj = jsonObj.filter(item => {
-            return item['StyleCode'] && item['productname'] && item['price'] && item['StyleCode'];
+            return item['StyleCode'] && item['productname'] && item['price'] && item['ItemSKU'];
         });
 
         const groupedProducts = {};
@@ -95,16 +95,19 @@ const downloadCSVFromGoogleDrive = async (fileId) => {
                     productCategory: item['productCategory'],
                     productSubCategory: item['SubCategory'],
                     productFeatures: [
-                        { title: "PackType", description: item['PackType'] },
-                        { title: "StyleType", description: item['StyleType'] },
-                        { title: "FabricType", description: item['FabricType'] },
+                        { title: "Pack Type", description: item['PackType'] },
+                        { title: "Style Type", description: item['StyleType'] },
+                        { title: "Fabric Type", description: item['FabricType'] },
                         { title: "Seam", description: item['Seam'] },
                         { title: "Wiring", description: item['Wiring'] },
                         { title: "Padding", description: item['Padding'] },
-                        { title: "StrapType", description: item['StrapType'] },
+                        { title: "Strap Type", description: item['StrapType'] },
                         { title: "Support", description: item['Support'] },
-                        { title: "HookCount", description: item['HookCount'] },
+                        { title: "Hook Count", description: item['HookCount'] },
                         { title: "Coverage", description: item['Coverage'] },
+                        { title: "Closure", description: item['Closure'] },
+                        { title: "Wash Care", description: item['WashCare'] },
+                        { title: "Care Instructions and Disclaimers", description: item['Disclaimer'] },
                     ],
                     variations: [],
                     productDescription: item['productDescription'],
@@ -114,7 +117,7 @@ const downloadCSVFromGoogleDrive = async (fileId) => {
                     stockAvailability: parseInt(item['stock']),
                     price: parseFloat(item['price']),
                     discount: parseFloat(item['discount']),
-                    GST: "663784b143bae7e8f341ad6e",  // Hardcoded GST value (you can replace this with dynamic logic)
+                    GST: "663784b143bae7e8f341ad6e",
                 };
             }
 
