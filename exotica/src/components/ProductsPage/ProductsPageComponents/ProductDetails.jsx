@@ -29,7 +29,7 @@ const ProductDetails = ({ product_id, color }) => {
 
     const zoomRef = useRef(null);
     const zoomBoxRef = useRef(null);
-    const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0, zoomX: 0, zoomY: 0});
+    const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0, zoomX: 0, zoomY: 0 });
     const [zoomVisible, setZoomVisible] = useState(false);
 
     // Find the selected variation based on activeColor
@@ -160,19 +160,18 @@ const ProductDetails = ({ product_id, color }) => {
 
     const handleMouseMove = (e) => {
         const { left, top, width, height } = zoomRef.current.getBoundingClientRect();
-    
+
         if (zoomBoxRef.current) {
-          const x = e.clientX - left - zoomBoxRef.current.offsetWidth - 45;
-          const y = e.clientY - top - zoomBoxRef.current.offsetHeight*1.25;
-    
-          const zoomX = ((e.clientX - left) / width) * 100;
-          const zoomY = ((e.clientY - top) / height) * 100;
-    
-          zoomBoxRef.current.style.transform = `translate(${x}px, ${y}px)`;
-          zoomBoxRef.current.style.backgroundPosition = `${zoomX}% ${zoomY}%`;
+            const x = e.clientX - left - zoomBoxRef.current.offsetWidth / 2;
+            const y = e.clientY - top - zoomBoxRef.current.offsetHeight / 2;
+
+            const zoomX = ((e.clientX - left) / width) * 100;
+            const zoomY = ((e.clientY - top) / height) * 100;
+
+            zoomBoxRef.current.style.transform = `translate(${x}px, ${y}px)`;
+            zoomBoxRef.current.style.backgroundPosition = `${zoomX}% ${zoomY}%`;
         }
-      };
-    
+    };
 
     const handleMouseEnter = () => {
         setZoomVisible(true);
@@ -213,15 +212,15 @@ const ProductDetails = ({ product_id, color }) => {
             <div><Toaster position="bottom-center" reverseOrder={false} /></div>
             <div className="flex flex-col justify-between lg:flex-row gap-16 lg:items-start max-sm:gap-4">
                 {/* Images Section */}
-                <div className="relative flex flex-col lg:flex-row gap-6 max-sm:gap-2 lg:w-2/4">
+                <div className="relative flex flex-col-reverse lg:flex-row gap-6 max-sm:gap-2 lg:w-2/4">
                     <div className="flex lg:flex-col gap-2 h-auto max-lg:w-full max-lg:overflow-x-auto max-lg:scrollbar-thin scrollbar-thumb-rounded-lg scrollbar-thumb-gray-500">
                         {selectedVariation.imageUrls.map((value, index) => (
                             <img
                                 key={"Image" + index}
                                 // src={value.replace('dl=0', 'raw=1')}
-                                src={process.env.NEXT_PUBLIC_Image_URL +"/"+ value}
+                                src={process.env.NEXT_PUBLIC_Image_URL + "/" + value}
                                 alt={value.split(".")[0]}
-                                className={activeImg === value ? "w-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer border-primary border-2 transition-transform duration-300" : "w-20 max-lg:w-36 max-lg:h-36 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
+                                className={activeImg === value ? "w-20 max-lg:w-14 bg-white rounded-md cursor-pointer border-primary border-2 transition-transform duration-300" : "w-20 max-lg:w-14 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
                                 onClick={() => setActiveImg(value)}
                                 loading="lazy"
                             />
@@ -237,27 +236,27 @@ const ProductDetails = ({ product_id, color }) => {
                             </div>
                         )} */}
                         <img
-                            // src={activeImg.replace('dl=0', 'raw=1')}
-                            src={process.env.NEXT_PUBLIC_Image_URL +"/"+ activeImg}
-                            alt={activeImg.split(".")[0]}
-                            className="w-full h-full object-cover rounded-xl cursor-none"
-                            // onLoad={handleImageLoad}
-                            onError={(e) => e.currentTarget.src = '/Images/placeholder.png'} 
-                            loading="lazy"
                             ref={zoomRef}
-                            onMouseMove={handleMouseMove}
+                            src={process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg}
+                            alt="Product Image"
+                            className="w-full h-full object-cover rounded-xl"
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
+                            onMouseMove={handleMouseMove}
+                            loading="lazy"
                         />
                         {zoomVisible && (
                             <div
                                 ref={zoomBoxRef}
-                                className="absolute w-44 h-44 bg-no-repeat rounded-full border border-neutral-400 shadow-md z-20 pointer-events-none"
+                                className="absolute top-0 left-0 w-48 h-48 bg-black pointer-events-none rounded-full max-sm:hidden"
                                 style={{
                                     backgroundImage: `url(${encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg)})`,
                                     backgroundSize: '500%',
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundPosition: `${zoomPosition.zoomX}% ${zoomPosition.zoomY}%`,
+                                    cursor: 'crosshair'
                                 }}
-                            ></div>
+                            />
                         )}
                     </div>
                 </div>
@@ -303,22 +302,36 @@ const ProductDetails = ({ product_id, color }) => {
                             {product.variations.map((variation, index) => {
                                 let colorKey = variation.color.toLowerCase();
                                 let backgroundColor = colorPalette[colorKey] || variation.color;
-                                return <button
-                                    key={"Color" + index}
-                                    className={
-                                        activeColor === variation.color
-                                            ? "p-4 rounded-full cursor-pointer border-4 border-pink-50 border-double"
-                                            : "p-4 rounded-full cursor-pointer border-4 border-pink-50 hover:border-primary hover:scale-100"
-                                    }
-                                    style={{ backgroundColor: backgroundColor }}
-                                    onClick={() => {
-                                        setActiveColor(variation.color);
-                                        setActiveImg(variation.imageUrls[0]);
-                                    }}
-                                    title={variation.color}
-                                ></button>
-                            }
-                            )}
+                                let backgroundImage = variation.imageUrls.length > 0 ? `url(${encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + variation.imageUrls[0])})` : '';
+
+                                return (
+                                    <div key={"Color Div " + index} className='flex flex-col items-center text-xs'>
+                                        <button
+                                        key={"Color" + index}
+                                        className={
+                                            activeColor === variation.color
+                                                ? "w-12 h-16 p-1 rounded-lg cursor-pointer border-2 border-primary"
+                                                : "w-12 h-16 p-1 rounded-lg cursor-pointer border-2 border-gray-500 hover:border-primary hover:scale-100"
+                                        }
+                        
+                                        style={{
+                                            backgroundColor: backgroundColor,
+                                            backgroundImage: backgroundImage,
+                                            backgroundSize: 'cover', // Ensure the image covers the button
+                                            backgroundPosition: 'center' // Center the image
+                                        }}
+                                        onClick={() => {
+                                            setActiveColor(variation.color);
+                                            setActiveImg(variation.imageUrls[0]);
+                                        }}
+                                        title={variation.color}
+                                    ></button>
+                                    {activeColor === variation.color && (
+                                        <span>{activeColor}</span>
+                                    )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 

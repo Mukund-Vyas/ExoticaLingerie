@@ -79,7 +79,7 @@ exports.createOrder = async (req, res) => {
                 const responseData = easyResponse.data;
                 if (responseData.code !== 200) {
                     console.error("Error creating order on EasyEcom:", responseData.message, responseData.data);
-            
+
                     // Handle the error based on the content of the response
                     return res.status(400).json({
                         message: "Failed to create order on EasyEcom",
@@ -512,7 +512,7 @@ exports.updateOrder = async (req, res) => {
                 const responseData = easyResponse.data;
                 if (responseData.code !== 200) {
                     console.error("Error creating order on EasyEcom:", responseData.message, responseData.data);
-            
+
                     // Handle the error based on the content of the response
                     return res.status(400).json({
                         message: "Failed to create order on EasyEcom",
@@ -572,31 +572,31 @@ exports.deleteOrder = async (req, res) => {
 
 const convertDecimal128ToFloat = (obj) => {
     if (Array.isArray(obj)) {
-      return obj.map(item => convertDecimal128ToFloat(item));
+        return obj.map(item => convertDecimal128ToFloat(item));
     } else if (obj && typeof obj === 'object') {
-      if (obj instanceof Date) {
-        return obj; // Preserve Date objects
-      }
-      return Object.keys(obj).reduce((acc, key) => {
-        if (obj[key] && obj[key]._bsontype === 'Decimal128') {
-          acc[key] = parseFloat(obj[key].toString()); // Convert to float
-        } else if (typeof obj[key] === 'object') {
-          acc[key] = convertDecimal128ToFloat(obj[key]);
-        } else {
-          acc[key] = obj[key];
+        if (obj instanceof Date) {
+            return obj; // Preserve Date objects
         }
-        return acc;
-      }, {});
+        return Object.keys(obj).reduce((acc, key) => {
+            if (obj[key] && obj[key]._bsontype === 'Decimal128') {
+                acc[key] = parseFloat(obj[key].toString()); // Convert to float
+            } else if (typeof obj[key] === 'object') {
+                acc[key] = convertDecimal128ToFloat(obj[key]);
+            } else {
+                acc[key] = obj[key];
+            }
+            return acc;
+        }, {});
     }
     return obj;
-  };
+};
 
 exports.getOrdersByUser = async (req, res) => {
     // console.log("come to get order");
     try {
         const userId = req.user._id;
         const orders = await Order.find({ user: userId }).populate('user');
-        
+
         if (orders.length > 0) {
             const ordersWithConvertedDecimals = orders.map(order => convertDecimal128ToFloat(order.toObject()));
             // console.log(ordersWithConvertedDecimals);
@@ -608,3 +608,27 @@ exports.getOrdersByUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Get Order Tracking Details 
+exports.getOrderTrackingDetails = async (req, res) => {
+    const orderNumber = req.params.orderNumber;
+    try {
+        // Replace the double slashes and properly format the reference_code
+        const easyecomAPI = `https://api.easyecom.io/Carriers/getTrackingDetails?reference_code=${orderNumber}`;
+        const authToken = await getEasyEcomAuthToken();
+        // Make the API call to Easyecom
+        const response = await axios.get(easyecomAPI, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+
+        // Send Easyecom API response back to the client
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error fetching tracking details:', error);
+
+        // Handle errors and send error response
+        res.status(500).json({ message: 'Error fetching tracking details' });
+    }
+}

@@ -6,8 +6,7 @@ import NoOrder from '../../../../public/Images/NoOrders.png'
 import { useSelector } from 'react-redux';
 import { Oval } from 'react-loader-spinner';
 import api from '@/src/utils/api';
-import { FcCalendar, FcInfo, FcMoneyTransfer, FcPackage, FcShipped, FcSurvey } from 'react-icons/fc';
-import { BsInfoCircleFill } from 'react-icons/bs';
+import { FcCalendar, FcMoneyTransfer, FcSurvey } from 'react-icons/fc';
 
 const OrderHistory = ({ goBack, toggleProfile }) => {
     const [orders, setOrders] = useState([]);
