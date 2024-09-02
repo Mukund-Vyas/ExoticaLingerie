@@ -28,7 +28,7 @@ const ProductDetails = ({ product_id, color }) => {
     const authdispatch = useDispatch();
 
     const zoomRef = useRef(null);
-    const zoomBoxRef = useRef(null);
+    const zoomLensRef = useRef(null);
     const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0, zoomX: 0, zoomY: 0 });
     const [zoomVisible, setZoomVisible] = useState(false);
 
@@ -159,27 +159,39 @@ const ProductDetails = ({ product_id, color }) => {
     };
 
     const handleMouseMove = (e) => {
-        const { left, top, width, height } = zoomRef.current.getBoundingClientRect();
+        if (!zoomRef.current || !zoomLensRef.current) return;
 
-        if (zoomBoxRef.current) {
-            const x = e.clientX - left - zoomBoxRef.current.offsetWidth / 2;
-            const y = e.clientY - top - zoomBoxRef.current.offsetHeight / 2;
+        const { top, left, width, height } = zoomRef.current.getBoundingClientRect();
+        const lensWidth = zoomLensRef.current.offsetWidth;
+        const lensHeight = zoomLensRef.current.offsetHeight;
 
-            const zoomX = ((e.clientX - left) / width) * 100;
-            const zoomY = ((e.clientY - top) / height) * 100;
+        let x = e.clientX - left - lensWidth / 2;
+        let y = e.clientY - top - lensHeight / 2;
 
-            zoomBoxRef.current.style.transform = `translate(${x}px, ${y}px)`;
-            zoomBoxRef.current.style.backgroundPosition = `${zoomX}% ${zoomY}%`;
-        }
+        // Prevent the lens from moving out of the image bounds
+        if (x > width - lensWidth) x = width - lensWidth;
+        if (x < 0) x = 0;
+        if (y > height - lensHeight) y = height - lensHeight;
+        if (y < 0) y = 0;
+
+        // Calculate the background position for the zoomed image
+        const posX = (x / (width - lensWidth)) * 100;
+        const posY = (y / (height - lensHeight)) * 100;
+
+        setZoomPosition({
+            x: -x,
+            y: -y,
+            backgroundPositionX: `${posX}%`,
+            backgroundPositionY: `${posY}%`
+        });
+
+        zoomLensRef.current.style.left = `${x}px`;
+        zoomLensRef.current.style.top = `${y}px`;
+        zoomLensRef.current.style.backgroundPosition = `${posX}% ${posY}%`;
     };
 
-    const handleMouseEnter = () => {
-        setZoomVisible(true);
-    };
-
-    const handleMouseLeave = () => {
-        setZoomVisible(false);
-    };
+    const handleMouseEnter = () => setZoomVisible(true);
+    const handleMouseLeave = () => setZoomVisible(false);
 
     const colorPalette = {
         'maroon': '#821517',
@@ -228,36 +240,46 @@ const ProductDetails = ({ product_id, color }) => {
                     </div>
 
                     <div
-                        className="relative w-full min-h-[30rem] max-lg:min-h-[20rem] rounded-xl border bg-gray border-primary shadow-lg flex items-center justify-center"
+                        className="relative w-full min-h-[10rem] rounded-xl bg-gray flex items-center justify-center"
                     >
                         {/* {imageLoading && (
                             <div className="absolute rounded-xl inset-0 bg-black bg-opacity-20 flex items-center justify-center z-10">
                                 <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
                             </div>
                         )} */}
-                        <img
-                            ref={zoomRef}
-                            src={process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg}
-                            alt="Product Image"
-                            className="w-full h-full object-cover rounded-xl"
+                        <div
+                            className="relative w-full rounded-xl border bg-gray-200 flex items-center justify-center border border-primary shadow-lg"
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
                             onMouseMove={handleMouseMove}
-                            loading="lazy"
-                        />
-                        {zoomVisible && (
-                            <div
-                                ref={zoomBoxRef}
-                                className="absolute top-0 left-0 w-48 h-48 bg-black pointer-events-none rounded-full max-sm:hidden"
-                                style={{
-                                    backgroundImage: `url(${encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg)})`,
-                                    backgroundSize: '500%',
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundPosition: `${zoomPosition.zoomX}% ${zoomPosition.zoomY}%`,
-                                    cursor: 'crosshair'
-                                }}
+                        >
+                            <img
+                                src={process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg}
+                                alt="Product"
+                                className="w-full h-full object-cover rounded-xl"
+                                ref={zoomRef}
                             />
-                        )}
+                            {zoomVisible && (
+                                <>
+                                    <div
+                                        ref={zoomLensRef}
+                                        className="absolute w-32 h-32 bg-white bg-opacity-50 border border-gray-300 rounded max-md:hidden"
+                                        style={{
+                                            backgroundSize: `${zoomRef.current?.offsetWidth * 3}px ${zoomRef.current?.offsetHeight * 3}px`,
+                                        }}
+                                    />
+                                    <div
+                                        className="absolute top-0 left-full ml-6 w-full h-full bg-no-repeat bg-contain rounded-lg z-10 max-md:hidden border border-slate-500"
+                                        style={{
+                                            backgroundImage: `url(${encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg)})`,
+                                            backgroundSize: `${zoomRef.current?.offsetWidth * 3}px ${zoomRef.current?.offsetHeight * 3}px`,
+                                            backgroundPosition: `${zoomPosition.backgroundPositionX} ${zoomPosition.backgroundPositionY}`,
+                                            // transform: `translate(${zoomPosition.x}px, ${zoomPosition.y}px)`,
+                                        }}
+                                    />
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
                 {/* Product Details */}
@@ -277,13 +299,13 @@ const ProductDetails = ({ product_id, color }) => {
                     {/* Price */}
                     <div className="flex flex-row items-baseline gap-2 mb-10 max-sm:mb-4">
                         <h6 className="text-2xl font-semibold max-sm:text-2xl">
-                            ₹ {product.price - product.price * (product.discount / 100)}
+                            ₹ {(product.price - product.price * (product.discount / 100)).toFixed(2)}
                         </h6>
                         {
                             product.discount !== 0 && (
                                 <div className='flex gap-2 items-baseline'>
                                     <span className="text-md font-semibold line-through text-gray-400 max-sm:text-sm">
-                                        ₹ {product.price}
+                                        ₹ {product.price.toFixed(2)}
                                     </span>
                                     <span className="text-green-600 text-xl font-semibold max-sm:text-lg">
                                         {product.discount}% off
@@ -300,39 +322,37 @@ const ProductDetails = ({ product_id, color }) => {
                         </span>
                         <div className="flex flex-row gap-2 pt-3 flex-wrap">
                             {product.variations.map((variation, index) => {
-                                let colorKey = variation.color.toLowerCase();
-                                let backgroundColor = colorPalette[colorKey] || variation.color;
-                                let backgroundImage = variation.imageUrls.length > 0 ? `url(${encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + variation.imageUrls[0])})` : '';
+                                const colorKey = variation.color.toLowerCase();
+                                const backgroundColor = colorPalette[colorKey] || variation.color;
+                                const backgroundImage = variation.imageUrls.length > 0
+                                    ? `url(${encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + variation.imageUrls[0])})`
+                                    : '';
 
                                 return (
-                                    <div key={"Color Div " + index} className='flex flex-col items-center text-xs'>
+                                    <div key={"Color Div " + index} className="relative flex flex-col items-center text-xs z-0" style={{ width: '4rem' }}>
                                         <button
-                                        key={"Color" + index}
-                                        className={
-                                            activeColor === variation.color
-                                                ? "w-12 h-16 p-1 rounded-lg cursor-pointer border-2 border-primary"
-                                                : "w-12 h-16 p-1 rounded-lg cursor-pointer border-2 border-gray-500 hover:border-primary hover:scale-100"
-                                        }
-                        
-                                        style={{
-                                            backgroundColor: backgroundColor,
-                                            backgroundImage: backgroundImage,
-                                            backgroundSize: 'cover', // Ensure the image covers the button
-                                            backgroundPosition: 'center' // Center the image
-                                        }}
-                                        onClick={() => {
-                                            setActiveColor(variation.color);
-                                            setActiveImg(variation.imageUrls[0]);
-                                        }}
-                                        title={variation.color}
-                                    ></button>
-                                    {activeColor === variation.color && (
-                                        <span>{activeColor}</span>
-                                    )}
+                                            className={`w-16 h-20 p-1 rounded-lg cursor-pointer border-2 z-0 ${activeColor === variation.color ? "border-primary" : "border-gray-400 hover:border-primary"
+                                                }`}
+                                            style={{
+                                                backgroundColor: backgroundImage ? 'transparent' : backgroundColor,
+                                                backgroundImage: backgroundImage,
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
+                                            }}
+                                            onClick={() => {
+                                                setActiveColor(variation.color);
+                                                setActiveImg(variation.imageUrls[0]);
+                                            }}
+                                            title={variation.color}
+                                        ></button>
+                                        <span className={`mt-1 text-center ${activeColor === variation.color ? 'visible' : 'invisible'}`} style={{ minHeight: '1rem' }}>
+                                            {variation.color}
+                                        </span>
                                     </div>
                                 );
                             })}
                         </div>
+
                     </div>
 
                     {/* Size */}

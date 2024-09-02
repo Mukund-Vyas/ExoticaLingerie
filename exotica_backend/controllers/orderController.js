@@ -1,6 +1,7 @@
 const { sendOrderConfirmationEmail } = require('../utils/otpmailer');
 const Order = require('../models/ordersModel');
 const User = require('../models/userModel');
+const Product = require('../models/ProductModel');
 const transactionModel = require('../models/transactionModel');
 const { default: axios } = require('axios');
 const { getEasyEcomAuthToken } = require('../utils/easyEcomUtils');
@@ -592,15 +593,51 @@ const convertDecimal128ToFloat = (obj) => {
 };
 
 exports.getOrdersByUser = async (req, res) => {
-    // console.log("come to get order");
     try {
         const userId = req.user._id;
-        const orders = await Order.find({ user: userId }).populate('user');
+        const orders = await Order.find({ user: userId });
 
         if (orders.length > 0) {
+            // Convert Decimal128 values to float
             const ordersWithConvertedDecimals = orders.map(order => convertDecimal128ToFloat(order.toObject()));
-            // console.log(ordersWithConvertedDecimals);
-            res.status(200).json(ordersWithConvertedDecimals);
+
+            // Extract all SKUs from the orders
+            const skus = ordersWithConvertedDecimals.flatMap(order => order.items.map(item => item.Sku));
+            const uniqueSkus = [...new Set(skus)]; // Remove duplicates
+
+            // Fetch products with variations containing the SKUs
+            const products = await Product.find({ 'variations.SKU': { $in: uniqueSkus } }, { 'variations.$': 1 });
+
+            // Create a map for quick lookup of SKU to image
+            const productMap = new Map();
+
+            // Iterate through products and map SKUs to images
+            products.forEach(product => {
+                product.variations.forEach(variation => {
+                    if (uniqueSkus.includes(variation.SKU)) {
+                        // Assuming imageUrls is an array and you want the first image
+                        const image = variation.imageUrls && variation.imageUrls.length > 0 ? variation.imageUrls[0] : null;
+                        productMap.set(variation.SKU, image);
+                    }
+                });
+            });
+
+            // Function to add product images to order items
+            const addProductImagesToOrders = (orders) => {
+                return orders.map(order => {
+                    return {
+                        ...order,
+                        items: order.items.map(item => ({
+                            ...item,
+                            productImage: productMap.get(item.Sku) || null
+                        }))
+                    };
+                }); 
+            };
+
+            const ordersWithProductImages = addProductImagesToOrders(ordersWithConvertedDecimals);
+
+            res.status(200).json(ordersWithProductImages);
         } else {
             res.status(404).json({ message: 'No orders found for this user' });
         }
@@ -608,6 +645,7 @@ exports.getOrdersByUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Get Order Tracking Details 
 exports.getOrderTrackingDetails = async (req, res) => {

@@ -34,6 +34,36 @@ body {
     }
 }
 
+/* ---------------------------------------- Order Tracking ------------------------------------------*/
+.stepper {
+    position: relative;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.step-icon {
+    background-color: #fff;
+    border: 2px solid #ff197d;
+    border-radius: 50%;
+    padding: 0.2rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    line-height: 0%;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.step.active .step-icon {
+    background-color: #ff197d;
+    color: #fff;
+}
 
 /* ---------------------------------------- Navbar Title CSS ---------------------------------------- */
 .t1 {

@@ -18,6 +18,7 @@ const NavMenu = () => {
                     <li><Link href={"/products"} className='hover:text-primary'>Activewear</Link></li>
                     <li><Link href={"/products"} className='hover:text-primary'>Panties</Link></li>
                     <li><Link href={"/products"} className='hover:text-primary'>Shapewear</Link></li>
+                    <li><Link href={"/products/Pack Of 2"} className='hover:text-primary'>Pack of 2</Link></li>
                 </ul>
             </div>
         </div>
