@@ -13,6 +13,7 @@ import { Oval } from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from '../../common/Tooltip';
 import { VscQuestion } from "react-icons/vsc";
+import Image from 'next/image';
 
 const ProductDetails = ({ product_id, color }) => {
     const [product, setProduct] = useState(null);
@@ -43,14 +44,14 @@ const ProductDetails = ({ product_id, color }) => {
         setImageLoading(false);
     };
 
-    useEffect(() => {
-        const img = new Image();
-        img.src = activeImg;
-        img.onload = () => setImageLoading(false);
-        setImageLoading(true); // Set loading state before the image starts loading
+    // useEffect(() => {
+    //     const img = new Image();
+    //     img.src = activeImg;
+    //     img.onload = () => setImageLoading(false);
+    //     setImageLoading(true); // Set loading state before the image starts loading
 
-        return () => img.onload = null;
-    }, [activeImg]);
+    //     return () => img.onload = null;
+    // }, [activeImg]);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -227,17 +228,25 @@ const ProductDetails = ({ product_id, color }) => {
                 <div className="relative flex flex-col-reverse lg:flex-row gap-6 max-sm:gap-2 lg:w-2/4">
                     <div className="flex lg:flex-col gap-2 h-auto max-lg:w-full max-lg:overflow-x-auto max-lg:scrollbar-thin scrollbar-thumb-rounded-lg scrollbar-thumb-gray-500">
                         {selectedVariation.imageUrls.map((value, index) => (
-                            <img
+                            <div
                                 key={"Image" + index}
-                                // src={value.replace('dl=0', 'raw=1')}
-                                src={process.env.NEXT_PUBLIC_Image_URL + "/" + value}
-                                alt={value.split(".")[0]}
-                                className={activeImg === value ? "w-20 max-lg:w-14 bg-white rounded-md cursor-pointer border-primary border-2 transition-transform duration-300" : "w-20 max-lg:w-14 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
+                                className={activeImg === value ? "w-20 max-lg:w-14 bg-white rounded-md cursor-pointer pointer-events-none border-primary border-2 transition-transform duration-300" : "w-20 max-lg:w-14 bg-white rounded-md cursor-pointer opacity-75 border-2 border-neutral-300 hover:border-rose-500 hover:scale-110 transition-transform duration-300"}
                                 onClick={() => setActiveImg(value)}
-                                loading="lazy"
-                            />
+                            >
+                                <Image
+                                    src={process.env.NEXT_PUBLIC_Image_URL + "/" + value}
+                                    alt={value.split(".")[0]}
+                                    width={80}  // Example width
+                                    height={80} // Example height
+                                    layout="responsive" // Ensure responsiveness
+                                    objectFit="cover"  // Same as object-cover in Tailwind
+                                    className="rounded-md"
+                                    loading="lazy"
+                                />
+                            </div>
                         ))}
                     </div>
+
 
                     <div
                         className="relative w-full min-h-[10rem] rounded-xl bg-gray flex items-center justify-center"
@@ -248,22 +257,25 @@ const ProductDetails = ({ product_id, color }) => {
                             </div>
                         )} */}
                         <div
-                            className="relative w-full rounded-xl border bg-gray-200 flex items-center justify-center border border-primary shadow-lg"
+                            className="relative w-full h-full rounded-xl border bg-gray-200 flex items-center justify-center border border-primary shadow-lg"
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
                             onMouseMove={handleMouseMove}
                         >
-                            <img
+                            <Image
                                 src={process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg}
                                 alt="Product"
+                                layout='fill'
+                                objectFit="cover"
                                 className="w-full h-full object-cover rounded-xl"
                                 ref={zoomRef}
+                                priority
                             />
                             {zoomVisible && (
                                 <>
                                     <div
                                         ref={zoomLensRef}
-                                        className="absolute w-32 h-32 bg-white bg-opacity-50 border border-gray-300 rounded max-md:hidden"
+                                        className="absolute w-32 h-32 bg-white bg-opacity-50 border border-gray-300 rounded-xl max-md:hidden"
                                         style={{
                                             backgroundSize: `${zoomRef.current?.offsetWidth * 3}px ${zoomRef.current?.offsetHeight * 3}px`,
                                         }}

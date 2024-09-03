@@ -7,8 +7,8 @@ import toast from 'react-hot-toast';
 import api from '@/src/utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
-import { getWishlists } from '@/src/services/wishlist';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const ProductCard = ({ product, variation, getWishlist }) => {
   const discountedPrice = product.price - (product.price * (product.discount / 100));
@@ -127,12 +127,17 @@ const ProductCard = ({ product, variation, getWishlist }) => {
           </div>
         )}
         <Link href={`/products/item/${product._id}?color=${variation.color}`}>
-          <img
-            // src={variation.imageUrls[0].replace('dl=0', 'raw=1')}
-            src={process.env.NEXT_PUBLIC_Image_URL +"/"+ variation.imageUrls[0]}
+          <Image
+            src={`${process.env.NEXT_PUBLIC_Image_URL}/${variation.imageUrls[0]}`}
             alt={`${variation.color} ${product.productname}`}
-            className="w-full object-cover rounded-md bg-gray-100 min-h-52"
-            loading='lazy'
+            className="rounded-md bg-gray-100 pointer-events-none"
+            layout="responsive"  // Ensures responsiveness
+            width={500}          // Set the width of the image (or use dynamic values)
+            height={300}         // Set the height of the image (or use dynamic values)
+            objectFit="cover"    // Similar to object-cover in Tailwind
+            placeholder="blur"   // Optional: add a blur-up placeholder
+            blurDataURL="/images/posters/placeholder.webp"  // Optional: tiny image used as a blur-up effect
+            loading="lazy"
           />
         </Link>
         <div >

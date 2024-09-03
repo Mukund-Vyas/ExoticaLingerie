@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { FaCaretRight } from 'react-icons/fa'
@@ -10,14 +11,15 @@ const NewArrivals = () => {
             <div className="NewImageGridRow">
                 <div className="NewImageContainer">
                     <div className="NewImageWrapper">
-                        <img
-                            src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687587836/clovia-picture-cotton-rich-padded-non-wired-spacer-cup-t-shirt-bra-1-413186_r5u0ri.jpg"
+                        <Image
+                            src="/images/ExclusiveDesigns&dealsWP/newbra1.webp"
                             alt="discountImage"
+                            layout='fill'
                             className="NewImageStyle"
                         />
                         <div className="NewImageTextOverlay">
                             <Link href="/products">
-                                <p className="NewImageTextStyle">
+                                <p className="NewImageTextStyle flex items-center gap-1">
                                     Mystic Town
                                     <FaCaretRight
                                         style={{ verticalAlign: "middle" }}
@@ -30,14 +32,15 @@ const NewArrivals = () => {
                 </div>
                 <div className="NewImageContainer">
                     <div className="NewImageWrapper">
-                        <img
-                            src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687592607/goh5bpf8_how-to-buy-a-sports-bra_625x300_28_March_22_uotyo6.jpg"
+                        <Image
+                            src="/images/ExclusiveDesigns&dealsWP/newbra2.webp"
                             alt="discountImage"
+                            layout='fill'
                             className="NewImageStyle"
                         />
                         <div className="NewImageTextOverlay">
                             <Link href="/products">
-                                <p className="NewImageTextStyle">
+                                <p className="NewImageTextStyle flex items-center gap-1">
                                     Disney 100{" "}
                                     <FaCaretRight
                                         style={{ verticalAlign: "middle" }}
@@ -50,14 +53,15 @@ const NewArrivals = () => {
                 </div>
                 <div className="NewImageContainer">
                     <div className="NewImageWrapper">
-                        <img
-                            src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687590819/51GDlRcxzOS._SX679__hgy6se.jpg"
+                        <Image
+                            src="/images/ExclusiveDesigns&dealsWP/newbra3.webp"
                             alt="discountImage"
+                            layout='fill'
                             className="NewImageStyle"
                         />
                         <div className="NewImageTextOverlay">
                             <Link href="/products">
-                                <p className="NewImageTextStyle">
+                                <p className="NewImageTextStyle flex items-center gap-1">
                                     Star Wars
                                     <FaCaretRight
                                         style={{ verticalAlign: "middle" }}

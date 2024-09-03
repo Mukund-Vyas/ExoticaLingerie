@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 
 const Advertising = () => {
@@ -5,13 +6,16 @@ const Advertising = () => {
         <div className="relative h-[90vh] mt-1">
             <picture className="absolute inset-0 h-full">
                 <source
-                    srcSet="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724672564/budjy5dhez90octixbnx.webp"
+                    srcSet="/images/posters/fashionsmall.webp"
                     media="(max-width: 640px)"
                 />
-                <img
-                    src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724604718/l51lqxyx5uhzxnhmjwil.webp"
+                <Image
+                    src="/images/posters/fashion.webp"
                     alt="exotica new bra collection"
-                    className="h-full w-full object-cover"
+                    layout="fill"
+                    objectFit="cover"
+                    quality={100}
+                    sizes="(max-width: 640px) 100vw, 100vw"  // Sets responsive sizes
                 />
             </picture>
             <div className="absolute bottom-8 text-white flex flex-col w-full items-center md:bottom-24">

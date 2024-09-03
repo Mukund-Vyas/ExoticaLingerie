@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 const BraCollection = () => {
@@ -5,13 +6,16 @@ const BraCollection = () => {
     <div className="relative h-[80vh] mt-1">
       <picture className="absolute inset-0 h-full">
         <source
-          srcSet="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724609742/ygjcq8eu4x3c0ljxzqdi.webp"
+          srcSet="/images/posters/wintersmall.webp"
           media="(max-width: 640px)"
         />
-        <img
-          src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724607373/ddqpkpqkxnvnl6ij0erk.webp"
+        <Image
+          src="/images/posters/winter.webp"
           alt="exotica new bra collection"
-          className="h-full w-full object-cover"
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+          sizes="(max-width: 640px) 100vw, 100vw"  // Sets responsive sizes
         />
       </picture>
       <div className="absolute top-8 text-pink-900 flex flex-col w-full items-center md:bottom-24 md:pr-72">

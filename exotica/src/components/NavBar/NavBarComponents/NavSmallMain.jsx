@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { HiOutlineMenu } from "react-icons/hi";
-import logo from '../../../../public/Images/logo.png';
+import logo from '../../../../public/Images/logo.webp';
 import { BsSearch } from 'react-icons/bs';
 import { FaShoppingCart, FaUser } from 'react-icons/fa';
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";

@@ -994,7 +994,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 20px;
 }
 
@@ -1167,7 +1167,7 @@ body {
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 40px;
 }
 

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React from 'react'
+import Image from 'next/image';
 
 const StoreImageGrid = () => {
     return (
@@ -8,10 +9,11 @@ const StoreImageGrid = () => {
             <div className="imageGridRow">
                 <div className="imageContainer">
                     <div className="imageWrapper">
-                        <img
-                            src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687587836/clovia-picture-cotton-rich-padded-non-wired-spacer-cup-t-shirt-bra-1-413186_r5u0ri.jpg"
+                        <Image
+                            src="/images/ExclusiveDesigns&dealsWP/1.webp"
                             alt="under 599 bra for women"
                             title='under 599 bra for women'
+                            layout="fill" 
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
@@ -23,10 +25,11 @@ const StoreImageGrid = () => {
                 </div>
                 <div className="imageContainer">
                     <div className="imageWrapper">
-                        <img
-                            src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687592607/goh5bpf8_how-to-buy-a-sports-bra_625x300_28_March_22_uotyo6.jpg"
+                        <Image
+                            src="/images/ExclusiveDesigns&dealsWP/2.webp"
                             alt="under 699 bra for women"
                             title='under 699 bra for women'
+                            layout="fill" 
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
@@ -38,10 +41,11 @@ const StoreImageGrid = () => {
                 </div>
                 <div className="imageContainer">
                     <div className="imageWrapper">
-                        <img
-                            src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687590819/51GDlRcxzOS._SX679__hgy6se.jpg"
+                        <Image
+                            src="/images/ExclusiveDesigns&dealsWP/panties.webp"
                             alt="under 799 bra for women"
                             title='under 799 bra for women'
+                            layout="fill"
                             className="imageStyle"
                         />
                         <div className="imageTextOverlay">
@@ -53,11 +57,12 @@ const StoreImageGrid = () => {
                 </div>
                 <div className="imageContainer">
                     <div className="imageWrapper">
-                        <img
-                            src="https://res.cloudinary.com/dcxdcs6l4/image/upload/v1687591188/P_1_lkfuj9.jpg"
+                        <Image
+                            src="/images/ExclusiveDesigns&dealsWP/4.webp"
                             alt="under 499 bra for women"
                             title='under 499 bra for women'
-                            className="imageStyle"
+                            layout="fill"
+                            className="imageStyle pointer-events-none"
                         />
                         <div className="imageTextOverlay">
                             <Link href="/products">
