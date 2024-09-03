@@ -6,11 +6,11 @@ const Advertising = () => {
         <div className="relative h-[90vh] mt-1">
             <picture className="absolute inset-0 h-full">
                 <source
-                    srcSet="/images/posters/fashionsmall.webp"
+                    srcSet="/Images/Posters/fashionsmall.webp"
                     media="(max-width: 640px)"
                 />
                 <Image
-                    src="/images/posters/fashion.webp"
+                    src="/Images/Posters/fashion.webp"
                     alt="exotica new bra collection"
                     layout="fill"
                     objectFit="cover"

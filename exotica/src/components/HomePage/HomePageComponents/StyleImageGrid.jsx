@@ -8,7 +8,7 @@ const StyleImageGrid = () => {
             className="styleImage-container mt-1.5"
             style={{
                 backgroundImage:
-                    'url("/images/Intiment/bg.webp")',
+                    'url("/Images/Intiment/bg.webp")',
             }}
         >
             <div className='bg-black bg-opacity-40'>
@@ -19,7 +19,7 @@ const StyleImageGrid = () => {
                         <Link href={'/products'}>
                             <div className="relative w-80 h-80 rounded-2xl max-sm:w-28 max-sm:h-28 max-xl:w-72 max-xl:h-72 max-lg:w-56 max-lg:h-56 max-md:w-48 max-md:h-48">
                                 <Image
-                                    src="/images/Intiment/bra.webp"
+                                    src="/Images/Intiment/bra.webp"
                                     alt="latest bra from exotica lingerie"
                                     layout='fill'
                                     className='rounded-2xl object-cover'
@@ -34,7 +34,7 @@ const StyleImageGrid = () => {
                         <Link href={'/products'}>
                             <div className="relative w-80 h-80 rounded-2xl max-sm:w-28 max-sm:h-28 max-xl:w-72 max-xl:h-72 max-lg:w-56 max-lg:h-56 max-md:w-48 max-md:h-48">
                                 <Image
-                                    src="/images/Intiment/Panty.webp"
+                                    src="/Images/Intiment/Panty.webp"
                                     alt="latest bra from exotica lingerie"
                                     layout='fill'
                                     className='rounded-2xl object-cover'
@@ -48,7 +48,7 @@ const StyleImageGrid = () => {
                         <Link href={'/products'}>
                             <div className="relative w-80 h-80 rounded-2xl max-sm:w-28 max-sm:h-28 max-xl:w-72 max-xl:h-72 max-lg:w-56 max-lg:h-56 max-md:w-48 max-md:h-48">
                                 <Image
-                                    src="/images/Intiment/activewear.webp"
+                                    src="/Images/Intiment/activewear.webp"
                                     alt="latest bra from exotica lingerie"
                                     layout='fill'
                                     className='rounded-2xl object-cover'
@@ -64,7 +64,7 @@ const StyleImageGrid = () => {
                         <Link href={'/products'}>
                             <div className="relative w-80 h-80 rounded-2xl max-sm:w-28 max-sm:h-28 max-xl:w-72 max-xl:h-72 max-lg:w-56 max-lg:h-56 max-md:w-48 max-md:h-48">
                                 <Image
-                                    src="/images/Intiment/shepwear.webp"
+                                    src="/Images/Intiment/shepwear.webp"
                                     alt="latest bra from exotica lingerie"
                                     layout='fill'
                                     className='rounded-2xl object-cover'
@@ -78,7 +78,7 @@ const StyleImageGrid = () => {
                         <Link href={'/products'}>
                             <div className="relative bg-white w-80 h-80 rounded-2xl max-sm:w-28 max-sm:h-28 max-xl:w-72 max-xl:h-72 max-lg:w-56 max-lg:h-56 max-md:w-48 max-md:h-48">
                                 <Image
-                                    src="/images/Intiment/Lingerieset.webp"
+                                    src="/Images/Intiment/Lingerieset.webp"
                                     alt="latest bra from exotica lingerie"
                                     layout='fill'
                                     className='rounded-2xl object-cover'
@@ -91,7 +91,7 @@ const StyleImageGrid = () => {
                         <Link href={'/products'}>
                             <div className="relative w-80 h-80 rounded-2xl max-sm:w-28 max-sm:h-28 max-xl:w-72 max-xl:h-72 max-lg:w-56 max-lg:h-56 max-md:w-48 max-md:h-48">
                                 <Image
-                                    src="/images/Intiment/yogabra.webp"
+                                    src="/Images/Intiment/yogabra.webp"
                                     alt="latest bra from exotica lingerie"
                                     layout='fill'
                                     className='rounded-2xl object-cover'

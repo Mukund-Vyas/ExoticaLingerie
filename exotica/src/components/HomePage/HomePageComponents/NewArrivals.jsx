@@ -12,7 +12,7 @@ const NewArrivals = () => {
                 <div className="NewImageContainer">
                     <div className="NewImageWrapper">
                         <Image
-                            src="/images/ExclusiveDesigns&dealsWP/newbra1.webp"
+                            src="/Images/ExclusiveDesigns&dealsWP/newbra1.webp"
                             alt="discountImage"
                             layout='fill'
                             className="NewImageStyle"
@@ -33,7 +33,7 @@ const NewArrivals = () => {
                 <div className="NewImageContainer">
                     <div className="NewImageWrapper">
                         <Image
-                            src="/images/ExclusiveDesigns&dealsWP/newbra2.webp"
+                            src="/Images/ExclusiveDesigns&dealsWP/newbra2.webp"
                             alt="discountImage"
                             layout='fill'
                             className="NewImageStyle"
@@ -54,7 +54,7 @@ const NewArrivals = () => {
                 <div className="NewImageContainer">
                     <div className="NewImageWrapper">
                         <Image
-                            src="/images/ExclusiveDesigns&dealsWP/newbra3.webp"
+                            src="/Images/ExclusiveDesigns&dealsWP/newbra3.webp"
                             alt="discountImage"
                             layout='fill'
                             className="NewImageStyle"

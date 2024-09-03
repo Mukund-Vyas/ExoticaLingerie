@@ -6,11 +6,11 @@ const BraCollection = () => {
     <div className="relative h-[80vh] mt-1">
       <picture className="absolute inset-0 h-full">
         <source
-          srcSet="/images/posters/wintersmall.webp"
+          srcSet="/Images/Posters/wintersmall.webp"
           media="(max-width: 640px)"
         />
         <Image
-          src="/images/posters/winter.webp"
+          src="/Images/Posters/winter.webp"
           alt="exotica new bra collection"
           layout="fill"
           objectFit="cover"

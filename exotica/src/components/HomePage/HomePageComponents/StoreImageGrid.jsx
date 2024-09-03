@@ -10,7 +10,7 @@ const StoreImageGrid = () => {
                 <div className="imageContainer">
                     <div className="imageWrapper">
                         <Image
-                            src="/images/ExclusiveDesigns&dealsWP/1.webp"
+                            src="/Images/ExclusiveDesigns&dealsWP/1.webp"
                             alt="under 599 bra for women"
                             title='under 599 bra for women'
                             layout="fill" 
@@ -26,7 +26,7 @@ const StoreImageGrid = () => {
                 <div className="imageContainer">
                     <div className="imageWrapper">
                         <Image
-                            src="/images/ExclusiveDesigns&dealsWP/2.webp"
+                            src="/Images/ExclusiveDesigns&dealsWP/2.webp"
                             alt="under 699 bra for women"
                             title='under 699 bra for women'
                             layout="fill" 
@@ -42,7 +42,7 @@ const StoreImageGrid = () => {
                 <div className="imageContainer">
                     <div className="imageWrapper">
                         <Image
-                            src="/images/ExclusiveDesigns&dealsWP/panties.webp"
+                            src="/Images/ExclusiveDesigns&dealsWP/panties.webp"
                             alt="under 799 bra for women"
                             title='under 799 bra for women'
                             layout="fill"
@@ -58,7 +58,7 @@ const StoreImageGrid = () => {
                 <div className="imageContainer">
                     <div className="imageWrapper">
                         <Image
-                            src="/images/ExclusiveDesigns&dealsWP/4.webp"
+                            src="/Images/ExclusiveDesigns&dealsWP/4.webp"
                             alt="under 499 bra for women"
                             title='under 499 bra for women'
                             layout="fill"
