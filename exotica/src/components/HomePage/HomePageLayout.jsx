@@ -45,12 +45,12 @@ const HomePageLayout = () => {
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/hng11skkxqf8g0o58nfv.webp',
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/wym4hrun6ef0heisq0jh.webp',
 
-    'images/posters/1.webp',
-    'images/posters/2.webp',
-    'images/posters/3.webp',
-    'images/posters/4.webp',
-    'images/posters/5.webp',
-    'images/posters/6.webp',
+    'Images/Posters/1.webp',
+    'Images/Posters/2.webp',
+    'Images/Posters/3.webp',
+    'Images/Posters/4.webp',
+    'Images/Posters/5.webp',
+    'images/Posters/6.webp',
   ];
 
   const image_url = [
@@ -70,7 +70,7 @@ const HomePageLayout = () => {
           <Link href={"/products"} className='flex flex-col items-center'>
             <div className='relative bg-rose-200 p-6 rounded-full border-4 border-white shadow-md'>
               <Image
-                src="/images/buttons/13001_hpk_1_ab8vvz.webp"
+                src="/Images/Buttons/13001_hpk_1_ab8vvz.webp"
                 alt="Bras"
                 layout="fill"
                 className='absolute left-0 -top-4 hover:scale-110 pointer-events-none'
@@ -81,7 +81,7 @@ const HomePageLayout = () => {
           <Link href={"/products"} className='flex flex-col items-center'>
             <div className='relative bg-emerald-200 p-6 rounded-full border-4 border-white shadow-md'>
               <Image
-                src="/images/buttons/Active-removebg-preview_b9snwp.webp"
+                src="/Images/Buttons/Active-removebg-preview_b9snwp.webp"
                 alt="Panties"
                 layout="fill"
                 className='absolute left-0 top-1 scale-125 hover:scale-150 pointer-events-none'
@@ -92,7 +92,7 @@ const HomePageLayout = () => {
           <Link href={"/products"} className='flex flex-col items-center'>
             <div className='relative bg-orange-200 p-6 rounded-full border-4 border-white shadow-md'>
               <Image
-                src="/images/buttons/image-removebg-preview_ybtrta.webp"
+                src="/Images/Buttons/image-removebg-preview_ybtrta.webp"
                 alt="Lingerie Set"
                 layout="fill"
                 className='absolute left-0 -top-2 scale-110 hover:scale-125 pointer-events-none'
@@ -103,7 +103,7 @@ const HomePageLayout = () => {
           <Link href={"/products"} className='flex flex-col items-center'>
             <div className='relative bg-blue-200 p-6 rounded-full border-4 border-white shadow-md'>
               <Image
-                src="/images/buttons/Active_yvgq4h.webp"
+                src="/Images/Buttons/Active_yvgq4h.webp"
                 alt="Lingerie Set"
                 layout="fill"
                 className='absolute left-0 -top-2 scale-110 hover:scale-125 pointer-events-none'
@@ -114,7 +114,7 @@ const HomePageLayout = () => {
           <Link href={"/products"} className='flex flex-col items-center'>
             <div className='relative bg-fuchsia-200 p-6 rounded-full border-4 border-white shadow-md'>
               <Image
-                src="/images/buttons/Offer_umit8e.webp"
+                src="/Images/Buttons/Offer_umit8e.webp"
                 alt="Offer"
                 layout="fill"
                 className='absolute -left-0 -top-1 scale-110 hover:scale-125 pointer-events-none'
