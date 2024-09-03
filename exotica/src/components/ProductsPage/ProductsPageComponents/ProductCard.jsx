@@ -136,7 +136,7 @@ const ProductCard = ({ product, variation, getWishlist }) => {
             height={300}         // Set the height of the image (or use dynamic values)
             objectFit="cover"    // Similar to object-cover in Tailwind
             placeholder="blur"   // Optional: add a blur-up placeholder
-            blurDataURL="/images/posters/placeholder.webp"  // Optional: tiny image used as a blur-up effect
+            blurDataURL="/Images/Posters/placeholder.webp"  // Optional: tiny image used as a blur-up effect
             loading="lazy"
           />
         </Link>
