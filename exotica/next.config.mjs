@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost', 'exoticalingerie.in'],
+    domains: ['localhost', 'www.exoticalingerie.in', 'www.api.exoticalingerie.in'],
   },
 };
 
