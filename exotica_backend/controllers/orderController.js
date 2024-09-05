@@ -99,9 +99,9 @@ exports.createOrder = async (req, res) => {
                             <p>Product Name: ${item.productName}</p>
                             <p>Product SKU: ${item.Sku}</p>
                             <p>Quantity: ${item.Quantity}</p>
-                            <p>Price: ₹${item.Price}</p>
+                            <p>Price: ₹${item.Price.toFixed(2)}</p>
                             <p>Item Discount: ₹${item.itemDiscount}</p>
-                            <p>Total: ₹${item.Quantity * (item.Price - item.itemDiscount)}</p>
+                            <p>Total: ₹${(item.Quantity * (item.Price - item.itemDiscount)).toFixed(2)}</p>
                             <hr>
                         </div>
                     `;
@@ -113,7 +113,7 @@ exports.createOrder = async (req, res) => {
                         <div>
                             <p>Product Name: ${item.productName}</p>
                             <p>Quantity: ${item.Quantity}</p>
-                            <p>Total: ₹${item.Quantity * (item.Price - item.itemDiscount)}</p>
+                            <p>Total: ₹${(item.Quantity * (item.Price - item.itemDiscount)).toFixed(2)}</p>
                             <hr>
                         </div>
                     `;
@@ -208,7 +208,7 @@ exports.createOrder = async (req, res) => {
                                 <div class="order-summary">
                                     <h2>Order Summary</h2>
                                     <div>
-                                        <p><span class="highlight">Total Amount:</span> ₹${savedOrder.orderTotal}</p>
+                                        <p><span class="highlight">Total Amount:</span> ₹${savedOrder.orderTotal.toFixed(2)}</p>
                                     </div>
                                     <div>
                                         <h3>What's in Your Cart:</h3>
@@ -331,9 +331,9 @@ exports.updateOrder = async (req, res) => {
                         <p>Product Name: ${item.productName}</p>
                         <p>Product SKU: ${item.Sku}</p>
                         <p>Quantity: ${item.Quantity}</p>
-                        <p>Price: ₹${item.Price}</p>
+                        <p>Price: ₹${item.Price.toFixed(2)}</p>
                         <p>Item Discount: ₹${item.itemDiscount}</p>
-                        <p>Total: ₹${item.Quantity * (item.Price - item.itemDiscount)}</p>
+                        <p>Total: ₹${(item.Quantity * (item.Price - item.itemDiscount)).toFixed(2)}</p>
                         <hr>
                     </div>
                 `;
@@ -345,7 +345,7 @@ exports.updateOrder = async (req, res) => {
                     <div>
                         <p>Product Name: ${item.productName}</p>
                         <p>Quantity: ${item.Quantity}</p>
-                        <p>Total: ₹${item.Quantity * (item.Price - item.itemDiscount)}</p>
+                        <p>Total: ₹${(item.Quantity * (item.Price - item.itemDiscount)).toFixed(2)}</p>
                         <hr>
                     </div>
                 `;
@@ -433,13 +433,14 @@ exports.updateOrder = async (req, res) => {
                             <h1>Your Order is On Its Way!</h1>
                             <p>Awesome news! Your order has been successfully placed and is now being processed. 🎉</p>
                             <p><span class="highlight">Order Number:</span> ${updatedOrder.orderNumber}</p>
+                            <p><span class="highlight">Order Number:</span> ${updatedOrder.paymentTransactionId || "COD"}</p>
                             <p><span class="highlight">Order Date:</span> ${updatedOrder.orderDate}</p>
                             <p><span class="highlight">Expected Delivery Date:</span> ${updatedOrder.expDeliveryDate}</p>
                             
                             <div class="order-summary">
                                 <h2>Order Summary</h2>
                                 <div>
-                                    <p><span class="highlight">Total Amount:</span> ₹${updatedOrder.orderTotal}</p>
+                                    <p><span class="highlight">Total Amount:</span> ₹${updatedOrder.orderTotal.toFixed(2)}</p>
                                 </div>
                                 <div>
                                     <h3>What's in Your Cart:</h3>

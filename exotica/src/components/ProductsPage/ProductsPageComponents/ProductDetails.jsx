@@ -221,7 +221,7 @@ const ProductDetails = ({ product_id, color }) => {
     };
 
     return (
-        <div className="py-10 max-sm:p-2 xl:px-48 md:px-16 lg:px-24 bg-pink-50">
+        <div className="py-6 max-sm:p-2 xl:px-48 md:px-16 lg:px-24 bg-pink-50">
             <div><Toaster position="bottom-center" reverseOrder={false} /></div>
             <div className="flex flex-col justify-between lg:flex-row gap-16 lg:items-start max-sm:gap-4">
                 {/* Images Section */}
@@ -265,8 +265,9 @@ const ProductDetails = ({ product_id, color }) => {
                             <Image
                                 src={process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg}
                                 alt="Product"
-                                layout='fill'
-                                objectFit="cover"
+                                layout="responsive"
+                                width={800} // Width corresponding to your image
+                                height={1066} // Height according to your image's aspect ratio
                                 className="w-full h-full object-cover rounded-xl"
                                 ref={zoomRef}
                                 priority
@@ -275,7 +276,7 @@ const ProductDetails = ({ product_id, color }) => {
                                 <>
                                     <div
                                         ref={zoomLensRef}
-                                        className="absolute w-32 h-32 bg-white bg-opacity-50 border border-gray-300 rounded-xl max-md:hidden"
+                                        className="absolute w-36 h-48 bg-white bg-opacity-50 border border-gray-300 rounded-xl max-md:hidden"
                                         style={{
                                             backgroundSize: `${zoomRef.current?.offsetWidth * 3}px ${zoomRef.current?.offsetHeight * 3}px`,
                                         }}

@@ -77,22 +77,22 @@ const OrderHistory = ({ goBack, toggleProfile }) => {
                                             </Link>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col lg:flex-row justify-between items-start py-4">
+                                    <div className="flex lg:flex-row justify-between items-start py-4">
                                         <div>
                                             <h5 className="text-sm font-medium">{order?.items[0]?.productName}</h5>
                                             <p className="text-gray-500">Qty: {order?.items[0]?.Quantity} item</p>
-                                            <h4 className="text-lg font-bold my-2">₹{order.orderTotal}</h4>
+                                            <h4 className="text-lg font-medium my-2">₹{order?.orderTotal?.toFixed(2)}</h4>
                                             <p className="text-gray-500">
-                                                Tracking Status on: <span className="font-bold text-gray-800">{new Date().toLocaleDateString()}</span>
+                                                Tracking Status on: <span className="font-medium text-gray-800">{new Date().toLocaleDateString()}</span>
                                             </p>
                                         </div>
-                                        <div className="mt-4 lg:mt-0 lg:ml-4">
+                                        <div className="mt-0 lg:ml-4">
                                             <img
-                                                src={process.env.NEXT_PUBLIC_Image_URL + "/" + order?.items[0]?.productImage || '/placeholder.png'}
+                                                src={process.env.NEXT_PUBLIC_Image_URL + "/" + order?.items[0]?.productImage || '/Images/placeholder.png'}
                                                 alt="Order Item"
                                                 width={150}
                                                 height={150}
-                                                className="object-cover rounded-lg"
+                                                className="object-cover rounded-lg max-sm:w-36 border "
                                             />
                                         </div>
                                     </div>

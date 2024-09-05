@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { GrNext, GrPrevious } from 'react-icons/gr';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Carousel = ({ images, image_url }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -29,12 +30,18 @@ const Carousel = ({ images, image_url }) => {
     <div className="relative overflow-hidden">
       <div className="flex justify-center items-center w-full">
         <Link href={image_url[currentImageIndex]}>
-          <img
-            className="w-full h-auto object-cover"
-            src={images[currentImageIndex]}
-            alt={`Slide ${currentImageIndex + 1}`}
-            loading='lazy'
-          />
+        <div className="relative w-full h-auto">
+      <Image
+        src={images[currentImageIndex]}
+        alt={`Slide ${currentImageIndex + 1}`}
+        layout="responsive"
+        width={1920}  // Replace with your image width
+        height={666} // Replace with your image height
+        priority={currentImageIndex === 0} // Prioritize the first image
+        objectFit="cover" // Ensures it covers the container
+        className="rounded-lg" // Optional styling
+      />
+    </div>
         </Link>
       </div>
       <button

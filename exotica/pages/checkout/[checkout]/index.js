@@ -30,7 +30,7 @@ const Index = () => {
                 <div className='flex flex-col items-center gap-4'>
                 <IoBagCheckSharp className='text-9xl text-green-700'/>
                 <h1>
-                    Your order has been placed successfully!, <br /> 🎉 We're excited to get it to you soon!
+                    Your order has been placed successfully!, <br /> We're excited to get it to you soon!
                 </h1>
                 <Link href={"/products"} className='bg-rose-500 px-5 py-2 rounded-md text-white font-medium'>
                     Let`s explore more..!
