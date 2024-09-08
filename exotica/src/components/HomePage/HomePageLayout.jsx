@@ -89,7 +89,7 @@ const HomePageLayout = () => {
             </div>
             <p className='text-xs font-medium font-serif'>Panties</p>
           </Link>
-          <Link href={"/products"} className='flex flex-col items-center'>
+          <Link href={"/products/Bikini%20Set"} className='flex flex-col items-center'>
             <div className='relative bg-orange-200 p-6 rounded-full border-4 border-white shadow-md'>
               <Image
                 src="/Images/Buttons/image-removebg-preview_ybtrta.webp"

@@ -23,11 +23,8 @@ const nextConfig = {
       },
     ],
   },
-  webpack: async (config, { dev, isServer }) => {
+  webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
-      // const TerserPlugin = (await import('terser-webpack-plugin')).default;
-
-      // Extend the optimization config with TerserPlugin
       config.optimization = {
         ...config.optimization,
         minimizer: [
@@ -37,12 +34,11 @@ const nextConfig = {
                 drop_console: true, // Removes all console.* statements
               },
             },
-            extractComments: false, // Optional: avoid extracting comments to separate files
+            extractComments: false, // Avoid extracting comments to separate files
           }),
         ],
       };
     }
-
     return config;
   },
 

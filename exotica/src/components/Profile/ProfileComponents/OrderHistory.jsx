@@ -3,15 +3,17 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Image from 'next/image';
 import NoOrder from '../../../../public/Images/NoOrders.png';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Oval } from 'react-loader-spinner';
 import api from '@/src/utils/api';
 import { FcSurvey } from 'react-icons/fc';
+import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
 
 const OrderHistory = ({ goBack, toggleProfile }) => {
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { authToken } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
 
     const handleGotoProductsClick = () => {
         toggleProfile();
@@ -77,7 +79,7 @@ const OrderHistory = ({ goBack, toggleProfile }) => {
                                             </p>
                                         </div>
                                         <div>
-                                            <Link href={`/order-details/${order.orderNumber}`}>
+                                            <Link href={`/orderDetails/${order.orderNumber}`} onClick={()=>dispatch(setProfileOpen({ isOpen: false }))}>
                                                 <span className="text-primary font-medium hover:underline">View Details</span>
                                             </Link>
                                         </div>
@@ -111,7 +113,7 @@ const OrderHistory = ({ goBack, toggleProfile }) => {
                                                 Tracking ID: <span className="font-medium text-gray-800">{order.trackingDetails?.awbNumber || 'N/A'}</span>
                                             </p>
                                             <p className="text-gray-500">
-                                                Tracking Status: <span className="font-medium text-gray-800">{order.trackingDetails?.currentShippingStatus || 'N/A'} | {new Date(order.trackingDetails?.shippingHistory[0]?.time).toLocaleDateString()}</span>
+                                                Current Status: <span className="font-medium text-gray-800">{order.trackingDetails?.currentShippingStatus || 'N/A'} | {new Date(order.trackingDetails?.shippingHistory[0]?.time).toLocaleDateString()}</span>
                                             </p>
                                         </div>
                                         <div className="stepper flex items-center justify-between relative">

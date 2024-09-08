@@ -279,6 +279,7 @@ const ProductDetails = ({ product_id, color }) => {
                                         style={{
                                             backgroundSize: `${zoomRef.current?.offsetWidth * 3}px ${zoomRef.current?.offsetHeight * 3}px`,
                                         }}
+                                        title={product.productname}
                                     />
                                     <div
                                         className="absolute top-0 left-full ml-6 w-full h-full bg-no-repeat bg-contain rounded-lg z-10 max-md:hidden border border-slate-500"
@@ -391,6 +392,7 @@ const ProductDetails = ({ product_id, color }) => {
                                             : "px-3 py-1 rounded-full cursor-pointer border-2 border-gray-400 max-sm:text-xs"
                                     }
                                     onClick={() => setSize(value)}
+                                    title={value.toUpperCase()}
                                 >
                                     {value.toUpperCase()}
                                 </button>
@@ -402,6 +404,7 @@ const ProductDetails = ({ product_id, color }) => {
                     <div className="flex flex-row flex-wrap items-center gap-6 my-4">
                         <button className="flex flex-row gap-1 items-center bg-white text-primary border-2 border-primary font-semibold py-2.5 px-5 rounded-lg h-full"
                             onClick={() => isInWishlist ? removeFromWishlist() : addToWishlist()}
+                            title='Add to Wishlist'
                         >
                             {isInWishlist ? <GoHeartFill /> : <GoHeart />}
                             Add to Wishlist
@@ -409,6 +412,7 @@ const ProductDetails = ({ product_id, color }) => {
                         <button
                             className="flex flex-row gap-1 items-center bg-primary text-white font-semibold py-2.5 px-10 rounded-lg h-full max-sm:px-3 max-sm:text-sm"
                             onClick={() => handleAddToCart(selectedVariation, size, activeColor)}
+                            title='Add to Cart'
                         >
                             <HiOutlineShoppingCart />
                             Add to Cart

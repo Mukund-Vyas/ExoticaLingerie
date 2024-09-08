@@ -705,7 +705,7 @@ exports.getOrdersByUser = async (req, res) => {
 
 exports.getOrderTrackingDetails = async (req, res) => {
     console.log("comes for tracking");
-    
+
     try {
         const { orderNumber } = req.params;
         const userId = req.user._id;
@@ -757,23 +757,15 @@ exports.getOrderTrackingDetails = async (req, res) => {
                 pin_code: trackingDetails.pin_code,
             }
             : null;
-
-        // Respond with order details
         res.status(200).json({
-            orderNumber: orderWithConvertedDecimals.orderNumber,
-            orderDate: orderWithConvertedDecimals.orderDate,
-            orderTotal: orderWithConvertedDecimals.orderTotal,
-            orderType: orderWithConvertedDecimals.orderType,
-            orderStatus: orderWithConvertedDecimals.orderStatus,
-            expDeliveryDate: orderWithConvertedDecimals.expDeliveryDate,
+            ...orderWithConvertedDecimals,
             items: orderWithConvertedDecimals.items.map(item => ({
-                Sku: item.Sku,
-                quantity: item.quantity,
+                ...item,
                 productImage: productMap.get(item.Sku) || null,
-                productName: item.productName
             })),
-            trackingDetails: refinedTracking || null
+            trackingDetails: refinedTracking || null // Override/add trackingDetails
         });
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
