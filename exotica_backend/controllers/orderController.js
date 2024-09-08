@@ -4,7 +4,7 @@ const User = require('../models/userModel');
 const Product = require('../models/ProductModel');
 const transactionModel = require('../models/transactionModel');
 const { default: axios } = require('axios');
-const { getEasyEcomAuthToken } = require('../utils/easyEcomUtils');
+const { getEasyEcomAuthToken, fetchTrackingDetails } = require('../utils/easyEcomUtils');
 
 exports.createOrder = async (req, res) => {
     console.log("come for order");
@@ -572,6 +572,7 @@ exports.deleteOrder = async (req, res) => {
     }
 };
 
+// Utility function to convert decimals to float
 const convertDecimal128ToFloat = (obj) => {
     if (Array.isArray(obj)) {
         return obj.map(item => convertDecimal128ToFloat(item));
@@ -604,41 +605,71 @@ exports.getOrdersByUser = async (req, res) => {
 
             // Extract all SKUs from the orders
             const skus = ordersWithConvertedDecimals.flatMap(order => order.items.map(item => item.Sku));
+            // console.log('All SKUs from orders:', skus);
+
             const uniqueSkus = [...new Set(skus)]; // Remove duplicates
 
-            // Fetch products with variations containing the SKUs
-            const products = await Product.find({ 'variations.SKU': { $in: uniqueSkus } }, { 'variations.$': 1 });
+            // Fetch products containing the SKUs in any of their variations
+            const products = await Product.find({ 'variations.SKU': { $in: uniqueSkus } });
+            // console.log("Products", products);
 
             // Create a map for quick lookup of SKU to image
             const productMap = new Map();
-
-            // Iterate through products and map SKUs to images
             products.forEach(product => {
                 product.variations.forEach(variation => {
                     if (uniqueSkus.includes(variation.SKU)) {
-                        // Assuming imageUrls is an array and you want the first image
                         const image = variation.imageUrls && variation.imageUrls.length > 0 ? variation.imageUrls[0] : null;
                         productMap.set(variation.SKU, image);
                     }
                 });
             });
 
-            // Function to add product images to order items
-            const addProductImagesToOrders = (orders) => {
-                return orders.map(order => {
+            // Function to add product images and tracking details to order items
+            const addProductImagesAndTrackingToOrders = async (orders) => {
+                return Promise.all(orders.map(async (order) => {
+                    const trackingDetails = await fetchTrackingDetails(order.orderNumber); // Fetch tracking details
+                    // console.log(trackingDetails);
+                    const refinedTracking = trackingDetails && Object.keys(trackingDetails).length > 0
+                        ? {
+                            awbNumber: trackingDetails.awbNumber,
+                            currentShippingStatus: trackingDetails.currentShippingStatus,
+                            shippingHistory: trackingDetails.shippingHistory2 || [],
+                            carrierName: trackingDetails.carrierName,
+                            orderStatus: trackingDetails.orderStatus,
+                            orderDate: trackingDetails.orderDate,
+                            expectedDeliveryDate: trackingDetails.expectedDeliveryDate,
+                            customer_name: trackingDetails.customer_name,
+                            customer_mobile_num: trackingDetails.customer_mobile_num,
+                            city: trackingDetails.city,
+                            state: trackingDetails.state,
+                            pin_code: trackingDetails.pin_code,
+                        }
+                        : null;
+
+                    // console.log(refinedTracking);
+
                     return {
-                        ...order,
+                        orderNumber: order.orderNumber,
+                        orderDate: order.orderDate,
+                        orderTotal: order.orderTotal,
+                        orderType: order.orderType,
+                        orderStatus: order.orderStatus,
+                        expDeliveryDate: order.expDeliveryDate,
                         items: order.items.map(item => ({
-                            ...item,
-                            productImage: productMap.get(item.Sku) || null
-                        }))
+                            Sku: item.Sku,
+                            quantity: item.Quantity,
+                            productImage: productMap.get(item.Sku) || null,
+                            productName: item.productName
+                        })),
+                        trackingDetails: refinedTracking || null
                     };
-                }); 
+
+                }));
             };
+            const ordersWithDetails = await addProductImagesAndTrackingToOrders(ordersWithConvertedDecimals);
+            console.log(ordersWithDetails);
 
-            const ordersWithProductImages = addProductImagesToOrders(ordersWithConvertedDecimals);
-
-            res.status(200).json(ordersWithProductImages);
+            res.status(200).json(ordersWithDetails);
         } else {
             res.status(404).json({ message: 'No orders found for this user' });
         }
@@ -649,25 +680,102 @@ exports.getOrdersByUser = async (req, res) => {
 
 
 // Get Order Tracking Details 
+// exports.getOrderTrackingDetails = async (req, res) => {
+//     const orderNumber = req.params.orderNumber;
+//     try {
+//         // Replace the double slashes and properly format the reference_code
+//         const easyecomAPI = `https://api.easyecom.io/Carriers/getTrackingDetails?reference_code=${orderNumber}`;
+//         const authToken = await getEasyEcomAuthToken();
+//         // Make the API call to Easyecom
+//         const response = await axios.get(easyecomAPI, {
+//             headers: {
+//                 'Authorization': `Bearer ${authToken}`
+//             }
+//         });
+
+//         // Send Easyecom API response back to the client
+//         res.status(200).json(response.data);
+//     } catch (error) {
+//         console.error('Error fetching tracking details:', error);
+
+//         // Handle errors and send error response
+//         res.status(500).json({ message: 'Error fetching tracking details' });
+//     }
+// }
+
 exports.getOrderTrackingDetails = async (req, res) => {
-    const orderNumber = req.params.orderNumber;
+    console.log("comes for tracking");
+    
     try {
-        // Replace the double slashes and properly format the reference_code
-        const easyecomAPI = `https://api.easyecom.io/Carriers/getTrackingDetails?reference_code=${orderNumber}`;
-        const authToken = await getEasyEcomAuthToken();
-        // Make the API call to Easyecom
-        const response = await axios.get(easyecomAPI, {
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
+        const { orderNumber } = req.params;
+        const userId = req.user._id;
+
+        // Fetch the order
+        const order = await Order.findOne({ orderNumber, user: userId }).exec();
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Convert Decimal128 values to float
+        const orderWithConvertedDecimals = convertDecimal128ToFloat(order.toObject());
+
+        // Extract all SKUs from the order
+        const skus = orderWithConvertedDecimals.items.map(item => item.Sku);
+        const uniqueSkus = [...new Set(skus)]; // Remove duplicates
+
+        // Fetch products containing the SKUs in any of their variations
+        const products = await Product.find({ 'variations.SKU': { $in: uniqueSkus } }).exec();
+
+        // Create a map for quick lookup of SKU to image
+        const productMap = new Map();
+        products.forEach(product => {
+            product.variations.forEach(variation => {
+                if (uniqueSkus.includes(variation.SKU)) {
+                    const image = variation.imageUrls && variation.imageUrls.length > 0 ? variation.imageUrls[0] : null;
+                    productMap.set(variation.SKU, image);
+                }
+            });
         });
 
-        // Send Easyecom API response back to the client
-        res.status(200).json(response.data);
-    } catch (error) {
-        console.error('Error fetching tracking details:', error);
+        // Fetch tracking details
+        const trackingDetails = await fetchTrackingDetails(order.orderNumber);
 
-        // Handle errors and send error response
-        res.status(500).json({ message: 'Error fetching tracking details' });
+        const refinedTracking = trackingDetails && Object.keys(trackingDetails).length > 0
+            ? {
+                awbNumber: trackingDetails.awbNumber,
+                currentShippingStatus: trackingDetails.currentShippingStatus,
+                shippingHistory: trackingDetails.shippingHistory2 || [],
+                carrierName: trackingDetails.carrierName,
+                orderStatus: trackingDetails.orderStatus,
+                orderDate: trackingDetails.orderDate,
+                expectedDeliveryDate: trackingDetails.expectedDeliveryDate,
+                customer_name: trackingDetails.customer_name,
+                customer_mobile_num: trackingDetails.customer_mobile_num,
+                city: trackingDetails.city,
+                state: trackingDetails.state,
+                pin_code: trackingDetails.pin_code,
+            }
+            : null;
+
+        // Respond with order details
+        res.status(200).json({
+            orderNumber: orderWithConvertedDecimals.orderNumber,
+            orderDate: orderWithConvertedDecimals.orderDate,
+            orderTotal: orderWithConvertedDecimals.orderTotal,
+            orderType: orderWithConvertedDecimals.orderType,
+            orderStatus: orderWithConvertedDecimals.orderStatus,
+            expDeliveryDate: orderWithConvertedDecimals.expDeliveryDate,
+            items: orderWithConvertedDecimals.items.map(item => ({
+                Sku: item.Sku,
+                quantity: item.quantity,
+                productImage: productMap.get(item.Sku) || null,
+                productName: item.productName
+            })),
+            trackingDetails: refinedTracking || null
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-}
+
+};

@@ -11,5 +11,5 @@ router.put('/:id', auth, orderController.updateOrder); // Update an order by ID 
 router.delete('/:id', auth, orderController.deleteOrder); // Delete an order by ID (authenticated)
 
 router.get('/user/orders', auth, orderController.getOrdersByUser);// Get all orders for a specific user
-router.get('/getTrackingDetails/:orderNumber', auth, orderController.getOrderTrackingDetails);// Get all orders for a specific user
+router.get('/getDetails/:orderNumber', auth, orderController.getOrderTrackingDetails);// Get all orders for a specific user
 module.exports = router;

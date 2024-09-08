@@ -37,7 +37,8 @@ const productSchema = new mongoose.Schema({
     }],
     SKU: {
       type: String,
-      required: [true, 'SKU is required for each variation']
+      required: [true, 'SKU is required for each variation'],
+      index: true,
     },
     imageUrls: [{
       type: String // Store image URLs instead of image data

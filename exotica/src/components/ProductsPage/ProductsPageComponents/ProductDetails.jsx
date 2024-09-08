@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from '../../common/Tooltip';
 import { VscQuestion } from "react-icons/vsc";
 import Image from 'next/image';
+import { BsZoomIn } from 'react-icons/bs';
 
 const ProductDetails = ({ product_id, color }) => {
     const [product, setProduct] = useState(null);
@@ -238,8 +239,7 @@ const ProductDetails = ({ product_id, color }) => {
                                     alt={value.split(".")[0]}
                                     width={80}  // Example width
                                     height={80} // Example height
-                                    layout="responsive" // Ensure responsiveness
-                                    objectFit="cover"  // Same as object-cover in Tailwind
+                                    style={{ objectFit: 'cover' }}
                                     className="rounded-md"
                                     loading="lazy"
                                 />
@@ -265,7 +265,6 @@ const ProductDetails = ({ product_id, color }) => {
                             <Image
                                 src={process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg}
                                 alt="Product"
-                                layout="responsive"
                                 width={800} // Width corresponding to your image
                                 height={1066} // Height according to your image's aspect ratio
                                 className="w-full h-full object-cover rounded-xl"
@@ -276,7 +275,7 @@ const ProductDetails = ({ product_id, color }) => {
                                 <>
                                     <div
                                         ref={zoomLensRef}
-                                        className="absolute w-36 h-48 bg-white bg-opacity-50 border border-gray-300 rounded-xl max-md:hidden"
+                                        className="absolute w-36 h-48 bg-white bg-opacity-50 border border-gray-300 rounded-xl max-md:hidden cursor-zoom-in"
                                         style={{
                                             backgroundSize: `${zoomRef.current?.offsetWidth * 3}px ${zoomRef.current?.offsetHeight * 3}px`,
                                         }}
@@ -293,6 +292,11 @@ const ProductDetails = ({ product_id, color }) => {
                                 </>
                             )}
                         </div>
+                        {!zoomVisible && (
+                            <div className='absolute text-sm flex gap-2 items-center bg-neutral-800 opacity-70 px-4 py-2 bottom-2 text-zinc-100 rounded-full max-md:hidden'>
+                                <BsZoomIn /> Magnify the beauty
+                            </div>
+                        )}
                     </div>
                 </div>
                 {/* Product Details */}
@@ -349,8 +353,12 @@ const ProductDetails = ({ product_id, color }) => {
                                             style={{
                                                 backgroundColor: backgroundImage ? 'transparent' : backgroundColor,
                                                 backgroundImage: backgroundImage,
-                                                backgroundSize: 'cover',
-                                                backgroundPosition: 'center',
+                                                backgroundSize: 'contain', // Ensure the image fits inside the button without overflowing
+                                                backgroundRepeat: 'no-repeat', // Prevent repetition of the image
+                                                backgroundPosition: 'center', // Center the image within the button
+                                                maxWidth: '100%', // Set max width to avoid overflow
+                                                maxHeight: '100%', // Set max height to avoid overflow
+
                                             }}
                                             onClick={() => {
                                                 setActiveColor(variation.color);

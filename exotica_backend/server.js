@@ -36,8 +36,12 @@ app.use('/images', (req, res, next) => {
 app.use('/images', express.static(path.join(__dirname, 'images'), {
     maxAge: '1d',  // Cache images for 1 day
     fallthrough: false,  // Prevent further routing when a file is served
-    setHeaders: (res, path) => {
-        res.setHeader('Cache-Control', 'public, max-age=86400');  // Cache headers for 1 day (86400 seconds)
+    setHeaders: (res, filePath) => {
+        // Ensure valid extensions are served with correct headers
+        const ext = path.extname(filePath).toLowerCase();
+        if (validExtensions.includes(ext)) {
+            res.setHeader('Cache-Control', 'public, max-age=86400');  // Cache headers for 1 day (86400 seconds)
+        }
     }
 }));
 
@@ -74,6 +78,11 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/', wishlistRoutes);
 app.use('/api/v1/payment', paymentRouters);
 app.use('/api/v1/order', orderRoutes);
+
+// Catch-all route for handling 404
+app.use((req, res) => {
+    res.status(404).send('Not Found');
+});
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
