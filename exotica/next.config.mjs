@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+import TerserPlugin from 'terser-webpack-plugin';
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -23,7 +25,7 @@ const nextConfig = {
   },
   webpack: async (config, { dev, isServer }) => {
     if (!dev && !isServer) {
-      const TerserPlugin = (await import('terser-webpack-plugin')).default;
+      // const TerserPlugin = (await import('terser-webpack-plugin')).default;
 
       // Extend the optimization config with TerserPlugin
       config.optimization = {
