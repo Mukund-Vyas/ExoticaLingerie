@@ -21,9 +21,9 @@ const nextConfig = {
       },
     ],
   },
-  webpack(config, { dev, isServer }) {
+  webpack: async (config, { dev, isServer }) => {
     if (!dev && !isServer) {
-      const TerserPlugin = require('terser-webpack-plugin');
+      const TerserPlugin = (await import('terser-webpack-plugin')).default;
 
       // Extend the optimization config with TerserPlugin
       config.optimization = {
