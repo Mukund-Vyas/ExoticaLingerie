@@ -46,11 +46,11 @@ const HomePageLayout = () => {
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/wym4hrun6ef0heisq0jh.webp',
 
     '/Images/Posters/1.webp',
-    '/Images/Posters/2.webp',
-    '/Images/Posters/3.webp',
+    '/Images/Posters/11.webp',
+    '/Images/Posters/12.webp',
     '/Images/Posters/4.webp',
-    '/Images/Posters/5.webp',
-    '/Images/Posters/6.webp',
+    '/Images/Posters/13.webp',
+    '/Images/Posters/14.webp',
   ];
 
   const image_url = [
