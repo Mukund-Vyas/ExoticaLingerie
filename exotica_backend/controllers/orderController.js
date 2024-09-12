@@ -67,7 +67,7 @@ exports.createOrder = async (req, res) => {
                 })),
                 customer: [savedOrder.customer]
             };
-            console.log(easyEcomOrderData);
+            // console.log(easyEcomOrderData);
 
             try {
                 let easyResponse = await axios.post('https://api.easyecom.io/webhook/v2/createOrder', easyEcomOrderData, {
@@ -89,8 +89,8 @@ exports.createOrder = async (req, res) => {
                     });
                 }
 
-                console.log(easyResponse.data);
-                console.log(easyResponse.data.data[0]);
+                // console.log(easyResponse.data);
+                // console.log(easyResponse.data.data[0]);
 
                 let productDetails = '';
                 savedOrder.items.forEach(item => {
@@ -523,8 +523,8 @@ exports.updateOrder = async (req, res) => {
                     });
                 }
 
-                console.log(easyResponse.data);
-                console.log(easyResponse.data.data[0]);
+                // console.log(easyResponse.data);
+                // console.log(easyResponse.data.data[0]);
 
                 // Send confirmation email to the customer
                 sendOrderConfirmationEmail(userEmail, 'Order Confirmation', customerEmailContent);
@@ -667,7 +667,7 @@ exports.getOrdersByUser = async (req, res) => {
                 }));
             };
             const ordersWithDetails = await addProductImagesAndTrackingToOrders(ordersWithConvertedDecimals);
-            console.log(ordersWithDetails);
+            // console.log(ordersWithDetails);
 
             res.status(200).json(ordersWithDetails);
         } else {

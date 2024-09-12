@@ -97,82 +97,36 @@ body {
 }
 
 /* ---------------------------------------- Carousel CSS ---------------------------------------- */
-.carousel {
-    position: relative;
-    overflow: hidden;
-    max-height: 80vh;
-}
-
-.carousel-image {
-    width: 100%;
-    height: 80vh;
-    object-fit: cover;
-}
-
-.carousel-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: transparent;
-    color: #fff;
-    font-size: 3rem;
-    padding: 0.5rem;
-    border: none;
-    cursor: pointer;
-}
-
-.carousel-button.prev {
-    left: 1rem;
-}
-
-.carousel-button.next {
-    right: 1rem;
-    color: #fff;
-}
-
-.carousel-indicators {
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    bottom: 1rem;
-    left: 0;
-    right: 0;
-    z-index: 1;
-}
-
-.carousel-indicator {
-    width: 1rem;
-    height: 1rem;
-    background-color: rgb(255, 241, 247, 0.8);
-    border-radius: 50%;
-    margin: 0 0.25rem;
-    cursor: pointer;
-}
-
-.carousel-indicator.active {
-    background-color: #ff197d;
-}
-
-@media (max-width: 768px) {
-    .carousel-button {
-        font-size: 1.5rem;
+@keyframes slideInLeft {
+    0% {
+      transform: translateX(-100%);
+      opacity: 1;
     }
-
-    .carousel-indicators {
-        bottom: 0.5rem;
+    100% {
+      transform: translateX(0);
+      opacity: 1;
     }
-
-    .carousel-indicator {
-        width: 0.5rem;
-        height: 0.5rem;
+  }
+  
+  @keyframes slideInRight {
+    0% {
+      transform: translateX(100%);
+      opacity: 1;
     }
-
-    .carousel-image {
-        height: 80vh;
-        left: 0;
+    100% {
+      transform: translateX(0);
+      opacity: 1;
     }
-}
-
+  }
+  
+  .animate-slideInLeft {
+    animation: slideInLeft 0.4s ease-in-out;
+  }
+  
+  .animate-slideInRight {
+    animation: slideInRight 0.4s ease-in-out;
+  }
+  
 /* ----------------------------------------------- Features ----------------------------------------------- */
 .carousel-container {
     background-color: #ffb1d3;

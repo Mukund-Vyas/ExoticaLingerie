@@ -54,6 +54,8 @@ const OrderHistory = ({ goBack, toggleProfile }) => {
         return statusMap[currentStatus] >= step ? 'active' : '';
     };
     
+    console.log(orders);
+    
     return (
         <div className="w-full">
             {isLoading ? (
@@ -118,15 +120,15 @@ const OrderHistory = ({ goBack, toggleProfile }) => {
                                         </div>
                                         <div className="stepper flex items-center justify-between relative">
                                             <div className="absolute w-full h-0.5 bg-gray-200 top-1/2 left-0 z-0"></div>
-                                            <div className={`step z-10 ${getStepClass(order.trackingDetails.orderStatus, 1)}`}>
+                                            <div className={`step z-10 ${getStepClass(order?.trackingDetails?.orderStatus, 1)}`}>
                                                 <div className="step-icon">1</div>
                                                 <div>PLACED</div>
                                             </div>
-                                            <div className={`step z-10 ${getStepClass(order.trackingDetails.orderStatus, 2)}`}>
+                                            <div className={`step z-10 ${getStepClass(order?.trackingDetails?.orderStatus, 2)}`}>
                                                 <div className="step-icon">2</div>
                                                 <div>SHIPPED</div>
                                             </div>
-                                            <div className={`step z-10 ${getStepClass(order.trackingDetails.orderStatus, 3)}`}>
+                                            <div className={`step z-10 ${getStepClass(order?.trackingDetails?.currentShippingStatus, 3)}`}>
                                                 <div className="step-icon">3</div>
                                                 <div>DELIVERED</div>
                                             </div>

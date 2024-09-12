@@ -51,10 +51,16 @@ const ProductsPageLayout = ({ products }) => {
   };
 
   const handleScroll = () => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+    const screenSize = window.innerWidth;
+  
+    // Set a larger threshold for smaller screens
+    const threshold = screenSize <= 640 ? 2000 : 1000; // 200px for small screens, 1000px for larger screens
+  
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - threshold) {
       loadMoreProducts();
     }
   };
+  
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);

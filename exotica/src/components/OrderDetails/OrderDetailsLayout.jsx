@@ -44,7 +44,7 @@ const OrderDetailsLayout = ({ orderNumber }) => {
 
     if (!order) {
         return <div className='flex w-full items-center flex-col min-h-[75vh] justify-center gap-4'>
-            <Image 
+            <Image
                 src={'/Images/IconImages/NoOrder.webp'}
                 alt={'order not found'}
                 width={256}
@@ -108,7 +108,9 @@ const OrderDetailsLayout = ({ orderNumber }) => {
                                 <div className='p-3 border-b border-slate-400 flex justify-between items-center'>
                                     <h1 className='font-medium'>Tracking Status</h1>
                                     <span className='font-bold text-primary' title={order?.trackingDetails?.orderStatus || 'N/A'}>
-                                        {order?.trackingDetails?.orderStatus || 'N/A'}
+                                        {order?.trackingDetails?.currentShippingStatus === 'Delivered'
+                                            ? order.trackingDetails.currentShippingStatus
+                                            : order?.trackingDetails?.orderStatus || 'N/A'}
                                     </span>
                                 </div>
 

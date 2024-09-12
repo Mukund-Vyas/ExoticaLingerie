@@ -45,16 +45,14 @@ const HomePageLayout = () => {
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/hng11skkxqf8g0o58nfv.webp',
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/wym4hrun6ef0heisq0jh.webp',
 
-    '/Images/Posters/1.webp',
     '/Images/Posters/11.webp',
     '/Images/Posters/12.webp',
-    '/Images/Posters/4.webp',
+    '/Images/Posters/15.webp',
     '/Images/Posters/13.webp',
     '/Images/Posters/14.webp',
   ];
 
   const image_url = [
-    '/products',
     '/products',
     '/products',
     '/products',

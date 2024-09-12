@@ -60,16 +60,16 @@ const NavMain = () => {
                             alt='logo'
                             height={0}
                             width={0}
-                            style={{ width: '100px', height: "auto" }}
+                            style={{ width: '105px', height: "auto" }}
                         />
                     </div>
-                    <div>
+                    {/* <div>
                         <p className=" text-right m-0 text-[26px] leading-[95%] text-black font-light font-Abri pb-2 pl-2 t1">
                             Lingerie <br />
                             <font className="text-[46px] t2">E</font>
                             <font className="text-[38px] t2">XOTICA</font>
                         </p>
-                    </div>
+                    </div> */}
                 </Link>
                 <div className='flex-1'>
                     <div className="flex justify-start items-center relative px-12">
