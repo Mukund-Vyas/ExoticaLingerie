@@ -14,22 +14,31 @@ export default function App({ Component, pageProps }) {
         <title>Lingeries - Buy Lingeries For Women @ Exotica Lingerie</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="keywords" content="lingerie, bras, panties, sports bras, backless bras, wireless bras,high impact sports bras, bralettes, nightwear, shapewear, swimwear, premium lingerie, Exotica Lingerie, lin gerie, buy lingerie, inside lingerie, Exotica" />
-        <meta name="description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
+
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+        <link rel="apple-touch-icon" href="/apple-touch-icon-iphone-60x60.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-ipad-76x76.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-iphone-retina-120x120.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-ipad-retina-152x152.png" />
+
         <meta property="og:title" content="Exotica Lingerie - Premium Women's Lingerie Online" />
         <meta property="og:local" content="en_US" />
         <meta property="og:site_name" content="Exotica Lingerie" />
         <meta property="og:description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
-        <meta property="og:image" content="https://www.dropbox.com/scl/fi/xwki7x87huxtxeoid9qdz/2.png?rlkey=d6zinjiskrxa8pbygdwxbcebp&st=0zkf2ltk&raw=0" />
+        <meta property="og:image" content="/Images/ogimage.webp" />
         <meta property="og:image:alt" content="Exotica Lingerie - Premium Women's Lingerie" />
         <meta property="og:url" content="https://www.exoticalingerie.in" />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://www.exoticalingerie.in" />
+
         <meta name="twitter:title" content="Exotica Lingerie - Premium Women's Lingerie Online" />
         <meta name="twitter:description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
-        <meta name="twitter:image" content="https://drive.google.com/uc?export=view&id=FMfcgzQVxlSVbMgSPccBDFTQcffdrGkB" />
+        <meta name="twitter:image" content="/Images/ogimage.webp" />
+
         <meta name="theme-color" content="#ff197d" />
+        <link rel="canonical" href="https://www.exoticalingerie.in" />
       </Head>
+
       <PersistGate loading={null} persistor={persistor}>
         <ProfileProvider>
           <CartProvider>
