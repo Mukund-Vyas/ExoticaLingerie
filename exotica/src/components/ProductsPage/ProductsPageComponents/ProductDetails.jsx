@@ -224,8 +224,9 @@ const ProductDetails = ({ product_id, color }) => {
 
     const productTitle = `Buy ${product.productname} - ${color}`;
     const productDescription = `Buy ${product.productname} in ${color} at ₹${(product.price - product.price * (product.discount / 100)).toFixed(2)} with ${product.discount}% off. Available in various sizes and colors.`;
-    const productUrl = `https://www.exoticalingerie.in/products/item/${product_id}?color=${color}?product=${product.productname}`;
-    const ogImageUrl = encodeURI(process.env.NEXT_PUBLIC_Image_URL + "/" + activeImg);
+    const productUrl = encodeURI(`https://www.exoticalingerie.in/products/item/${product_id}?color=${color}?product=${product.productname}`);
+    const ogImageUrl = activeImg ? encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${activeImg}`) : 'https://www.exoticalingerie.in/Images/ogimage.webp';
+
     return (
         <>
             <Head>
@@ -236,6 +237,10 @@ const ProductDetails = ({ product_id, color }) => {
                 <meta property="og:url" content={productUrl} />
                 <meta property="og:image" content={ogImageUrl} />
                 <meta property="og:type" content="product" />
+
+                <meta name="twitter:title" content="Exotica Lingerie - Premium Women's Lingerie Online" />
+                <meta name="twitter:description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
+                <meta name="twitter:image" content={ogImageUrl} />
             </Head>
             <div className="py-6 max-sm:p-2 xl:px-48 md:px-16 lg:px-24 bg-pink-50">
                 <div><Toaster position="bottom-center" reverseOrder={false} /></div>

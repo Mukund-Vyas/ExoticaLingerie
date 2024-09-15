@@ -4,20 +4,23 @@ import { useRouter } from 'next/router';
 import { Oval } from 'react-loader-spinner';
 
 const ProductPage = () => {
-  const params = useRouter();
-  const { product, color, productname } = params.query;
-  
+  const { query } = useRouter();
+  const { product, color } = query;
+
   if (!product) {
     return (
-      <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
       </div>
     );
   }
 
+  // Safely extract the color or provide a default fallback
+  const extractedColor = color ? color.split("?")[0] : 'black';
+
   return (
     <div>
-      {product && <ProductDetails product_id={product} color={color} productName={productname}/>}
+      <ProductDetails product_id={product} color={extractedColor} />
     </div>
   );
 };
