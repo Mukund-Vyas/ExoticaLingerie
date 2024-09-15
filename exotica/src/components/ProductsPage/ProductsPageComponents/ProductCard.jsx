@@ -126,7 +126,7 @@ const ProductCard = ({ product, variation, getWishlist }) => {
             </div>
           </div>
         )}
-        <Link href={`/products/item/${product._id}?color=${variation.color}?product=${product.productname}`}>
+        <Link href={`/products/item/${product._id}?color=${variation.color}?productname=${product.productname}`}>
           <Image
             src={`${process.env.NEXT_PUBLIC_Image_URL}/${variation.imageUrls[0]}`}
             alt={`${variation.color} ${product.productname}`}

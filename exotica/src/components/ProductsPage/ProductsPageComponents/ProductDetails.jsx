@@ -235,9 +235,7 @@ const ProductDetails = ({ product_id, color }) => {
                 <meta property="og:description" content={productDescription} />
                 <meta property="og:url" content={productUrl} />
                 <meta property="og:image" content={ogImageUrl} />
-                <meta name="twitter:card" content="summary_large_image" />
                 <meta property="og:type" content="product" />
-                <meta property="og:site_name" content="Exotica Lingerie" />
             </Head>
             <div className="py-6 max-sm:p-2 xl:px-48 md:px-16 lg:px-24 bg-pink-50">
                 <div><Toaster position="bottom-center" reverseOrder={false} /></div>

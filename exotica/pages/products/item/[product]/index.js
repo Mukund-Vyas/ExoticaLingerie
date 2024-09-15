@@ -5,7 +5,7 @@ import { Oval } from 'react-loader-spinner';
 
 const ProductPage = () => {
   const params = useRouter();
-  const { product, color } = params.query;
+  const { product, color, productname } = params.query;
   
   if (!product) {
     return (
@@ -17,7 +17,7 @@ const ProductPage = () => {
 
   return (
     <div>
-      {product && <ProductDetails product_id={product} color={color}/>}
+      {product && <ProductDetails product_id={product} color={color} productName={productname}/>}
     </div>
   );
 };
