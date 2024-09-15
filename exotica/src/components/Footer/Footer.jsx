@@ -217,19 +217,19 @@ const Footer = () => {
                             <span className="hidden-link-text">Linkedin</span>
                             <FaLinkedin style={{ alignSelf: "center" }} color="#fff" />
                         </Link>
-                        <Link className="footer-social-link twitter" href="/" target="_blank">
+                        <Link className="footer-social-link twitter" href="https://x.com/Ex_Exotica5400" target="_blank">
                             <span className="hidden-link-text">Twitter</span>
                             <FaXTwitter style={{ alignSelf: "center" }} color="#fff" />
                         </Link>
                         <Link
                             className="footer-social-link instagram"
-                            href="/"
+                            href="https://www.instagram.com/exotica5400/"
                             target="_blank"
                         >
                             <span className="hidden-link-text">Instagram</span>
                             <FaInstagram style={{ alignSelf: "center" }} color="#fff" />
                         </Link>
-                        <Link className="footer-social-link facebook" href="/" target="_blank">
+                        <Link className="footer-social-link facebook" href="https://www.facebook.com/profile.php?id=100078934444266" target="_blank">
                             <span className="hidden-link-text">Facebook</span>
                             <FaFacebook color="#fff" />
                         </Link>
