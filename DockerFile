@@ -2,7 +2,7 @@
 FROM node:18-alpine
 
 # Set working directory for Docker
-WORKDIR /usr/src/app
+WORKDIR /var/www/nextjs/ExoticaLingerie
 
 # Copy package.json files for both the front-end and back-end
 COPY ./exotica/package.json ./exotica/
