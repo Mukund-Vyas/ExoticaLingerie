@@ -45,11 +45,11 @@ const HomePageLayout = () => {
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/hng11skkxqf8g0o58nfv.webp',
     // 'https://res.cloudinary.com/dcxdcs6l4/image/upload/v1724571053/wym4hrun6ef0heisq0jh.webp',
 
-    '/Images/Posters/ex_carousel_1.webp',
-    '/Images/Posters/ex_carousel_2.webp',
-    '/Images/Posters/ex_carousel_3.webp',
-    '/Images/Posters/ex_carousel_4.webp',
-    '/Images/Posters/ex_carousel_5.webp',
+    '/Images/Posters/ex-carousel1.webp',
+    '/Images/Posters/ex-carousel2.webp',
+    '/Images/Posters/ex-carousel3.webp',
+    '/Images/Posters/ex-carousel4.webp',
+    '/Images/Posters/ex-carousel5.webp',
   ];
 
   const image_url = [
