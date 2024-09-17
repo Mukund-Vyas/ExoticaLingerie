@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
+import api from '@/src/utils/api';
+import toast, { Toaster } from 'react-hot-toast';
 
 const BlogForm = () => {
     const [title, setTitle] = useState('');
@@ -8,6 +10,7 @@ const BlogForm = () => {
     const [subTopics, setSubTopics] = useState([{ subHeading: '', subText: '', subImage: '', actionButton: { text: '', link: '' } }]);
     const [tags, setTags] = useState([]);
     const [tagInput, setTagInput] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const addSubTopic = () => {
         setSubTopics([...subTopics, { subHeading: '', subText: '', subImage: '', actionButton: { text: '', link: '' } }]);
@@ -19,9 +22,19 @@ const BlogForm = () => {
     };
 
     const addTag = () => {
-        if (tagInput.trim() !== '') {
-            setTags([...tags, tagInput.trim()]);
-            setTagInput('');
+        const newTag = tagInput.trim().toLowerCase();
+
+        if (newTag !== '' && !tags.includes(newTag)) {
+            setTags([...tags, newTag]);
+        }
+
+        setTagInput('');
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Tab' || e.key === 'Enter') {
+            e.preventDefault();  // Prevent default tab behavior
+            addTag();  // Call the addTag function
         }
     };
 
@@ -31,17 +44,35 @@ const BlogForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true); // Start loading
         try {
-            const blogData = { title, content, mainImage, subTopics };
-            await axios.post('/api/blogs', blogData);
-            // Handle success (show toast or redirect)
+            const blogData = { 
+                mainHeading: title, 
+                mainText: content, 
+                mainImage, 
+                subTopics, 
+                tags 
+            };
+            await api.post('/blog/create', blogData);
+            toast.success('Blog posted successfully!'); // Success toast
+    
+            // Clear the inputs after successful submission
+            setTitle('');
+            setContent('');
+            setMainImage('');
+            setSubTopics([{ subHeading: '', subText: '', subImage: '', actionButton: { text: '', link: '' } }]);
+            setTags([]);
+    
         } catch (error) {
-            // Handle error
+            toast.error('Failed to post the blog. Please try again.'); // Error toast
+        } finally {
+            setIsSubmitting(false); // End loading
         }
     };
 
     return (
         <div className='p-6'>
+            <Toaster position="bottom-center" reverseOrder={false} />
             <h1 className='w-full text-center font-serif py-4 font-bold text-primary text-2xl'>Create a New Blog.</h1>
             <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white border border-slate-500 rounded-lg">
                 <div>
@@ -82,6 +113,7 @@ const BlogForm = () => {
                             type="text"
                             value={tagInput}
                             onChange={(e) => setTagInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder="Add a tag"
                             className="border p-2 flex-grow"
                         />
@@ -97,7 +129,7 @@ const BlogForm = () => {
                         {tags.map((tag, index) => (
                             <div
                                 key={index}
-                                className="bg-gray-200 px-3 py-1 rounded-full flex items-center space-x-2"
+                                className="bg-gray-200 px-3 py-1 rounded-full flex items-center space-x-2 my-1"
                             >
                                 <span>{tag}</span>
                                 <button
@@ -113,7 +145,7 @@ const BlogForm = () => {
                 </div>
                 {/* SubTopics Section */}
                 {subTopics.map((sub, index) => (
-                    <div key={index} className="mt-4">
+                    <div key={"sub section" + index} className="mt-4">
                         <h3 className='font-bold'>Sub Topic {index + 1}</h3>
                         <div className='p-4 border border-slate-500 rounded-lg'>
                             <div>
@@ -197,8 +229,12 @@ const BlogForm = () => {
                     Add Another SubTopic
                 </button>
 
-                <button type="submit" className="mt-4 bg-green-500 text-white px-4 py-2">
-                    Submit Blog
+                <button
+                    type="submit"
+                    className={`mt-4 px-4 py-2 text-white ${isSubmitting ? 'bg-gray-500' : 'bg-green-500'}`}
+                    disabled={isSubmitting} // Disable button while submitting
+                >
+                    {isSubmitting ? 'Submitting...' : 'Submit Blog'} {/* Change text based on loading state */}
                 </button>
             </form>
         </div>
