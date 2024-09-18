@@ -38,7 +38,7 @@ export default function App({ Component, pageProps }) {
         <meta name="twitter:title" content="Exotica Lingerie - Premium Women's Lingerie Online" />
         <meta name="twitter:description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
         <meta name="twitter:image" content="https://www.exoticalingerie.in/Images/ogimage.webp" />
-
+        
       </Head>
 
       <PersistGate loading={null} persistor={persistor}>
