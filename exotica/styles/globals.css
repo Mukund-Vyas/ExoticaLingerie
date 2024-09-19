@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Abril Fatface&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Libre Baskerville&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Nunito&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Lobster&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Gelasio&display=swap');
@@ -8,7 +7,7 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto Slab&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Bacasime Antique&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Pacifico&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -33,6 +32,15 @@ body {
         text-wrap: balance;
     }
 }
+
+.clip-corner-tl {
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.clip-corner-br {
+    clip-path: polygon(100% 100%, 100% 0, 0 100%);
+}
+
 
 /* ---------------------------------------- Order Tracking ------------------------------------------*/
 .stepper {
