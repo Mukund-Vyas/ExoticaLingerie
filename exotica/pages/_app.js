@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }) {
     <Provider store={store}>
       <Head>
         <title>Lingeries - Buy Lingeries For Women @ Exotica Lingerie</title>
-        <meta property="description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
+        <meta name="description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
