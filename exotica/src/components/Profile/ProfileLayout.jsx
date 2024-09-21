@@ -117,7 +117,7 @@ const ProfileLayout = ({toggleProfile}) => {
                 startResendTimer();
             } else {
                 console.log(error);
-                toast.error('Failed to resend OTP. Please try again.');
+                toast.error('Failed to send OTP. Please try again.');
             }
             setIsLoading(false);
         }

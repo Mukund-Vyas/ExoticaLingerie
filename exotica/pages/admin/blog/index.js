@@ -7,6 +7,7 @@ const BlogForm = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [mainImage, setMainImage] = useState('');
+    const [categories, setCategories] = useState('');
     const [subTopics, setSubTopics] = useState([{ subHeading: '', subText: '', subImage: '', actionButton: { text: '', link: '' } }]);
     const [tags, setTags] = useState([]);
     const [tagInput, setTagInput] = useState('');
@@ -48,8 +49,9 @@ const BlogForm = () => {
         try {
             const blogData = { 
                 mainHeading: title, 
-                mainText: content, 
+                mainText: content,
                 mainImage, 
+                categories, 
                 subTopics, 
                 tags 
             };
@@ -104,7 +106,16 @@ const BlogForm = () => {
                         required
                     />
                 </div>
-
+                <div>
+                    <label className='font-medium'>Blog Category:</label>
+                    <input
+                        type="text"
+                        value={categories}
+                        onChange={(e) => setCategories(e.target.value)}
+                        className="border p-2 w-full"
+                        required
+                    />
+                </div>
                 {/* Tags Section */}
                 <div className="mt-4">
                     <label className='font-medium'>Tags:</label>

@@ -17,6 +17,7 @@ const blogSchema = new mongoose.Schema({
   mainHeading: { type: String, required: true },
   mainText: { type: String, required: true },
   mainImage: { type: String, required: true },
+  categories: { type: String, required: true },
   subTopics: [subTopicSchema], // Array of sub-topics with individual layouts
   tags: { type: [String], required: true }, // Array of tags
   createdAt: { type: Date, default: Date.now }, // Timestamp

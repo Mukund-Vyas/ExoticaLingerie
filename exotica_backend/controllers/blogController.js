@@ -63,7 +63,7 @@ exports.createBlog = async (req, res) => {
     console.log("::: Comes for creating Blog :::");
     
     try {
-        const { mainHeading, mainText, mainImage, subTopics, tags } = req.body;
+        const { mainHeading, mainText, mainImage, categories, subTopics, tags } = req.body;
 
         console.log("::: main function URL :::", mainImage);
         
@@ -93,6 +93,7 @@ exports.createBlog = async (req, res) => {
         const newBlog = new Blog({
             mainHeading,
             mainText,
+            categories,
             mainImage: mainImagePath, // Store the path to the main image
             subTopics: updatedSubTopics,
             tags,
@@ -108,7 +109,6 @@ exports.createBlog = async (req, res) => {
         return res.status(500).json({ message: 'Error creating blog', error: error.message });
     }
 };
-
 
 // Get all blogs
 exports.getAllBlogs = async (req, res) => {
