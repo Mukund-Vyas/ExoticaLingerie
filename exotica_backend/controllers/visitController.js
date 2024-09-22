@@ -12,18 +12,33 @@ exports.trackVisit = async (req, res) => {
         const { page } = req.body;
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress; // To handle proxies and real IPs
         console.log(page, ip);
-        
+
         // Ignore admin routes
         if (page.startsWith('/admin')) {
             console.log("admin");
             return res.status(200).json({ message: 'Admin routes are not logged' });
         }
 
+        // Detect marketing campaign links by common query parameters
+        let updatedPage = page; // Default to the original page
+
+        if (page.includes('fbclid')) {
+            updatedPage = '/facebook-clicks';  // Group Facebook clicks
+        } else if (page.includes('gclid')) {
+            updatedPage = '/google-clicks';  // Group Google Ads clicks
+        } else if (page.includes('msclkid')) {
+            updatedPage = '/bing-clicks';  // Group Bing Ads clicks
+        } else if (page.includes('twclid')) {
+            updatedPage = '/twitter-clicks';  // Group Twitter Ads clicks
+        } else if (page.includes('li_fat_id')) {
+            updatedPage = '/linkedin-clicks';  // Group LinkedIn Ads clicks
+        }
+
         // Handle product/item/{_id} routes
         if (page.startsWith('/products/item/')) {
             const productId = page.split('/products/item/')[1];  // Extract the _id part
             console.log("::: id :::", productId);
-            
+
             try {
                 // Fetch the product by its _id
                 const product = await Product.findById(productId);
@@ -32,20 +47,20 @@ exports.trackVisit = async (req, res) => {
                     return res.status(404).json({ message: 'Product not found' });
                 }
                 const sku = product.productSKU; // Assuming SKU is stored in the product document
-                const updatedPage = `/product/item/${sku}`;
-                
+                updatedPage = `/product/item/${sku}`;  // Log with SKU URL instead of ID
+
                 // Log the visit with the updated SKU URL
                 const visit = new Visit({ ip, page: updatedPage });
                 await visit.save();
-                
+
                 return res.status(200).json({ message: 'Visit logged successfully' });
             } catch (error) {
                 console.error("Error fetching product:", error);
                 return res.status(500).json({ error: 'Failed to fetch product by ID' });
             }
         } else {
-            // Log visits for other routes
-            const visit = new Visit({ ip, page });
+            // Log visits for other routes, including marketing clicks grouped under their respective categories
+            const visit = new Visit({ ip, page: updatedPage });
             await visit.save();
             return res.status(200).json({ message: 'Visit logged successfully' });
         }
@@ -54,6 +69,7 @@ exports.trackVisit = async (req, res) => {
         res.status(500).json({ error: 'Failed to log visit' });
     }
 };
+
 
 // Helper function for daily visits
 const getDailyVisits = async () => {
