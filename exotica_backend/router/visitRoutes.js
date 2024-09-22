@@ -6,17 +6,19 @@ const visitController = require('../controllers/visitController');
 router.post('/track-visit', visitController.trackVisit);
 
 // Route for daily visits report
-router.get('/daily-visits', reportController.getDailyVisitsReport);
+router.get('/daily-visits', visitController.getDailyVisitsReport);
 
 // Route for monthly visits report
-router.get('/monthly-visits', reportController.getMonthlyVisitsReport);
+router.get('/monthly-visits', visitController.getMonthlyVisitsReport);
 
 // Route for yearly visits report
-router.get('/yearly-visits', reportController.getYearlyVisitsReport);
+router.get('/yearly-visits', visitController.getYearlyVisitsReport);
 
 // Routes for daily, monthly, yearly URL-wise reports
-router.get('/daily-visits-url', reportController.getDailyVisitsByURLReport);
-router.get('/monthly-visits-url', reportController.getMonthlyVisitsByURLReport);
-router.get('/yearly-visits-url', reportController.getYearlyVisitsByURLReport);
+router.get('/daily-visits-url', visitController.getDailyVisitsByURLReport);
+router.get('/monthly-visits-url', visitController.getMonthlyVisitsByURLReport);
+router.get('/yearly-visits-url', visitController.getYearlyVisitsByURLReport);
 
+// Routes for last 30 days visits report
+router.get('/last-30-days', visitController.getTotalVisitsLast30DaysReport);
 module.exports = router;

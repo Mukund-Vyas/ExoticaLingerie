@@ -2,15 +2,55 @@
 const Visit = require('../models/visitModel');
 
 // Function to log a visit
+const Product = require('../models/ProductModel'); // Assuming you have a product model
+
+// Function to log a visit
 exports.trackVisit = async (req, res) => {
+    console.log("::: trackVisit :::");
+
     try {
         const { page } = req.body;
-        const ip = req.ip; // or use req.headers['x-forwarded-for'] for proxies
-        const visit = new Visit({ ip, page });
+        const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress; // To handle proxies and real IPs
+        console.log(page, ip);
+        
+        // Ignore admin routes
+        if (page.startsWith('/admin')) {
+            console.log("admin");
+            return res.status(200).json({ message: 'Admin routes are not logged' });
+        }
 
-        await visit.save();
-        res.status(200).json({ message: 'Visit logged successfully' });
+        // Handle product/item/{_id} routes
+        if (page.startsWith('/products/item/')) {
+            const productId = page.split('/products/item/')[1];  // Extract the _id part
+            console.log("::: id :::", productId);
+            
+            try {
+                // Fetch the product by its _id
+                const product = await Product.findById(productId);
+                if (!product) {
+                    console.log("::: Product not found :::");
+                    return res.status(404).json({ message: 'Product not found' });
+                }
+                const sku = product.productSKU; // Assuming SKU is stored in the product document
+                const updatedPage = `/product/item/${sku}`;
+                
+                // Log the visit with the updated SKU URL
+                const visit = new Visit({ ip, page: updatedPage });
+                await visit.save();
+                
+                return res.status(200).json({ message: 'Visit logged successfully' });
+            } catch (error) {
+                console.error("Error fetching product:", error);
+                return res.status(500).json({ error: 'Failed to fetch product by ID' });
+            }
+        } else {
+            // Log visits for other routes
+            const visit = new Visit({ ip, page });
+            await visit.save();
+            return res.status(200).json({ message: 'Visit logged successfully' });
+        }
     } catch (error) {
+        console.error("Error logging visit:", error);
         res.status(500).json({ error: 'Failed to log visit' });
     }
 };
@@ -169,5 +209,44 @@ exports.getYearlyVisitsByURLReport = async (req, res) => {
         res.status(200).json(visits);
     } catch (error) {
         res.status(500).json({ error: 'Failed to get yearly visits report' });
+    }
+};
+
+// Helper function for date-wise total visits for the past 30 days
+const getTotalVisitsLast30Days = async () => {
+    const today = new Date();
+    const past30Days = new Date();
+    past30Days.setDate(today.getDate() - 30);
+
+    const visits = await Visit.aggregate([
+        {
+            $match: {
+                timestamp: { $gte: past30Days }  // Only consider visits in the last 30 days
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    date: {
+                        $dateToString: { format: "%Y-%m-%d", date: "$timestamp" }
+                    }
+                },
+                totalVisits: { $sum: 1 }
+            }
+        },
+        {
+            $sort: { "_id.date": 1 }  // Sort by date ascending
+        }
+    ]);
+    return visits;
+};
+
+// Controller for last 30 days visits report
+exports.getTotalVisitsLast30DaysReport = async (req, res) => {
+    try {
+        const visits = await getTotalVisitsLast30Days();
+        res.status(200).json(visits);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to get total visits report for the last 30 days' });
     }
 };

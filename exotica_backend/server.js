@@ -9,6 +9,7 @@ const cors = require('cors');
 const paymentRouters = require('./router/paymentRouters');
 const orderRoutes = require('./router/orderRouters'); 
 const blogRoutes = require('./router/blogRoutes'); 
+const visitRoutes = require('./router/visitRoutes'); 
 const path = require('path');
 
 // Load environment variables from .env file
@@ -80,6 +81,7 @@ app.use('/api/v1/', wishlistRoutes);
 app.use('/api/v1/payment', paymentRouters);
 app.use('/api/v1/order', orderRoutes);
 app.use('/api/v1/blog', blogRoutes);
+app.use('/api/v1/sitevisits', visitRoutes);
 
 // Catch-all route for handling 404
 app.use((req, res) => {

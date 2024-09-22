@@ -6,8 +6,43 @@ import { Provider } from "react-redux";
 import { store, persistor } from "@/Redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import Head from "next/head";
+import api from "@/src/utils/api";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import ReactGA from 'react-ga4';
+
+const trackingId = 'G-73BCPH24QZ'; 
+ReactGA.initialize(trackingId);
 
 export default function App({ Component, pageProps }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const trackVisit = async (url) => {
+      try {
+        await api.post('/sitevisits/track-visit', {
+          page: url,
+        });
+        console.log('Page visit tracked successfully');
+      } catch (error) {
+        console.error('Error tracking page visit:', error);
+      }
+    };
+
+    const handleRouteChange = (url) => {
+      const pathWithQueryString = window.location.pathname + window.location.search;
+      ReactGA.send({ hitType: "pageview", page: pathWithQueryString });
+      
+      trackVisit(url);
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
+  
   return (
     <Provider store={store}>
       <Head>
