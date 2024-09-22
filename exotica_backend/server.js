@@ -10,6 +10,7 @@ const paymentRouters = require('./router/paymentRouters');
 const orderRoutes = require('./router/orderRouters'); 
 const blogRoutes = require('./router/blogRoutes'); 
 const visitRoutes = require('./router/visitRoutes'); 
+const adminRoutes = require('./router/adminRoutes'); 
 const path = require('path');
 
 // Load environment variables from .env file
@@ -82,6 +83,7 @@ app.use('/api/v1/payment', paymentRouters);
 app.use('/api/v1/order', orderRoutes);
 app.use('/api/v1/blog', blogRoutes);
 app.use('/api/v1/sitevisits', visitRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Catch-all route for handling 404
 app.use((req, res) => {

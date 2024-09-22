@@ -14,10 +14,10 @@ exports.trackVisit = async (req, res) => {
         console.log(page, ip);
 
         // Ignore admin routes
-        if (page.startsWith('/admin')) {
-            console.log("admin");
-            return res.status(200).json({ message: 'Admin routes are not logged' });
-        }
+        if (page.startsWith('/admin') || page.startsWith('/orderDetails')) {
+            console.log("admin or orderDetails");
+            return res.status(200).json({ message: 'Admin or orderDetails routes are not logged' });
+        }        
 
         // Detect marketing campaign links by common query parameters
         let updatedPage = page; // Default to the original page

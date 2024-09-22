@@ -5,6 +5,7 @@ import userReducer from './Reducers/userSlice';
 import profileReducer from './Reducers/profileSlice';
 import wishlistReducer from './Reducers/wishlistSlice';
 import cartReducer from './Reducers/cartSlice';
+import adminAuthReducer from './Reducers/adimnAuthSlice';
 
 // Persist configuration for user slice
 const userPersistConfig = {
@@ -20,6 +21,7 @@ export const store = configureStore({
     profile: profileReducer,
     cart: cartReducer,
     wishlist: wishlistReducer,
+    admin: adminAuthReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

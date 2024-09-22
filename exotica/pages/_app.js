@@ -10,12 +10,15 @@ import api from "@/src/utils/api";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ReactGA from 'react-ga4';
+import AdminLayout from "@/src/components/Admin/Layout/AdminLayout";
 
 const trackingId = 'G-73BCPH24QZ'; 
 ReactGA.initialize(trackingId);
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
+  const isAdminRoute = router.pathname.startsWith('/admin');
+  const isLoginRoute = router.pathname === '/admin/login';
 
   useEffect(() => {
     const trackVisit = async (url) => {
@@ -80,9 +83,18 @@ export default function App({ Component, pageProps }) {
       <PersistGate loading={null} persistor={persistor}>
         <ProfileProvider>
           <CartProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
+          {isLoginRoute ? (
+              <Component {...pageProps} /> // No layout for login route
+            ) : isAdminRoute ? (
+              <AdminLayout>
+                <Component {...pageProps} />
+              </AdminLayout>
+            ) : (
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            )}
+            
           </CartProvider>
         </ProfileProvider>
       </PersistGate>

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const visitController = require('../controllers/visitController');
+const auth = require('../middleware/adminAuthMiddleware');
 
 // Route to track a visit
 router.post('/track-visit', visitController.trackVisit);
