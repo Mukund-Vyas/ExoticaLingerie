@@ -23,6 +23,8 @@ exports.trackVisit = async (req, res) => {
         let updatedPage = page; // Default to the original page
 
         if (page.includes('fbclid')) {
+            console.log('::: Facebook Recieved :::');
+            
             updatedPage = '/facebook-clicks';  // Group Facebook clicks
         } else if (page.includes('gclid')) {
             updatedPage = '/google-clicks';  // Group Google Ads clicks
