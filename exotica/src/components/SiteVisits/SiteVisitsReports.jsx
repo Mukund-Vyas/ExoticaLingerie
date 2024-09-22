@@ -43,7 +43,7 @@ const SiteVisitsReports = () => {
     useEffect(() => {
         fetchData();
         // Auto-refresh every 30 seconds
-        const intervalId = setInterval(fetchData, 5000);
+        const intervalId = setInterval(fetchData, 15000);
 
         return () => clearInterval(intervalId); // Cleanup on unmount
     }, []);
