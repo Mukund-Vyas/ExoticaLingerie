@@ -38,7 +38,7 @@ exports.trackVisit = async (req, res) => {
 
         // Handle product/item/{_id} routes
         if (page.startsWith('/products/item/')) {
-            const productId = page.split('/products/item/')[1];  // Extract the _id part
+            const productId = page.split('/products/item/')[1].split('?')[0];  // Extract the _id part
             console.log("::: id :::", productId);
 
             try {
