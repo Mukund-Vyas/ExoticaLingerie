@@ -52,7 +52,7 @@ const downloadImage = async (url, filenamePrefix, tags) => {
 
     // Return the relative path to the image once it's saved
     return new Promise((resolve, reject) => {
-        writer.on('finish', () => resolve(`/images/blog/${filename}`)); // Store path in DB
+        writer.on('finish', () => resolve(`/blog/${filename}`)); // Store path in DB
         writer.on('error', reject);
     });
 };
@@ -122,12 +122,15 @@ exports.getAllBlogs = async (req, res) => {
 
 // Get blog main details for list page (without subtopics)
 exports.getBlogsMainDetails = async (req, res) => {
+    console.log("::: comes to get main details :::");
+    
     try {
         // Fetch blogs but exclude subTopics field
         const blogs = await Blog.find({}, {
             mainHeading: 1,
             mainText: 1,
             mainImage: 1,
+            categories: 1,
             tags: 1,
             createdAt: 1,
         });
@@ -140,6 +143,8 @@ exports.getBlogsMainDetails = async (req, res) => {
 
 // Get a single blog by ID
 exports.getBlogById = async (req, res) => {
+    console.log("::: comes with ID:::");
+    
     try {
         const blog = await Blog.findById(req.params.id);
         if (!blog) {
@@ -154,13 +159,9 @@ exports.getBlogById = async (req, res) => {
 // Update a blog by ID
 exports.updateBlog = async (req, res) => {
     try {
-        const { mainHeading, mainText, mainImage, subTopics, tags } = req.body;
-
-        const updatedBlog = await Blog.findByIdAndUpdate(
-            req.params.id,
-            { mainHeading, mainText, mainImage, subTopics, tags },
-            { new: true }
-        );
+        const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, {
+            $set: req.body
+        }, { new: true });
 
         if (!updatedBlog) {
             return res.status(404).json({ message: 'Blog not found' });

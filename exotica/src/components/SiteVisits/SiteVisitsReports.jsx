@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import api from '@/src/utils/api';
+import { Oval } from 'react-loader-spinner';
 
 const SiteVisitsReports = () => {
     const [dailyData, setDailyData] = useState([]);
@@ -70,7 +71,9 @@ const SiteVisitsReports = () => {
     const formattedLast30DaysData = useMemo(() => formatData30Days(last30DaysData), [last30DaysData]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+            <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
+        </div>;
     }
 
     if (error) {

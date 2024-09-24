@@ -52,7 +52,7 @@ const AdminLayout = ({ children }) => {
           </ul>
         </nav>
       </aside>
-      <main className="flex-1 p-4 bg-gray-100 overflow-y-scroll">
+      <main className="flex-1 p-4 bg-pink-50 overflow-y-scroll">
         {children}
       </main>
     </div>

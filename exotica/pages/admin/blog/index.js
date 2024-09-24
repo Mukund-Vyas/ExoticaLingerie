@@ -1,9 +1,15 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useRef, useState } from 'react';
 import api from '@/src/utils/api';
 import toast, { Toaster } from 'react-hot-toast';
+import dynamic from 'next/dynamic';
+import 'jodit/es2021.en/jodit.min.css';
+
+// Dynamically import Jodit to avoid SSR issues
+const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
 
 const BlogForm = () => {
+    const editor = useRef(null);
+    const [joditContent, setJoditContent] = useState('');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [mainImage, setMainImage] = useState('');
@@ -12,6 +18,19 @@ const BlogForm = () => {
     const [tags, setTags] = useState([]);
     const [tagInput, setTagInput] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const config = {
+        readonly: false, // Enable editing
+        uploader: {
+            insertImageAsBase64URI: true, // Optional, uploads images as Base64
+        },
+        buttons: [
+            'source', 'bold', 'italic', 'underline', 'strikethrough', 'eraser', 'ul', 'ol', 'outdent', 'indent',
+            'font', 'fontsize', 'brush', 'paragraph', 'align', 'undo', 'redo', 'table', 'image', 'file', 'link',
+            'hr', 'copyformat', 'selectall', 'cut', 'copy', 'paste', 'fullsize', 'print'
+        ],
+    };
+
 
     const addSubTopic = () => {
         setSubTopics([...subTopics, { subHeading: '', subText: '', subImage: '', actionButton: { text: '', link: '' } }]);
@@ -47,28 +66,48 @@ const BlogForm = () => {
         e.preventDefault();
         setIsSubmitting(true); // Start loading
         try {
-            const blogData = { 
-                mainHeading: title, 
+            const blogData = {
+                mainHeading: title,
                 mainText: content,
-                mainImage, 
-                categories, 
-                subTopics, 
-                tags 
+                mainImage,
+                categories,
+                subTopics,
+                tags
             };
-            await api.post('/blog/create', blogData);
+            await api.post('/blog', blogData);
             toast.success('Blog posted successfully!'); // Success toast
-    
+
             // Clear the inputs after successful submission
             setTitle('');
             setContent('');
             setMainImage('');
             setSubTopics([{ subHeading: '', subText: '', subImage: '', actionButton: { text: '', link: '' } }]);
             setTags([]);
-    
+
         } catch (error) {
             toast.error('Failed to post the blog. Please try again.'); // Error toast
         } finally {
             setIsSubmitting(false); // End loading
+        }
+    };
+
+    const handleJoditSubmit = async () => {
+        try {
+            const response = await fetch('/api/save-blog', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ joditContent }),
+            });
+
+            if (response.ok) {
+                console.log('Blog saved successfully');
+            } else {
+                console.error('Failed to save blog');
+            }
+        } catch (error) {
+            console.error('Error submitting the blog:', error);
         }
     };
 
@@ -108,13 +147,19 @@ const BlogForm = () => {
                 </div>
                 <div>
                     <label className='font-medium'>Blog Category:</label>
-                    <input
-                        type="text"
+                    <select
                         value={categories}
                         onChange={(e) => setCategories(e.target.value)}
                         className="border p-2 w-full"
                         required
-                    />
+                    >
+                        <option value="" disabled>Select a category</option>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Lifestyle">Lifestyle</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Quizzes">Quizzes</option>
+                        <option value="Listicles">Listicles</option>
+                    </select>
                 </div>
                 {/* Tags Section */}
                 <div className="mt-4">
@@ -248,6 +293,22 @@ const BlogForm = () => {
                     {isSubmitting ? 'Submitting...' : 'Submit Blog'} {/* Change text based on loading state */}
                 </button>
             </form>
+
+            <div className="container mx-auto p-4">
+                <h1 className="text-2xl font-bold mb-4 font-serif">Create Blog Post</h1>
+                <JoditEditor
+                    ref={editor}
+                    value={joditContent}
+                    config={config}
+                    onBlur={(newContent) => setJoditContent(newContent)} // On editor blur, set content
+                />
+                <button
+                    onClick={handleJoditSubmit}
+                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                    Still in development...
+                </button>
+            </div>
         </div>
     );
 };

@@ -11,11 +11,9 @@ exports.trackVisit = async (req, res) => {
     try {
         const { page } = req.body;
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress; // To handle proxies and real IPs
-        console.log(page, ip);
 
         // Ignore admin routes
         if (page.startsWith('/admin') || page.startsWith('/orderDetails')) {
-            console.log("admin or orderDetails");
             return res.status(200).json({ message: 'Admin or orderDetails routes are not logged' });
         }        
 
@@ -23,8 +21,6 @@ exports.trackVisit = async (req, res) => {
         let updatedPage = page; // Default to the original page
 
         if (page.includes('fbclid')) {
-            console.log('::: Facebook Recieved :::');
-            
             updatedPage = '/facebook-clicks';  // Group Facebook clicks
         } else if (page.includes('gclid')) {
             updatedPage = '/google-clicks';  // Group Google Ads clicks
@@ -39,8 +35,7 @@ exports.trackVisit = async (req, res) => {
         // Handle product/item/{_id} routes
         if (page.startsWith('/products/item/')) {
             const productId = page.split('/products/item/')[1].split('?')[0];  // Extract the _id part
-            console.log("::: id :::", productId);
-
+            
             try {
                 // Fetch the product by its _id
                 const product = await Product.findById(productId);
