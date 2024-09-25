@@ -1,0 +1,15 @@
+version: '3'
+services:
+  exotica_frontend:
+    build: ./exotica
+    ports:
+      - "3000:3000"
+    depends_on:
+      - exotica_backend
+    restart: always
+
+  exotica_backend:
+    build: ./exotica_backend
+    ports:
+      - "5016:5016"
+    restart: always
