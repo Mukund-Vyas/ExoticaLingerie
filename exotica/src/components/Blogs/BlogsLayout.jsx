@@ -108,7 +108,7 @@ const BlogsLayout = ({ blogs }) => {
           {/* Latest blog */}
           {filteredBlogs.length > 0 && (
             // /blogs/${filteredBlogs[0]._id}?blogName=${filteredBlogs[0].mainHeading}
-            <Link href={`/blogs`}>
+            <Link href={`/blogs/${filteredBlogs[0]._id}?blogName=${filteredBlogs[0].mainHeading}`}>
               <div className='w-full flex rounded-2xl bg-white mb-10 border border-slate-400 max-md:flex-col-reverse'>
                 <div className='w-1/2 max-md:w-full h-full flex flex-col justify-center items-start my-auto px-10 p-4'>
                   {filteredBlogs[0].categories && <span className='text-xs font-semibold text-slate-500 py-1.5 px-2 border border-slate-400 rounded-md'>
@@ -139,7 +139,7 @@ const BlogsLayout = ({ blogs }) => {
           {/* Other blogs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-6">
             {filteredBlogs.slice(1).map((blog, index) => (
-              <Link key={"blog" + index} href={`/blogs`}>
+              <Link key={"blog" + index} href={`/blogs/${blog._id}?blogName=${blog.mainHeading}`}>
                 <div className="relative bg-white shadow-md rounded-xl overflow-hidden border border-slate-400">
                   <Image
                     src={encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${blog.mainImage}`)}
