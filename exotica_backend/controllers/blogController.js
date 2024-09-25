@@ -4,6 +4,10 @@ const path = require('path');
 const axios = require('axios');
 const mime = require('mime-types');
 
+// Supported image formats
+const SUPPORTED_IMAGE_FORMATS = ['jpeg', 'jpg', 'png', 'webp', 'gif', 'svg'];
+
+// Helper function to get 1 or 2 random tags from the provided list
 const getRandomTags = (tags) => {
     if (!tags || tags.length === 0) return ''; // Return empty if no tags available
     const selectedTags = tags
@@ -66,10 +70,9 @@ const downloadImage = async (url, filenamePrefix, tags) => {
     const contentType = response.headers['content-type'];
     let ext = mime.extension(contentType); // Extract the extension from content-type
 
-    if (!ext) {
-        // Fallback: Extract extension from URL
-        const urlExt = path.extname(downloadUrl).split('?')[0]; // Handle URLs with query params
-        ext = urlExt ? urlExt.replace('.', '') : 'jpg'; // Default to 'jpg'
+    // Validate if the file extension is in the list of supported image formats
+    if (!ext || !SUPPORTED_IMAGE_FORMATS.includes(ext.toLowerCase())) {
+        throw new Error(`Unsupported file format: ${ext}. Only JPEG, PNG, WEBP, and GIF are allowed.`);
     }
 
     // Generate SEO-friendly filename with random tags
@@ -91,12 +94,12 @@ const downloadImage = async (url, filenamePrefix, tags) => {
 // Create a new blog
 exports.createBlog = async (req, res) => {
     console.log("::: Comes for creating Blog :::");
-    
+
     try {
         const { mainHeading, mainText, mainImage, categories, subTopics, tags } = req.body;
 
         console.log("::: Main function URL :::", mainImage);
-        
+
         // Download and save the main image with random tags in the filename
         const mainImagePath = await downloadImage(mainImage, 'main', tags);
 
