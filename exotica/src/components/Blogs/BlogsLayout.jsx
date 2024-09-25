@@ -110,55 +110,57 @@ const BlogsLayout = ({ blogs }) => {
             // /blogs/${filteredBlogs[0]._id}?blogName=${filteredBlogs[0].mainHeading}
             <Link href={`/blogs`}>
               <div className='w-full flex rounded-2xl bg-white mb-10 border border-slate-400 max-md:flex-col-reverse'>
-              <div className='w-1/2 max-md:w-full h-full flex flex-col justify-center items-start my-auto px-10 p-4'>
-                {filteredBlogs[0].categories && <span className='text-xs font-semibold text-slate-500 py-1.5 px-2 border border-slate-400 rounded-md'>
-                  {filteredBlogs[0].categories}
-                </span>}
-                <h2 className="mt-2 text-xl font-[roboto] font-bold text-gray-800">
-                  {filteredBlogs[0].mainHeading}
-                </h2>
-                <div className='text-sm flex items-center mt-4 text-slate-500'>
-                  <span>{new Date(filteredBlogs[0].createdAt).toISOString().split('T')[0]}</span>
-                  <RxDotFilled />
-                  <span>By Team Exotica</span>
+                <div className='w-1/2 max-md:w-full h-full flex flex-col justify-center items-start my-auto px-10 p-4'>
+                  {filteredBlogs[0].categories && <span className='text-xs font-semibold text-slate-500 py-1.5 px-2 border border-slate-400 rounded-md'>
+                    {filteredBlogs[0].categories}
+                  </span>}
+                  <h2 className="mt-2 text-xl font-[roboto] font-bold text-gray-800">
+                    {filteredBlogs[0].mainHeading}
+                  </h2>
+                  <div className='text-sm flex items-center mt-4 text-slate-500'>
+                    <span>{new Date(filteredBlogs[0].createdAt).toISOString().split('T')[0]}</span>
+                    <RxDotFilled />
+                    <span>By Team Exotica</span>
+                  </div>
+                </div>
+                <div className='w-1/2 max-md:w-full'>
+                  <Image
+                    src={encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${filteredBlogs[0].mainImage}`)}
+                    alt={filteredBlogs[0].title}
+                    width={200} // Set appropriate width
+                    height={200} // Set appropriate height
+                    className="w-full object-cover md:rounded-tr-2xl md:rounded-br-2xl max-md:rounded-tr-2xl max-md:rounded-tl-2xl"
+                  />
                 </div>
               </div>
-              <div className='w-1/2 max-md:w-full'>
-                <Image
-                  src={encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${filteredBlogs[0].mainImage}`)}
-                  alt={filteredBlogs[0].title}
-                  width={200} // Set appropriate width
-                  height={200} // Set appropriate height
-                  className="w-full object-cover md:rounded-tr-2xl md:rounded-br-2xl max-md:rounded-tr-2xl max-md:rounded-tl-2xl"
-                />
-              </div>
-            </div>
             </Link>
           )}
 
           {/* Other blogs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-6">
             {filteredBlogs.slice(1).map((blog, index) => (
-              <div key={index} className="relative bg-white shadow-md rounded-xl overflow-hidden border border-slate-400">
-                <Image
-                  src={blog.imageUrl}
-                  alt={blog.title}
-                  width={400}
-                  height={250}
-                  className="h-52 w-full object-cover"
-                />
-                <div className="p-4">
-                  <span className='text-xs font-semibold text-slate-500 py-1.5 px-2 border border-slate-400 rounded-md'>
-                    {blog.tag}
-                  </span>
-                  <h2 className="mt-2 text-xl font-[roboto] font-bold text-gray-800">{blog.title}</h2>
-                  <div className="flex items-center mt-4 text-sm text-gray-500">
-                    <span>{blog.date}</span>
-                    <RxDotFilled />
-                    <span>By Team Exotica</span>
+              <Link key={"blog" + index} href={`/blogs`}>
+                <div className="relative bg-white shadow-md rounded-xl overflow-hidden border border-slate-400">
+                  <Image
+                    src={encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${blog.mainImage}`)}
+                    alt={blog.mainHeading}
+                    width={400}
+                    height={250}
+                    className="h-52 w-full object-cover"
+                  />
+                  <div className="p-4">
+                    <span className='text-xs font-semibold text-slate-500 py-1.5 px-2 border border-slate-400 rounded-md'>
+                      {blog.categories}
+                    </span>
+                    <h2 className="mt-2 text-xl font-[roboto] font-bold text-gray-800">{blog.mainHeading}</h2>
+                    <div className="flex items-center mt-4 text-sm text-gray-500">
+                      <span>{blog.date}</span>
+                      <RxDotFilled />
+                      <span>By Team Exotica</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </>

@@ -4,13 +4,42 @@ const path = require('path');
 const axios = require('axios');
 const mime = require('mime-types');
 
-// Helper function to get 1 or 2 random tags from the provided list
 const getRandomTags = (tags) => {
     if (!tags || tags.length === 0) return ''; // Return empty if no tags available
     const selectedTags = tags
         .sort(() => 0.5 - Math.random()) // Shuffle tags
         .slice(0, Math.min(10, tags.length)); // Select up to 10 tags
     return selectedTags.join('-').replace(/\s+/g, '-'); // Join tags with hyphens
+};
+
+// Helper function to convert Dropbox URL to a direct download link
+const convertDropboxUrl = (url) => {
+    return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+};
+
+// Helper function to convert Google Drive URLs to direct download links
+const convertGoogleDriveUrl = (url) => {
+    const fileIdMatch = url.match(/\/d\/(.+?)\/view/);
+    if (fileIdMatch && fileIdMatch[1]) {
+        return `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+    }
+    return url;
+};
+
+// Helper function to convert URLs of Dropbox, Google Drive, etc. to downloadable links
+const getDownloadableUrl = (url) => {
+    // Handle Dropbox URL
+    if (url.includes('dropbox.com')) {
+        return convertDropboxUrl(url);
+    }
+
+    // Handle Google Drive URL
+    if (url.includes('drive.google.com')) {
+        return convertGoogleDriveUrl(url);
+    }
+
+    // Return the original URL if no changes are needed
+    return url;
 };
 
 // Helper function to download and save images locally in the blog folder
@@ -22,11 +51,13 @@ const downloadImage = async (url, filenamePrefix, tags) => {
         fs.mkdirSync(blogImagesPath, { recursive: true });
     }
 
-    console.log("::: URL :::",url);
-    
+    // Convert the URL if it's from Dropbox or Google Drive
+    const downloadUrl = getDownloadableUrl(url);
+    console.log("::: Download URL :::", downloadUrl);
+
     // Fetch the image
     const response = await axios({
-        url,
+        url: downloadUrl,
         method: 'GET',
         responseType: 'stream',
     });
@@ -37,7 +68,7 @@ const downloadImage = async (url, filenamePrefix, tags) => {
 
     if (!ext) {
         // Fallback: Extract extension from URL
-        const urlExt = path.extname(url).split('?')[0]; // Handle URLs with query params
+        const urlExt = path.extname(downloadUrl).split('?')[0]; // Handle URLs with query params
         ext = urlExt ? urlExt.replace('.', '') : 'jpg'; // Default to 'jpg'
     }
 
@@ -57,7 +88,6 @@ const downloadImage = async (url, filenamePrefix, tags) => {
     });
 };
 
-
 // Create a new blog
 exports.createBlog = async (req, res) => {
     console.log("::: Comes for creating Blog :::");
@@ -65,7 +95,7 @@ exports.createBlog = async (req, res) => {
     try {
         const { mainHeading, mainText, mainImage, categories, subTopics, tags } = req.body;
 
-        console.log("::: main function URL :::", mainImage);
+        console.log("::: Main function URL :::", mainImage);
         
         // Download and save the main image with random tags in the filename
         const mainImagePath = await downloadImage(mainImage, 'main', tags);
@@ -105,10 +135,10 @@ exports.createBlog = async (req, res) => {
         return res.status(201).json({ message: 'Blog created successfully', blog: savedBlog });
     } catch (error) {
         console.log(error);
-        
         return res.status(500).json({ message: 'Error creating blog', error: error.message });
     }
 };
+
 
 // Get all blogs
 exports.getAllBlogs = async (req, res) => {
