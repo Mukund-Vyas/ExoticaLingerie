@@ -29,7 +29,7 @@ const BlogsLayout = ({ blogs }) => {
   // Filter blogs based on the active topic
   const filteredBlogs = activeTopic === 'All'
     ? blogs
-    : blogs.filter(blog => blog.tag === activeTopic);
+    : blogs.filter(blog => blog.categories === activeTopic);
 
   // Handle category button click and update URL
   const handleCategoryChange = (topic) => {
