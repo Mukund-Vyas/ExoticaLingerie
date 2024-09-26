@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const mime = require('mime-types');
+const FileType = require('file-type');
 
 // Supported image formats
 const SUPPORTED_IMAGE_FORMATS = ['jpeg', 'jpg', 'png', 'webp', 'gif', 'svg'];
@@ -12,9 +13,13 @@ const getRandomTags = (tags) => {
     if (!tags || tags.length === 0) return ''; // Return empty if no tags available
     const selectedTags = tags
         .sort(() => 0.5 - Math.random()) // Shuffle tags
-        .slice(0, Math.min(10, tags.length)); // Select up to 10 tags
-    return selectedTags.join('-').replace(/\s+/g, '-'); // Join tags with hyphens
+        .slice(0, Math.min(5, tags.length)); // Select up to 10 tags
+    return selectedTags
+        .join('-')
+        .replace(/\s+/g, '-')  // Replace spaces with hyphens
+        .replace(/[\/\\]/g, '-'); // Replace slashes with hyphens
 };
+
 
 // Helper function to convert Dropbox URL to a direct download link
 const convertDropboxUrl = (url) => {
@@ -47,6 +52,51 @@ const getDownloadableUrl = (url) => {
 };
 
 // Helper function to download and save images locally in the blog folder
+// with mime type
+// const downloadImage = async (url, filenamePrefix, tags) => {
+//     const blogImagesPath = path.join(__dirname, '../images/blog');
+
+//     // Ensure the 'blog' subfolder exists, create it if it doesn't
+//     if (!fs.existsSync(blogImagesPath)) {
+//         fs.mkdirSync(blogImagesPath, { recursive: true });
+//     }
+
+//     // Convert the URL if it's from Dropbox or Google Drive
+//     const downloadUrl = getDownloadableUrl(url);
+//     console.log("::: Download URL :::", downloadUrl);
+
+//     // Fetch the image
+//     const response = await axios({
+//         url: downloadUrl,
+//         method: 'GET',
+//         responseType: 'stream',
+//     });
+
+//     // Get the content-type to determine the extension
+//     const contentType = response.headers['content-type'];
+//     let ext = mime.extension(contentType); // Extract the extension from content-type
+
+//     // Validate if the file extension is in the list of supported image formats
+//     if (!ext || !SUPPORTED_IMAGE_FORMATS.includes(ext.toLowerCase())) {
+//         throw new Error(`Unsupported file format: ${ext}. Only JPEG, PNG, WEBP, and GIF are allowed.`);
+//     }
+
+//     // Generate SEO-friendly filename with random tags
+//     const randomTags = getRandomTags(tags); // Get 1 or 2 random tags
+//     const filename = `${filenamePrefix}-${randomTags}-${Date.now()}.${ext}`;
+//     const imagePath = path.join(blogImagesPath, filename);
+
+//     // Save the image
+//     const writer = fs.createWriteStream(imagePath);
+//     response.data.pipe(writer);
+
+//     // Return the relative path to the image once it's saved
+//     return new Promise((resolve, reject) => {
+//         writer.on('finish', () => resolve(`/blog/${filename}`)); // Store path in DB
+//         writer.on('error', reject);
+//     });
+// };
+
 const downloadImage = async (url, filenamePrefix, tags) => {
     const blogImagesPath = path.join(__dirname, '../images/blog');
 
@@ -63,33 +113,27 @@ const downloadImage = async (url, filenamePrefix, tags) => {
     const response = await axios({
         url: downloadUrl,
         method: 'GET',
-        responseType: 'stream',
+        responseType: 'arraybuffer', // Use arraybuffer to work with file content
     });
 
-    // Get the content-type to determine the extension
-    const contentType = response.headers['content-type'];
-    let ext = mime.extension(contentType); // Extract the extension from content-type
-
-    // Validate if the file extension is in the list of supported image formats
-    if (!ext || !SUPPORTED_IMAGE_FORMATS.includes(ext.toLowerCase())) {
-        throw new Error(`Unsupported file format: ${ext}. Only JPEG, PNG, WEBP, and GIF are allowed.`);
+    // Detect the actual file type using file-type
+    const type = await FileType.fromBuffer(response.data);
+    if (!type || !SUPPORTED_IMAGE_FORMATS.includes(type.ext.toLowerCase())) {
+        throw new Error(`Unsupported file format: ${type.ext}. Only JPEG, PNG, WEBP, GIF, and SVG are allowed.`);
     }
 
     // Generate SEO-friendly filename with random tags
-    const randomTags = getRandomTags(tags); // Get 1 or 2 random tags
-    const filename = `${filenamePrefix}-${randomTags}-${Date.now()}.${ext}`;
+    const randomTags = getRandomTags(tags);
+    const filename = `${filenamePrefix}-${randomTags}-${Date.now()}.${type.ext}`;
     const imagePath = path.join(blogImagesPath, filename);
 
     // Save the image
-    const writer = fs.createWriteStream(imagePath);
-    response.data.pipe(writer);
+    fs.writeFileSync(imagePath, response.data);
 
     // Return the relative path to the image once it's saved
-    return new Promise((resolve, reject) => {
-        writer.on('finish', () => resolve(`/blog/${filename}`)); // Store path in DB
-        writer.on('error', reject);
-    });
+    return `/blog/${filename}`;
 };
+
 
 // Create a new blog
 exports.createBlog = async (req, res) => {
@@ -99,6 +143,11 @@ exports.createBlog = async (req, res) => {
         const { mainHeading, mainText, mainImage, categories, subTopics, tags } = req.body;
 
         console.log("::: Main function URL :::", mainImage);
+
+        // Validate that all subTopics have required fields
+        if (subTopics.some(sub => !sub.subHeading || !sub.subText)) {
+            return res.status(400).json({ message: 'All subtopics must include subHeading and subText.' });
+        }
 
         // Download and save the main image with random tags in the filename
         const mainImagePath = await downloadImage(mainImage, 'main', tags);
@@ -156,7 +205,7 @@ exports.getAllBlogs = async (req, res) => {
 // Get blog main details for list page (without subtopics)
 exports.getBlogsMainDetails = async (req, res) => {
     console.log("::: comes to get main details :::");
-    
+
     try {
         // Fetch blogs but exclude subTopics field
         const blogs = await Blog.find({}, {
@@ -177,7 +226,7 @@ exports.getBlogsMainDetails = async (req, res) => {
 // Get a single blog by ID
 exports.getBlogById = async (req, res) => {
     console.log("::: comes with ID:::");
-    
+
     try {
         const blog = await Blog.findById(req.params.id);
         if (!blog) {

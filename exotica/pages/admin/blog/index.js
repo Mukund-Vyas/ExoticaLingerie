@@ -215,6 +215,7 @@ const BlogForm = () => {
                                         setSubTopics(updated);
                                     }}
                                     className="border p-2 w-full"
+                                    required
                                 />
                             </div>
                             <div>
@@ -227,6 +228,7 @@ const BlogForm = () => {
                                         setSubTopics(updated);
                                     }}
                                     className="border p-2 w-full"
+                                    required
                                 ></textarea>
                             </div>
                             <div>

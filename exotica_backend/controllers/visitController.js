@@ -6,8 +6,6 @@ const Product = require('../models/ProductModel'); // Assuming you have a produc
 
 // Function to log a visit
 exports.trackVisit = async (req, res) => {
-    console.log("::: trackVisit :::");
-
     try {
         const { page } = req.body;
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress; // To handle proxies and real IPs
@@ -30,6 +28,8 @@ exports.trackVisit = async (req, res) => {
             updatedPage = '/twitter-clicks';  // Group Twitter Ads clicks
         } else if (page.includes('li_fat_id')) {
             updatedPage = '/linkedin-clicks';  // Group LinkedIn Ads clicks
+        }   else if (page.startsWith('/blogs')) {
+            updatedPage = '/blogs';  // Group LinkedIn Ads clicks
         }
 
         // Handle product/item/{_id} routes
