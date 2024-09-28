@@ -135,7 +135,7 @@ const BlogsPage = ({ blogId }) => {
                         {blogPost.subTopics.map((topic, index) => (
                             <div key={topic._id} className="flex flex-col-reverse md:flex-row items-center gap-8">
                                 {topic.subImage && (
-                                    <div className={`flex-1 ${index % 2 === 0 ? 'order-2' : ''}`}>
+                                    <div className={`flex-1 ${index % 2 === 0 ? 'sm:order-2' : ''}`}>
                                         <Image
                                             src={encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${topic.subImage}`)}
                                             alt={topic.subHeading}
