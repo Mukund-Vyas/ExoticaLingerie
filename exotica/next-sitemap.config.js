@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { default: api } = require('./src/utils/api');
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -58,7 +57,7 @@ async function fetchProductUrls() {
 // Fetch blog URLs using axios and assign to 'sitemap-blogs.xml'
 async function fetchBlogUrls() {
     try {
-        const { data: blogs } = await api.get('/blog/main-details');
+        const { data: blogs } = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/blog/main-details`);
         return blogs.map((blog) => ({
             loc: `/blogs/${blog._id}?blogName=${encodeURIComponent(blog.mainHeading)}`,
             changefreq: 'weekly',
