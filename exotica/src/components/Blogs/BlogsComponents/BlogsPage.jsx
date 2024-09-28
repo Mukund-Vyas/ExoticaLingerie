@@ -2,6 +2,7 @@ import api from '@/src/utils/api';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Head from 'next/head';
+import Link from 'next/link';
 
 const BlogsPage = ({ blogId }) => {
     const [blogPost, setBlogPost] = useState(null);
@@ -134,12 +135,12 @@ const BlogsPage = ({ blogId }) => {
                                     <h2 className="sm:text-2xl max-sm:text-lg font-semibold mb-4 font-[playfair]">{topic.subHeading}</h2>
                                     <p className="text-gray-600 mb-4 font-[roboto]">{topic.subText}</p>
                                     {topic.actionButton?.text && (
-                                        <a
+                                        <Link
                                             href={topic.actionButton.link}
                                             className="bg-primary text-white py-2 px-6 rounded-full hover:bg-pink-700 transition"
                                         >
                                             {topic.actionButton.text}
-                                        </a>
+                                        </Link>
                                     )}
                                 </div>
                             </div>

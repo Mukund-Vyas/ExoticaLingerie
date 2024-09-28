@@ -76,7 +76,7 @@ const Footer = () => {
                                 <Link href="/products">Panties</Link>
                             </li>
                             <li>
-                                <Link href="/products">Lingerie Set</Link>
+                                <Link href="/Bikini%20Set">Lingerie Set</Link>
                             </li>
                             <li>
                                 <Link href="/products">Winterwear</Link>
@@ -86,9 +86,6 @@ const Footer = () => {
                             </li>
                             <li>
                                 <Link href="/products">Lingerie Sale & Offer</Link>
-                            </li>
-                            <li>
-                                <Link href="/products">Swimwear</Link>
                             </li>
                         </ul>
                     </div>
@@ -133,7 +130,7 @@ const Footer = () => {
                                 <Link href="/">About Exotica Lingerie</Link>
                             </li>
                             <li>
-                                <Link href="/">Blogs</Link>
+                                <Link href="/blogs">Blogs</Link>
                             </li>
                             <li>
                                 <Link href="/">Find Your Fit</Link>

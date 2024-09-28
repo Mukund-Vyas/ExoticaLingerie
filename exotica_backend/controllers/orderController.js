@@ -208,7 +208,7 @@ exports.createOrder = async (req, res) => {
                                 <div class="order-summary">
                                     <h2>Order Summary</h2>
                                     <div>
-                                        <p><span class="highlight">Total Amount:</span> ₹${savedOrder.orderTotal.toFixed(2)}</p>
+                                        <p><span class="highlight">Total Amount:</span> ₹${parseFloat(savedOrder.orderTotal).toFixed(2)}</p>
                                     </div>
                                     <div>
                                         <h3>What's in Your Cart:</h3>
@@ -217,7 +217,7 @@ exports.createOrder = async (req, res) => {
                                 </div>
                             </div>
                             <div class="thank-you">
-                                <p>Thank you for choosing us! 🌟</p>
+                                <p>Thank you for choosing us!</p>
                                 <p>If you have any questions or need assistance, our support team is here to help.</p>
                             </div>
                         </div>
@@ -229,7 +229,7 @@ exports.createOrder = async (req, res) => {
                     <h1>New Order Received</h1>
                     <p>A new order has been placed!</p>
                     <p>Order Number: ${savedOrder.orderNumber}</p>
-                    <p>Order Total: ₹${savedOrder.orderTotal}</p>
+                    <p>Order Total: ₹${parseFloat(savedOrder.orderTotal).toFixed(2)}</p>
                     <h2>Product Details:</h2>
                     ${productDetails}
                 `;

@@ -27,9 +27,11 @@ const BlogsLayout = ({ blogs }) => {
   };
 
   // Filter blogs based on the active topic
-  const filteredBlogs = activeTopic === 'All'
+  const filteredBlogs = (activeTopic === 'All'
     ? blogs
-    : blogs.filter(blog => blog.categories === activeTopic);
+    : blogs.filter(blog => blog.categories === activeTopic)
+  ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  
 
   // Handle category button click and update URL
   const handleCategoryChange = (topic) => {
@@ -153,8 +155,8 @@ const BlogsLayout = ({ blogs }) => {
                       {blog.categories}
                     </span>
                     <h2 className="mt-2 text-xl font-[roboto] font-bold text-gray-800">{blog.mainHeading}</h2>
-                    <div className="flex items-center mt-4 text-sm text-gray-500">
-                      <span>{blog.date}</span>
+                    <div className="flex gap-1 items-center mt-4 text-sm text-gray-500">
+                      <span>{new Date(blog.createdAt).toISOString().split('T')[0]}</span>
                       <RxDotFilled />
                       <span>By Team Exotica</span>
                     </div>
