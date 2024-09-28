@@ -24,8 +24,11 @@ const CustomersList = () => {
                 const response = await api.get('/admin/get-site-users', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                setUsers(response.data);
-                setTotalPages(Math.ceil(response.data.length / usersPerPage));
+                
+                const sortedUsers = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                setUsers(sortedUsers);
+                setTotalPages(Math.ceil(sortedUsers.length / usersPerPage));
                 setLoading(false);
             } catch (err) {
                 setError('Failed to fetch users');

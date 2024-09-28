@@ -64,39 +64,42 @@ const BlogActions = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4">
       {blogs.map(blog => (
-        <Link key={blog._id} href={`/blogs/${blog._id}?blogName=${blog.mainHeading}`}>
-          <div className="relative bg-white border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <img
-              src={encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${blog.mainImage}`)}
-              alt={blog.mainHeading}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-4">
-              <div className="mt-2">
-                <span className="inline-block bg-pink-200 text-pink-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                  {blog.categories}
-                </span>
-                <h2 className="text-lg font-bold text-gray-800">{blog.mainHeading}</h2>
+        <div key={blog._id} className='relative'>
+          <Link href={`/blogs/${blog._id}?blogName=${blog.mainHeading}`}>
+            <div className="bg-white border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <img
+                src={encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${blog.mainImage}`)}
+                alt={blog.mainHeading}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <div className="mt-2">
+                  <span className="inline-block bg-pink-200 text-pink-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                    {blog.categories}
+                  </span>
+                  <h2 className="text-lg font-bold text-gray-800">{blog.mainHeading}</h2>
+                </div>
               </div>
+
             </div>
-            <div className="absolute top-2 right-2 flex flex-col space-y-2">
-              <button
-                onClick={() => handleEdit(blog._id)}
-                className="bg-white p-2 rounded-full shadow-sm border border-slate-400 text-blue-600 hover:text-blue-800"
-                title="edit"
-              >
-                <TbEdit className="text-lg" />
-              </button>
-              <button
-                onClick={() => handleDelete(blog._id)}
-                className="bg-white p-2 rounded-full shadow-sm border border-slate-400 text-red-600 hover:text-red-800"
-                title="delete"
-              >
-                <TbTrash className="text-lg" />
-              </button>
-            </div>
+          </Link>
+          <div className="absolute top-2 right-2 flex flex-col space-y-2 z-10">
+            <button
+              onClick={() => handleEdit(blog._id)}
+              className="bg-white p-2 rounded-full shadow-sm border border-slate-400 text-blue-600 hover:text-blue-800"
+              title="edit"
+            >
+              <TbEdit className="text-lg" />
+            </button>
+            <button
+              onClick={() => handleDelete(blog._id)}
+              className="bg-white p-2 rounded-full shadow-sm border border-slate-400 text-red-600 hover:text-red-800"
+              title="delete"
+            >
+              <TbTrash className="text-lg" />
+            </button>
           </div>
-        </Link>
+        </div>
       ))}
     </div>
   );
