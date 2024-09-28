@@ -54,7 +54,7 @@ exports.findUser = async (req, res) => {
 
         const isProduction = process.env.NODE_ENV === 'production';
 
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: isProduction, sameSite: 'Strict'});
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: isProduction, sameSite: 'Strict' });
         res.send({ accessToken });
     } catch (error) {
         console.log(error);
@@ -105,7 +105,7 @@ exports.addPartialInfo = async (req, res) => {
 
     try {
         const existingUser = await User.findOne(query);
-        
+
         if (existingUser) {
             return res.status(409).send('User with this email or mobile number already exists.');
         }
@@ -167,12 +167,12 @@ exports.updateUserProfile = async (req, res) => {
         res.status(200).json({ message: 'User Updated Successfully' });
     } catch (error) {
         console.error('Error updating profile:', error);
-        
+
         if (error.code === 11000) {
             // Check which field caused the duplicate key error
             const duplicateField = Object.keys(error.keyPattern)[0];
             console.log(duplicateField);
-            
+
             let errorMessage = 'Duplicate value';
             if (duplicateField === 'mobile') {
                 errorMessage = 'This mobile number is already registered. Please use another number or log in.';
@@ -203,8 +203,8 @@ exports.addAddress = async (req, res) => {
 
 // Delete address for existing user
 exports.deleteAddress = async (req, res) => {
-    const {addressId } = req.params;
-    
+    const { addressId } = req.params;
+
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
@@ -291,6 +291,45 @@ exports.getUserAddresses = async (req, res) => {
         res.status(200).send({ addresses: user.addresses });
     } catch (error) {
         console.error('Error fetching addresses:', error.message);
+        res.status(500).send('Internal server error.');
+    }
+};
+
+// Get user details for Admin
+exports.getUsersForAdminList = async (req, res) => {
+    try {
+        // Ensure the requester has admin rights (implement your own role-checking logic)
+        if (!req.admin || !req.isAdmin) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        // Fetch all users
+        const users = await User.find({}, '-refreshToken'); // Exclude refreshToken for security
+
+        // Decrypt sensitive fields like email and mobile
+        const decryptedUsers = users.map(user => {
+            const decryptedEmail = decrypt(user.email);
+            const decryptedMobile = decrypt(user.mobile);
+
+            return {
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: decryptedEmail,
+                mobile: decryptedMobile,
+                mobileVerified: user.mobileVerified,
+                emailVerified: user.emailVerified,
+                isActive: user.isActive, // If you track active status
+                createdAt: user.createdAt,
+            };
+        });
+
+        // Send the list of users
+        res.status(200).json(decryptedUsers);
+    } catch (error) {
+        console.log(error);
+        
+        console.error('Error fetching users for admin:', error.message);
         res.status(500).send('Internal server error.');
     }
 };

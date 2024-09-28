@@ -7,19 +7,19 @@ const auth = require('../middleware/adminAuthMiddleware');
 router.post('/track-visit', visitController.trackVisit);
 
 // Route for daily visits report
-router.get('/daily-visits', visitController.getDailyVisitsReport);
+router.get('/daily-visits', auth, visitController.getDailyVisitsReport);
 
 // Route for monthly visits report
-router.get('/monthly-visits', visitController.getMonthlyVisitsReport);
+router.get('/monthly-visits', auth, visitController.getMonthlyVisitsReport);
 
 // Route for yearly visits report
-router.get('/yearly-visits', visitController.getYearlyVisitsReport);
+router.get('/yearly-visits', auth, visitController.getYearlyVisitsReport);
 
 // Routes for daily, monthly, yearly URL-wise reports
-router.get('/daily-visits-url', visitController.getDailyVisitsByURLReport);
-router.get('/monthly-visits-url', visitController.getMonthlyVisitsByURLReport);
-router.get('/yearly-visits-url', visitController.getYearlyVisitsByURLReport);
+router.get('/daily-visits-url', auth, visitController.getDailyVisitsByURLReport);
+router.get('/monthly-visits-url', auth, visitController.getMonthlyVisitsByURLReport);
+router.get('/yearly-visits-url', auth, visitController.getYearlyVisitsByURLReport);
 
 // Routes for last 30 days visits report
-router.get('/last-30-days', visitController.getTotalVisitsLast30DaysReport);
+router.get('/last-30-days', auth, visitController.getTotalVisitsLast30DaysReport);
 module.exports = router;

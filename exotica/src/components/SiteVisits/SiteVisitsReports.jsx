@@ -2,8 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import api from '@/src/utils/api';
 import { Oval } from 'react-loader-spinner';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { logout } from '@/Redux/Reducers/adimnAuthSlice';
 
 const SiteVisitsReports = () => {
+    const router = useRouter();
     const [dailyData, setDailyData] = useState([]);
     const [monthlyData, setMonthlyData] = useState([]);
     const [yearlyData, setYearlyData] = useState([]);
@@ -13,7 +17,7 @@ const SiteVisitsReports = () => {
     const [last30DaysData, setLast30DaysData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null); // For handling errors
-
+    const dispatch = useDispatch();
     // Function to format data for charts
     const formatDataForChart = (data) => {
         return data.map(item => ({
@@ -32,16 +36,35 @@ const SiteVisitsReports = () => {
     // Function to fetch data, only when required
     const fetchData = async () => {
         try {
+            // Retrieve token from localStorage or wherever you store it
+            const token = localStorage.getItem('adminToken'); // Adjust this if you store the token differently
+    
+            // Axios requests with Authorization header
             const [dailyResUrl, monthlyResUrl, yearlyResUrl, dailyRes, monthlyRes, yearlyRes, last30DaysRes] = await Promise.all([
-                api.get('/sitevisits/daily-visits-url'),
-                api.get('/sitevisits/monthly-visits-url'),
-                api.get('/sitevisits/yearly-visits-url'),
-                api.get('/sitevisits/daily-visits'),
-                api.get('/sitevisits/monthly-visits'),
-                api.get('/sitevisits/yearly-visits'),
-                api.get('/sitevisits/last-30-days'),
+                api.get('/sitevisits/daily-visits-url', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                api.get('/sitevisits/monthly-visits-url', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                api.get('/sitevisits/yearly-visits-url', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                api.get('/sitevisits/daily-visits', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                api.get('/sitevisits/monthly-visits', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                api.get('/sitevisits/yearly-visits', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                api.get('/sitevisits/last-30-days', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
             ]);
-
+    
+            // Process the responses and update state
             setDailyData(dailyRes.data);
             setMonthlyData(monthlyRes.data);
             setYearlyData(yearlyRes.data);
@@ -49,13 +72,22 @@ const SiteVisitsReports = () => {
             setMonthlyDataUrl(monthlyResUrl.data);
             setYearlyDataUrl(yearlyResUrl.data);
             setLast30DaysData(last30DaysRes.data);
-
+    
             setLoading(false);
         } catch (error) {
-            setError("Error fetching data");
+            console.error('Error fetching data:', error);
+    
+            if (error.response && error.response.status === 401) {
+                dispatch(logout());
+                router.push('/admin/login');
+            } else {
+                setError("Error fetching data");
+            }
+    
             setLoading(false);
         }
     };
+    
 
     useEffect(() => {
         fetchData();

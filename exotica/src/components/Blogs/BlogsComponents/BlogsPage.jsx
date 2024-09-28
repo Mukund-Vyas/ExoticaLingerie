@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
+import { Oval } from 'react-loader-spinner';
 
 const BlogsPage = ({ blogId }) => {
     const [blogPost, setBlogPost] = useState(null);
@@ -32,11 +33,24 @@ const BlogsPage = ({ blogId }) => {
     console.log("blogId:", blogId);
 
     if (loading) {
-        return <p>Loading...</p>; // Display a loading state
+        return <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+        <Oval color="#ff197d" secondaryColor="#ffb1d3" height={80} width={80} />
+    </div>; // Display a loading state
     }
 
     if (!blogPost) {
-        return <p>No blog post found.</p>; // Handle case when no blog post is found
+        return <div className="flex flex-col items-center justify-center mt-20">
+            <Image
+                src="/Images/no-blogs.png" // Use your own image here
+                alt="No content"
+                width={125}
+                height={125}
+                className="mb-4"
+            />
+            <p className="text-lg text-slate-600 font-medium">
+                Sorry, no blogs are available for this category.
+            </p>
+        </div>; // Handle case when no blog post is found
     }
 
     const blogUrl = encodeURI(`https://exoticalingerie.in/blogs/${blogId}?blogName=${blogPost.mainHeading}`);
