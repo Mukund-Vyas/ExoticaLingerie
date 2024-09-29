@@ -9,6 +9,7 @@ import BraCollection from './HomePageComponents/BraCollection';
 import { Toaster } from 'react-hot-toast';
 import Link from 'next/link';
 import Image from 'next/image';
+import OverCollections from './HomePageComponents/OverCollections';
 
 const HomePageLayout = () => {
   const [isLargeScreen, setIsLargeScreen] = useState(false);
@@ -125,7 +126,8 @@ const HomePageLayout = () => {
       <Carousel images={images} image_url={image_url} />
       <Features />
       <StoreImageGrid />
-      <StyleImageGrid />
+      {/* <StyleImageGrid /> */}
+      <OverCollections />
       <Advertising />
       <NewArrivals />
       <BraCollection />
