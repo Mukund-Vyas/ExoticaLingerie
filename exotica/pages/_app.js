@@ -52,7 +52,7 @@ export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
       {
-        (!isProductPage & !isBlogPage) && (
+        (!isProductPage && !isBlogPage) && (
           <Head>
             <title>Lingeries - Buy Lingeries For Women @ Exotica Lingerie</title>
             <meta name="description" content="Exotica Lingerie offers premium women's lingerie with a wide range of bras, panties, nightwear, shapewear, and swimwear. Shop high-quality lingerie for every occasion." />

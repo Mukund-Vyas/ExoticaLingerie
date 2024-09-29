@@ -16,8 +16,10 @@ import { VscQuestion } from "react-icons/vsc";
 import Image from 'next/image';
 import { BsZoomIn } from 'react-icons/bs';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 const ProductDetails = ({ product_id, color }) => {
+    const router = useRouter();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeColor, setActiveColor] = useState(color);
@@ -423,6 +425,11 @@ const ProductDetails = ({ product_id, color }) => {
                                                 onClick={() => {
                                                     setActiveColor(variation.color);
                                                     setActiveImg(variation.imageUrls[0]);
+                                                    router.replace({
+                                                        pathname: router.pathname,
+                                                        query: { ...router.query, color: variation.color }, // Update the 'color' query parameter
+                                                    });
+
                                                 }}
                                                 title={variation.color}
                                             ></button>
