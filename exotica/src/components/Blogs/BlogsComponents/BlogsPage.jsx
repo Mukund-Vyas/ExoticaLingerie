@@ -82,7 +82,6 @@ const BlogsPage = ({ blogId }) => {
                     {JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "BlogPosting",
-                        "keywords": blogPost.tags.join(", "),
                         "mainEntityOfPage": {
                             "@type": "WebPage",
                             "@id": blogUrl

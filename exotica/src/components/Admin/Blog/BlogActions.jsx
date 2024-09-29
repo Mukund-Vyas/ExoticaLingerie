@@ -65,7 +65,7 @@ const BlogActions = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4">
       {blogs.map(blog => (
         <div key={blog._id} className='relative'>
-          <Link href={`/blogs/${blog._id}?blogName=${blog.mainHeading}`}>
+          <Link href={`/blogs/${blog.mainHeading.replace(/\s+/g, '-').toLowerCase()}-${blog._id}`}>
             <div className="bg-white border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
               <img
                 src={encodeURI(`${process.env.NEXT_PUBLIC_Image_URL}/${blog.mainImage}`)}

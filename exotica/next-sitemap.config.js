@@ -6,7 +6,7 @@ module.exports = {
     generateRobotsTxt: true, // Generate robots.txt
     changefreq: 'daily',
     sitemapSize: 5000,
-    exclude: ['/admin*'], // Exclude admin routes
+    exclude: ['/admin*', '/api*', '/whishlist*', '/checkout*'], // Exclude admin routes
 
     // Create separate sitemaps
     generateIndexSitemap: true, // Generate a sitemap index file
@@ -21,8 +21,10 @@ module.exports = {
     // Define different paths for general, products, and blogs
     additionalPaths: async (config) => {
         // General Pages
-        const generalPages = [{ loc: '/', priority: 1.0, changefreq: 'daily' }];
-
+        const generalPages = [{ loc: '/', priority: 1.0, changefreq: 'daily' },
+            { loc: '/products', priority: 0.9, changefreq: 'daily' }
+        ];
+        
         // Fetch product and blog URLs dynamically
         const productUrls = await fetchProductUrls();
         const blogUrls = await fetchBlogUrls();
@@ -40,9 +42,9 @@ async function fetchProductUrls() {
         // Map through products and their variations to create URL objects
         const productUrls = products.flatMap((product) =>
             product.variations.map((variation) => ({
-                loc: `/products/item/${product._id}?color=${variation.color}&productname=${encodeURIComponent(product.productname)}`,
+                loc: `/products/item/${product.productname.replace(/\s+/g, '-').toLowerCase()}-${variation.color.replace(/\s+/g, '-').toLowerCase()}-${product._id}?color=${variation.color}}`,
                 changefreq: 'daily',
-                priority: 0.8,
+                priority: 0.9,
             }))
         );
 
@@ -59,9 +61,9 @@ async function fetchBlogUrls() {
     try {
         const { data: blogs } = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/blog/main-details`);
         return blogs.map((blog) => ({
-            loc: `/blogs/${blog._id}?blogName=${encodeURIComponent(blog.mainHeading)}`,
+            loc: `/blogs/${blog.mainHeading.replace(/\s+/g, '-').toLowerCase()}-${blog._id}`,
             changefreq: 'weekly',
-            priority: 0.6,
+            priority: 0.8,
         }));
     } catch (error) {
         console.error("Error fetching blog URLs:", error);
