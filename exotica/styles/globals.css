@@ -43,6 +43,16 @@ body {
     clip-path: polygon(100% 100%, 100% 0, 0 100%);
 }
 
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
 
 /* ---------------------------------------- Order Tracking ------------------------------------------*/
 .stepper {

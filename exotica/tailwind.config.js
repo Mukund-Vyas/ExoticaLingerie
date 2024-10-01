@@ -5,7 +5,7 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  
+
   darkMode: 'false',
 
   theme: {
@@ -14,12 +14,13 @@ module.exports = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+          "light-noise": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"200\" viewBox=\"0 0 200 200\"><filter id=\"a\" filterUnits=\"objectBoundingBox\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.65\" numOctaves=\"1\"/></filter><rect width=\"100%\" height=\"100%\" filter=\"url(%23a)\" opacity=\"0.25\"/></svg>')",
       },
       colors: {
-        'primary' : "#ff197d",
-        'secondary' : '#ffb1d3',
+        'primary': "#ff197d",
+        'secondary': '#ffb1d3',
       },
-      fontFamily : {
+      fontFamily: {
         'Abril': 'Abril Fatface'
       },
       textShadow: {
