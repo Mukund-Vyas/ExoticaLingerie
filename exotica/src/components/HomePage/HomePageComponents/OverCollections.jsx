@@ -27,7 +27,7 @@ const OverCollections = () => {
         },
         {
             name: "Lingerie set",
-            imageUrl: "/Images/Intiment/lingerieset.webp",
+            imageUrl: "/Images/Intiment/Lingerieset.webp",
             bgColor: "bg-green-500",
             bgSubColor: "bg-cyan-500", 
             link:"/products/Bikini%20Set"
