@@ -76,7 +76,7 @@ app.use(cors(corsOptions));
 
 // Routes
 app.use('/api/v1', productRoutes);
-app.use('/api/v1', otpRouter);
+app.use('/api/v1/otp', otpRouter);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/', wishlistRoutes);
 app.use('/api/v1/payment', paymentRouters);

@@ -1,135 +1,125 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
-import { useSwipeable } from 'react-swipeable';
+import React, { useState, useEffect, useRef } from 'react';
+import 'swiper/swiper-bundle.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Navigation, EffectCoverflow } from 'swiper/modules';
+import 'swiper/swiper-bundle.css';
+
 
 const OverCollections = () => {
     const categories = [
-        {
-            name: "Bras",
-            imageUrl: "/Images/Intiment/bra.webp", // Replace with actual image URL
-            bgColor: "bg-teal-500",
-            bgSubColor: "bg-orange-500", // Contrast sub-color
-            link:"/products"
-        },
-        {
-            name: "Panties",
-            imageUrl: "/Images/Intiment/panties.webp",
-            bgColor: "bg-pink-500",
-            bgSubColor: "bg-yellow-500",
-        },
-        {
-            name: "Activewear",
-            imageUrl: "/Images/Intiment/activeware.webp",
-            bgColor: "bg-rose-500",
-            bgSubColor: "bg-blue-500",
-            link:"/products/Sag%20Lift%20Bra",
-        },
-        {
-            name: "Lingerie set",
-            imageUrl: "/Images/Intiment/Lingerieset.webp",
-            bgColor: "bg-green-500",
-            bgSubColor: "bg-cyan-500", 
-            link:"/products/Bikini%20Set"
-        },
-        {
-            name: "Yoga",
-            imageUrl: "/Images/Intiment/yoga.webp",
-            bgColor: "bg-blue-500",
-            bgSubColor: "bg-red-500",
-            link:"/products/Sport%20Bra"
-        },
-        {
-            name: "Shapewear",
-            imageUrl: "/Images/Intiment/shapewear.webp",
-            bgColor: "bg-purple-500",
-            bgSubColor: "bg-emerald-500"
-        },
+        { name: "Bras", imageUrl: "/Images/Intiment/bra.webp", link: "/products", discount: "Upto 55% Off" },
+        { name: "Panties", imageUrl: "/Images/Intiment/panties.webp" },
+        { name: "Activewear", imageUrl: "/Images/Intiment/activeware.webp", link: "/products/Sag%20Lift%20Bra", discount: "Upto 50% Off" },
+        { name: "Lingerie set", imageUrl: "/Images/Intiment/Lingerieset.webp", link: "/products/Bikini%20Set", discount: "Upto 30% Off" },
+        { name: "Yoga", imageUrl: "/Images/Intiment/yoga.webp", link: "/products/Sport%20Bra", discount: "Upto 60% Off" },
+        { name: "Shapewear", imageUrl: "/Images/Intiment/shapewear.webp" },
     ];
 
-    
-    const handlers = useSwipeable({
-        onSwipedLeft: () => document.getElementById("carousel").scrollBy({ left: 200, behavior: 'smooth' }),
-        onSwipedRight: () => document.getElementById("carousel").scrollBy({ left: -200, behavior: 'smooth' })
-    });
-
     return (
-        <div className="py-12 bg-gray-50 mt-2"
-        style={{
-            backgroundImage: `url(/Images/Intiment/CollectionBG.webp)`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-        }}
-    >
-        {/* Heading */}
-        <h2 className="text-center md:text-3xl max-md:text-xl font-extrabold text-gray-900 mb-8">
-            EXPLORE OUR COLLECTIONS
-        </h2>
+        <div className="md:py-12 max-md:p-6 bg-gray-50 mt-2"
+            style={{
+                backgroundImage: `url(/Images/Intiment/collection-bg.webp)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
+        >
+            <h2 className="text-center font-[Gelasio] md:text-3xl max-md:text-xl font-extrabold text-amber-300 mb-10">
+                EXPLORE OUR COLLECTIONS
+            </h2>
 
-        <div className="container mx-auto px-20 max-md:hidden">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {/* Desktop view */}
+            <div className="container mx-auto px-20 max-md:hidden">
+                <div className="flex gap-10 justify-between px-20">
                     {categories.map((category, index) => (
                         <div
                             key={index}
-                            className={`relative h-96 rounded-lg overflow-hidden shadow-lg bg-gradient-to-b from-transparent to-black/10 ${category.bgColor} bg-light-noise transition-transform duration-300 ease-in-out transform hover:scale-105 group`}
-                       >
-                            <Link className='absolute cursor-pointer inset-0 z-10'  href={category.link || "/"}/>
-                            <div className={`absolute inset-7 rounded-md overflow-hidden shadow-lg bg-gradient-to-b from-transparent to-black/10 ${category.bgSubColor} bg-light-noise`}>
-                                <img
+                            className={`relative flex-grow h-[30rem] w-20 rounded-lg overflow-hidden shadow-lg transition-all duration-300 ease-in-out transform hover:flex-grow-[5] group hover:border hover:border-amber-200 hover:rounded-[6rem]`}
+                        >
+                            <Link className='absolute cursor-pointer inset-0 z-10' href={category.link || "/"} />
+                            <div className={`absolute inset-0 rounded-md overflow-hidden shadow-lg group-hover:inset-5 group-hover:mb-16 group-hover:rounded-[5rem]`}
+                                style={{
+                                    backgroundImage: 'url(/Images/Intiment/image-bg.webp)',
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                }}
+                            >
+                                <Image
                                     src={category.imageUrl}
                                     alt={category.name}
-                                    className="absolute inset- w-full h-full object-cover transition-opacity duration-300"
-                                    
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
                                 />
+                                {/* Black gradient overlay from bottom to top */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-transparent group-hover:hidden"></div>
                             </div>
-                            {/* Background image */}
-                            
-
                             {/* Category Label */}
-                            <div className="absolute bottom-7 left-8">
-                                <h3 className="text-white text-3xl font-bold text-shadow-sm">{category.name}</h3>
+                            <div className="w-full absolute bottom-3">
+                                <h3 className="w-full text-center text-amber-200 text-xl font-[Salsa] uppercase text-shadow-sm group-hover:text-2xl ">{category.name}</h3>
+                                <h4 className="hidden w-full text-center text-yellow-400 text-shadow-sm text-2xl group-hover:block">{category.discount || "Comming Soon"}</h4>
                             </div>
-
-                            {/* Darker Shadow for depth on hover */}
-                            {/* <div className="absolute inset-0 bg-black/5 shadow-2xl transition-all duration-300 group-hover:bg-black/10"></div> */}
                         </div>
                     ))}
                 </div>
             </div>
-        {/* Swipeable Category Slider for small/medium screens */}
-        <div {...handlers} className="relative overflow-hidden md:hidden">
-            <div
-                id="carousel"
-                className="flex gap-6 px-6 overflow-x-scroll no-scrollbar scroll-snap-x-mandatory no-scrollbar"
-                style={{
-                    scrollPadding: '0 50vw',
-                }}
-            >
-                {categories.map((category, index) => (
-                    <div
-                        key={index}
-                        className={`relative flex-shrink-0 w-[70vw] h-80 rounded-md overflow-hidden shadow-lg bg-gradient-to-b from-transparent to-black/10 ${category.bgColor}`}
-                    >
-                        <Link className='absolute cursor-pointer inset-0 z-10'  href={category.link || "/"}/>
-                        <div className={`absolute inset-4 rounded-md overflow-hidden shadow-lg bg-gradient-to-b from-transparent to-black/10 ${category.bgSubColor}`}>
-                            <Image
-                                src={category.imageUrl}
-                                alt={category.name}
-                                layout="fill"
-                                objectFit="cover"
-                                className="transition-opacity duration-300"
-                            />
-                        </div>
-                        {/* Category Label */}
-                        <div className="absolute bottom-3 left-5">
-                            <h3 className="text-white text-xl font-bold text-shadow-sm">{category.name}</h3>
-                        </div>
-                    </div>
-                ))}
+
+            {/* Swiper for small/medium screens with Coverflow effect */}
+            <div className="md:hidden">
+                <Swiper
+                    effect={'coverflow'}
+                    grabCursor={true}
+                    centeredSlides={true}
+                    slidesPerView={'auto'}
+                    coverflowEffect={{
+                        rotate: 50,
+                        stretch: 0,
+                        depth: 100,
+                        modifier: 1,
+                        slideShadows: true,
+                    }}
+                    pagination={{ el: '.custom-pagination', type: 'fraction', clickable: true }}
+                    loop={true}
+                    modules={[Pagination, EffectCoverflow]}
+                    className="mySwiper"
+                >
+                    {categories.map((category, index) => (
+                        <SwiperSlide key={"slide "+index}>
+                            <div className="relative flex-shrink-0 justify-center w-full h-96 overflow-hidden shadow-lg transition-transform duration-500 border border-amber-200 rounded-[4rem]">
+                                <Link className="absolute cursor-pointer inset-0 z-10" href={category.link || "/"} />
+                                <div className={`absolute overflow-hidden inset-5 mb-16 rounded-[3rem]`}
+                                    style={{
+                                        backgroundImage: 'url(/Images/Intiment/image-bg.webp)',
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                    }}
+                                >
+                                    <Image
+                                        src={category.imageUrl}
+                                        alt={category.name}
+                                        layout="fill"
+                                        objectFit="cover"
+                                        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                                    />
+                                    {/* Black gradient overlay from bottom to top */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent group-hover:hidden"></div>
+                                </div>
+                                {/* Category Label */}
+                                <div className="absolute bottom-3 w-full flex flex-col justify-center">
+                                    <h3 className="w-full text-center text-amber-200 text-xl font-[Salsa] uppercase text-shadow-sm">{category.name}</h3>
+                                    <h4 className="text-center text-yellow-400 text-shadow-sm text-lg">{category.discount || "Coming Soon"}</h4>
+                                </div>
+                            </div>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+                <div className='w-full flex justify-center my-4'>
+                    <div className="custom-pagination max-w-10 bg-amber-300 rounded-full flex justify-center"></div>
+                </div>
             </div>
         </div>
-    </div>
-    )
+    );
 }
 
-export default OverCollections
+export default OverCollections;

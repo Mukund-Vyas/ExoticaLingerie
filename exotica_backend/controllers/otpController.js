@@ -1,7 +1,8 @@
 const OTP = require('../models/otpModel');
 const { sendOtpEmail, generateOtp } = require('../utils/otpmailer');
+const axios = require('axios');
 
-const sendOtp = async (req, res) => {
+const sendEmailOtp = async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -20,7 +21,7 @@ const sendOtp = async (req, res) => {
   }
 };
 
-const validateOtp = async (req, res) => {
+const validateEmailOtp = async (req, res) => {
   const { email, otp } = req.body;
 
   if (!email || !otp) {
@@ -35,13 +36,71 @@ const validateOtp = async (req, res) => {
       return res.status(200).json({ message: 'OTP validated successfully' });
     }
 
-    return res.status(400).json({ error: 'Invalid OTP' });
+    return res.status(204).json({ error: 'Invalid OTP' });
   } catch (error) {
     return res.status(500).json({ error: 'Failed to validate OTP' });
   }
 };
 
+// MSG91 Mobile OTP Integration
+const sendMSGOTP = async (req, res) => {
+  const { mobileNumber } = req.body;
+
+  try {
+    const response = await axios.post('https://api.msg91.com/api/v5/otp', {
+      mobile: mobileNumber,
+      authkey: process.env.MSG91_AUTH_KEY,
+      template_id: process.env.MSG91_OTP_TEMPLATE_ID,
+      otp_length: 6,
+    }, {
+      'Content-Type': 'application/json',
+    });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to send OTP' });
+  }
+};
+
+// Verify OTP
+const verifyMSGOTP = async (req, res) => {
+  const { mobileNumber, otp } = req.body;
+
+  const options = {
+    method: 'GET',
+    url: 'https://control.msg91.com/api/v5/otp/verify',
+    params: {otp: otp, mobile: mobileNumber},
+    headers: {authkey: process.env.MSG91_AUTH_KEY}
+  };
+  try {
+    const response = await axios.request(options);
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to verify OTP' });
+  }
+};
+
+// Resend OTP
+const resendMSGOTP = async (req, res) => {
+  const { mobileNumber } = req.body;
+
+  const options = {
+    method: 'GET',
+    url: 'https://control.msg91.com/api/v5/otp/retry',
+    params: {authkey: process.env.MSG91_AUTH_KEY, retrytype: 'text', mobile: mobileNumber}
+  };
+  try {
+    const response = await axios.request(options);
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to resend OTP' });
+  }
+};
+
 module.exports = {
-  sendOtp,
-  validateOtp,
+  sendEmailOtp,
+  validateEmailOtp,
+  sendMSGOTP,
+  verifyMSGOTP,
+  resendMSGOTP,
 };

@@ -14,8 +14,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser } from '@/Redux/Reducers/userSlice';
 import Link from 'next/link';
 import { setProfileOpen } from '@/Redux/Reducers/profileSlice';
+import api from '@/src/utils/api';
 
-const ProfileLayout = ({toggleProfile}) => {
+const ProfileLayout = ({ toggleProfile }) => {
     const [profileState, setProfileState] = useState('initial'); // 'initial', 'login', 'otp', 'loggedIn'
     const [useEmail, setUseEmail] = useState(true);
     const [inputValue, setInputValue] = useState('');
@@ -29,8 +30,8 @@ const ProfileLayout = ({toggleProfile}) => {
     const recaptchaVerifierRef = useRef(null);
     // const [isUser, setIsUser] = useState(false);
     const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
-    const {isUser} = useSelector((state)=>state.user)
-    const {profileOpen} = useSelector((state)=>state.profile)
+    const { isUser } = useSelector((state) => state.user)
+    const { profileOpen } = useSelector((state) => state.profile)
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -54,7 +55,9 @@ const ProfileLayout = ({toggleProfile}) => {
         setProfileState('login');
     }
 
-    const handleUserLogin = async () => {
+    const handleUserLogin = async (mobileOtpRout = 'send-mobile-otp') => {
+        console.log(typeof mobileOtpRout, mobileOtpRout);
+
         setIsLoading(true);
         if (!recaptchaVerifierRef.current) {
             recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -70,13 +73,17 @@ const ProfileLayout = ({toggleProfile}) => {
                 recaptchaVerifierRef.current.render().then(() => {
                     recaptchaVerifierRef.current.verify().then(recaptchaToken => {
                         if (recaptchaToken) {
-                            fetch(process.env.NEXT_PUBLIC_SEND_EMAIL_OTP_API_URL, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ email: inputValue })
+                            // fetch(process.env.NEXT_PUBLIC_SEND_EMAIL_OTP_API_URL, {
+                            //     method: 'POST',
+                            //     headers: { 'Content-Type': 'application/json' },
+                            //     body: JSON.stringify({ email: inputValue })
+                            // })
+                            api.post('/otp/send-otp', { email: inputValue }, {
+                                headers: { 'Content-Type': 'application/json' }
                             })
                                 .then(response => {
-                                    if (response.ok) {
+                                    // Axios responses do not have 'ok', so check the status code
+                                    if (response.status === 200) {
                                         toast.success('OTP has been sent to your email!');
                                         setIsOtpSent(true);
                                         setProfileState('otp');
@@ -93,23 +100,45 @@ const ProfileLayout = ({toggleProfile}) => {
                                 .finally(() => {
                                     setIsLoading(false);
                                 });
+
                         }
                     }).catch(error => {
-                        console.error('Error verifying recaptcha:', error);
-                        toast.error('Failed to verify recaptcha. Please try again.');
+                        console.error('Error verifying reCAPTCHA:', error);
+                        toast.error('Failed to verify reCAPTCHA. Please try again.');
                         setIsLoading(false);
                     });
                 });
 
             } else {
-                const phoneNumber = "+91" + inputValue;
-                const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifierRef.current);
-                setVerificationId(confirmationResult.verificationId);
-                setIsOtpSent(true);
-                setProfileState('otp');
-                toast.success('OTP has been sent to your mobile!');
-                setIsLoading(false);
-                startResendTimer();
+                const mobileNumber = "91" + inputValue;
+                // const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifierRef.current);
+                // setVerificationId(confirmationResult.verificationId);
+                // setIsOtpSent(true);
+                // setProfileState('otp');
+                // toast.success('OTP has been sent to your mobile!');
+                // setIsLoading(false);
+                // startResendTimer();
+                api.post(`/otp/${mobileOtpRout}`, { mobileNumber }, {
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                    .then(response => {
+                        if (response.status === 200) {
+                            toast.success('OTP has been sent to your mobile!');
+                            setIsOtpSent(true);
+                            setProfileState('otp');
+                            startResendTimer();
+                        } else {
+                            toast.error('Failed to send OTP. Please try again.');
+                            console.log(response);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error sending OTP:', error);
+                        toast.error('Failed to send OTP. Please try again.');
+                    })
+                    .finally(() => {
+                        setIsLoading(false);
+                    });
             }
         } catch (error) {
             if (error.code === 'auth/too-many-requests') {
@@ -166,13 +195,16 @@ const ProfileLayout = ({toggleProfile}) => {
         setIsLoading(true);
         if (otpValue.length === 6) {
             if (useEmail) {
-                fetch(process.env.NEXT_PUBLIC_VALIDATE_EMAIL_OTP_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: inputValue, otp: otpValue })
+                // fetch(process.env.NEXT_PUBLIC_VALIDATE_EMAIL_OTP_API_URL, {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ email: inputValue, otp: otpValue })
+                // })
+                api.post('/otp/validate-otp', { email: inputValue, otp: otpValue }, {
+                    headers: { 'Content-Type': 'application/json' }
                 })
                     .then(response => {
-                        if (response.ok) {
+                        if (response.status === 200) {
                             setOtpValue('')
                             toast.success('OTP Verified!');
                             setProfileState('loggedIn');
@@ -189,23 +221,43 @@ const ProfileLayout = ({toggleProfile}) => {
                         setIsLoading(false);
                     });
             } else {
-                if (verificationId) {
-                    try {
-                        const credential = PhoneAuthProvider.credential(verificationId, otpValue);
-                        await signInWithCredential(auth, credential);
-                        setProfileState('loggedIn');
-                        toast.success('OTP Verified!');
-                        setOtpValue('')
+                // if (verificationId) {
+                //     try {
+                //         const credential = PhoneAuthProvider.credential(verificationId, otpValue);
+                //         await signInWithCredential(auth, credential);
+                //         setProfileState('loggedIn');
+                //         toast.success('OTP Verified!');
+                //         setOtpValue('')
+                //         setIsLoading(false);
+                //         findUser({ mobile: inputValue })
+                //     } catch (error) {
+                //         toast.error('Invalid OTP. Please try again.');
+                //         setIsLoading(false);
+                //     }
+                // } else {
+                //     toast.error('Please try again.');
+                //     setIsLoading(false);
+                // }
+                api.post('/otp/verify-mobile-otp', { mobileNumber: "91" + inputValue, otp: otpValue }, {
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                    .then(response => {
+                        if (response.status === 200 && response.data.type == "success") {
+                            setOtpValue('')
+                            toast.success('OTP Verified!');
+                            setProfileState('loggedIn');
+                            findUser({ mobile: inputValue })
+                        } else {
+                            toast.error('Invalid OTP. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error verifying OTP:', error);
+                        toast.error('An error occurred. Please try again.');
+                    })
+                    .finally(() => {
                         setIsLoading(false);
-                        findUser({ mobile: inputValue })
-                    } catch (error) {
-                        toast.error('Invalid OTP. Please try again.');
-                        setIsLoading(false);
-                    }
-                } else {
-                    toast.error('Please try again.');
-                    setIsLoading(false);
-                }
+                    });
             }
         } else {
             toast.error('Please enter a valid 6-digit OTP.');
@@ -214,7 +266,7 @@ const ProfileLayout = ({toggleProfile}) => {
     }
 
     const handleResendOtp = async () => {
-        handleUserLogin();
+        handleUserLogin('resend-mobile-otp');
         startResendTimer();
     }
 
@@ -311,9 +363,9 @@ const ProfileLayout = ({toggleProfile}) => {
                             <span className='hover:text-primary'>FAQs</span>
                             <span className='hover:text-primary'>Contact Us</span>
                             <span className='hover:text-primary'>About Us</span>
-                            <span className='hover:text-primary'><Link href="/return-policy" onClick={()=>handleToggleProfile()}>Return Policy</Link></span>
-                            <span className='hover:text-primary'><Link href="/privacy-policy" onClick={()=>handleToggleProfile()}>Privacy Policy</Link></span>
-                            <span className='hover:text-primary'><Link href="/terms-of-use" onClick={()=>handleToggleProfile()}>Terms of Use</Link></span>
+                            <span className='hover:text-primary'><Link href="/return-policy" onClick={() => handleToggleProfile()}>Return Policy</Link></span>
+                            <span className='hover:text-primary'><Link href="/privacy-policy" onClick={() => handleToggleProfile()}>Privacy Policy</Link></span>
+                            <span className='hover:text-primary'><Link href="/terms-of-use" onClick={() => handleToggleProfile()}>Terms of Use</Link></span>
                         </div>
                     </div>
                 </div>
@@ -330,7 +382,11 @@ const ProfileLayout = ({toggleProfile}) => {
                         </button>
                     </div>
 
-                    <div className='w-full flex flex-col gap-4 items-center'>
+                    <form onSubmit={(e) => {
+                        e.preventDefault(); // Prevent the default form submission behavior
+                        if (isInputValid) handleUserLogin(); // Trigger login if input is valid
+                    }}
+                        className='w-full flex flex-col gap-4 items-center'>
                         <div className='w-full flex flex-col gap-2'>
                             <label className='w-full text-left mb-2 text-sm font-semibold'>
                                 Enter {useEmail ? 'Email ID' : 'Mobile Number'}
@@ -344,11 +400,6 @@ const ProfileLayout = ({toggleProfile}) => {
                                         placeholder=" "
                                         value={inputValue}
                                         onChange={useEmail ? (e) => setInputValue(e.target.value) : handleMobileInputChange}
-                                        onKeyDown={(e)=>{
-                                            if (e.key === 'Enter' && isInputValid){
-                                                handleUserLogin();
-                                            }
-                                        }}
                                     />
                                     <label className="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-stone-500 peer-focus:text-rose-600 before:border-blue-gray-200 peer-focus:before:!border-primary after:border-blue-gray-200 peer-focus:after:!border-primary">
                                         {useEmail ? 'Email ID' : 'Mobile Number'}
@@ -363,7 +414,8 @@ const ProfileLayout = ({toggleProfile}) => {
 
                         <button
                             className='text-rose-700 font-semibold py-2'
-                            onClick={toggleLoginMethod}
+                            type="button" 
+                            onClick={() => toggleLoginMethod()}
                         >
                             {useEmail ? 'Use Mobile Number Instead' : 'Use Email Instead'}
                         </button>
@@ -374,12 +426,12 @@ const ProfileLayout = ({toggleProfile}) => {
 
                         <button
                             className='w-full bg-primary disabled:bg-secondary text-white py-2 px-4 rounded mb-4'
-                            onClick={handleUserLogin}
+                            type="submit" // This ensures the button submits the form
                             disabled={!isInputValid}
                         >
                             Continue
                         </button>
-                    </div>
+                    </form>
                 </div>
             )}
 
@@ -394,7 +446,11 @@ const ProfileLayout = ({toggleProfile}) => {
                         </button>
                     </div>
 
-                    <div className='w-full flex flex-col gap-4 items-center'>
+                    <form onSubmit={(e) => { 
+        e.preventDefault(); // Prevent default form submission
+        if (otpValue.length === 6) handleOtpVerification(); // Verify OTP only if it's valid
+    }}
+className='w-full flex flex-col gap-4 items-center'>
                         <div className='w-full flex items-center flex-col'>
                             <span className='w-full text-center mb-2 text-lg font-semibold'>
                                 Enter OTP
@@ -415,23 +471,23 @@ const ProfileLayout = ({toggleProfile}) => {
                             />
                         </div>
 
-                        <button className='text-rose-700 font-semibold py-2 disabled:text-stone-500' onClick={handleResendOtp} disabled={isResendDisabled}>
+                        <button type='button' className='text-rose-700 font-semibold py-2 disabled:text-stone-500' onClick={handleResendOtp} disabled={isResendDisabled}>
                             {isResendDisabled ? `Resend OTP in ${Math.floor(resendTimer / 60)}:${resendTimer % 60 < 10 ? '0' : ''}${resendTimer % 60}` : 'Resend OTP'}
                         </button>
 
                         <button
                             className='w-full bg-primary disabled:bg-secondary text-white py-2 px-4 rounded mb-'
-                            onClick={handleOtpVerification}
+                            type="submit"
                             disabled={otpValue.length !== 6}
                         >
                             Verify
                         </button>
-                    </div>
+                    </form>
                 </div>
             )}
 
             {authToken && (
-                <UserProfile gotoLogin={updateProfileState} toggleProfile={toggleProfile}/>
+                <UserProfile gotoLogin={updateProfileState} toggleProfile={toggleProfile} />
             )}
 
             {!authToken && profileState === "loggedIn" && (

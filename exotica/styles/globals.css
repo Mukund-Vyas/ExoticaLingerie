@@ -94,6 +94,22 @@ body {
     font-family: 'Abril Fatface';
 }
 
+/* ---------------------------------------- Swiper CSS ---------------------------------------- */
+/* Custom Pagination Style */
+.custom-pagination {
+    font-family: 'Arial', sans-serif;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.custom-pagination .swiper-pagination-fraction {
+    padding: 10px;
+    max-width: 60px;
+    margin: 0 auto;
+}
+
+
 /* ---------------------------------------- Scroll bar CSS ---------------------------------------- */
 .scrollbar::-webkit-scrollbar {
     width: 5px;
